@@ -11,23 +11,38 @@ namespace PosthumanWebApi.Models.Entities
     public class EventItem
     {
         public EventItem(
-            int id,
             int avatarId,
-            int type, 
+            EventType type,
             DateTime occured)
         {
-            this.Id = id;
             this.AvatarId = avatarId;
             this.Type = type;
             this.Occured = occured;
+
+            this.ExpGained = ExpReward[type];
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int AvatarId { get; set; }                // Owner
-        public int Type { get; set; }
-        public DateTime Occured { get; set; }
+        public int AvatarId { get; set; }               // Owner
+        public EventType Type { get; set; }             // Type of event, "what happened"
+        public DateTime Occured { get; set; }           // When happened
 
+        public int ExpGained { get; set; }              // How much XP user gained from this action
+
+        // Exp points rewards for different events
+        private Dictionary<EventType, int> ExpReward = new Dictionary<EventType, int>()
+        {
+            { EventType.TodoItemCreated, 10 },
+            { EventType.TodoItemDeleted, -10 },
+            { EventType.TodoItemModified, 0 },
+            { EventType.TodoItemCompleted, 30 },
+
+            { EventType.ProjectCreated, 30 },
+            { EventType.ProjectDeleted, -30 },
+            { EventType.ProjectModified, 0 },
+            { EventType.ProjectFinished, 100 }
+        };
     }
 }

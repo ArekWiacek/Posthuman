@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PosthumanWebApi.Models;
 
@@ -11,9 +12,10 @@ using PosthumanWebApi.Models;
 namespace PosthumanWebApi.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20211015030513_Migration8")]
+    partial class Migration8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,33 +52,6 @@ namespace PosthumanWebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Avatars", (string)null);
-                });
-
-            modelBuilder.Entity("PosthumanWebApi.Models.Entities.EventItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AvatarId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExpGained")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Occured")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EventItems", (string)null);
                 });
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>

@@ -78,6 +78,14 @@ namespace PosthumanWebApi.Controllers
             }
 
             _context.TodoItems.Add(todoItem);
+
+            var taskCreatedEvent = new EventItem(2, EventType.TodoItemCreated, DateTime.Now);
+            _context.EventItems.Add(taskCreatedEvent);
+
+            var avatar = await _context.Avatars.FindAsync(2);
+            if(avatar != null)
+                avatar.Exp += taskCreatedEvent.ExpGained;
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(
@@ -114,17 +122,33 @@ namespace PosthumanWebApi.Controllers
                 todoItem.ProjectId = updatedTodoItemDTO.ProjectId;
             }
 
+            // Add event of type "TodoItemModified"
+            var todoItemModifiedEvent = new EventItem(2, EventType.TodoItemModified, DateTime.Now);
+            _context.EventItems.Add(todoItemModifiedEvent);
+
             // TodoItem was just completed
             if (todoItem.IsCompleted == false && updatedTodoItemDTO.IsCompleted == true)
             {
                 todoItem.CompletionDate = DateTime.Now;
                 todoItem.IsCompleted = updatedTodoItemDTO.IsCompleted;
 
+                // If TodoItem is subtask of a project, update CompletedSubtasks property
                 if (todoItem.ProjectId != null)
                 {
                     var parentProject = await _context.Projects.FindAsync(todoItem.ProjectId.Value);
-                    parentProject.CompletedSubtasks++;
+                    
+                    if(parentProject != null)
+                        parentProject.CompletedSubtasks++;
                 }
+
+                // Add event of completion
+                var todoItemCompletedEvent = new EventItem(2, EventType.TodoItemCompleted, DateTime.Now);
+                _context.EventItems.Add(todoItemCompletedEvent);
+
+                // Update Avatar Exp points
+                var avatar = await _context.Avatars.FindAsync(2);
+                if(avatar != null)
+                    avatar.Exp += todoItemCompletedEvent.ExpGained;
             }
 
             try
@@ -151,13 +175,24 @@ namespace PosthumanWebApi.Controllers
             if (todoItem == null)
                 return NotFound();
 
-            // TodoItem was subtask of parent Project - it need to be updated as well
-            if(todoItem.Project != null)
-            {
-                todoItem.Project.TotalSubtasks--;
-            }
-            
             _context.TodoItems.Remove(todoItem);
+
+            // TodoItem was subtask of parent Project - it need to be updated as well
+            if (todoItem.ProjectId != null)
+            {
+                var parentProject = await _context.Projects.FindAsync(todoItem.ProjectId.Value);
+
+                if (parentProject != null)
+                    parentProject.TotalSubtasks--;
+            }
+
+            var todoItemDeletedEvent = new EventItem(2, EventType.TodoItemDeleted, DateTime.Now);
+            _context.EventItems.Add(todoItemDeletedEvent);
+
+            var avatar = await _context.Avatars.FindAsync(2);
+            if(avatar != null)
+                avatar.Exp += todoItemDeletedEvent.ExpGained;
+
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -33,56 +33,14 @@ namespace PosthumanWebApi.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return project;
-        }
-
-        // PUT: api/Projects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, ProjectDTO updatedProjectDTO)
-        {
-            if (id != updatedProjectDTO.Id)
-                return BadRequest();
-
             var project = await _context.Projects.FindAsync(id);
 
             if (project == null)
                 return NotFound();
 
-            project.Title = updatedProjectDTO.Title;
-            project.Description = updatedProjectDTO.Description;
-            project.StartDate = updatedProjectDTO.StartDate;
-
-            // Project was just finished
-            if(project.IsFinished == false && updatedProjectDTO.IsFinished == true)
-            {
-                project.FinishDate = DateTime.Now;
-            }
-
-            project.IsFinished = updatedProjectDTO.IsFinished;
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return NoContent();
+            return ProjectToDTO(project);
         }
 
         // POST: api/Projects
@@ -101,11 +59,71 @@ namespace PosthumanWebApi.Controllers
             project.CompletedSubtasks = 0;
 
             _context.Projects.Add(project);
+
+            var projectCreatedEvent = new EventItem(2, EventType.ProjectCreated, DateTime.Now);
+            _context.EventItems.Add(projectCreatedEvent);
+
+            var avatar = await _context.Avatars.FindAsync(2);
+            if (avatar != null)
+                avatar.Exp += projectCreatedEvent.ExpGained;
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProjects", new { id = project.Id }, project);
         }
 
+
+        // PUT: api/Projects/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProject(int id, ProjectDTO updatedProjectDTO)
+        {
+            if (id != updatedProjectDTO.Id)
+                return BadRequest();
+
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
+                return NotFound();
+
+            project.Title = updatedProjectDTO.Title;
+            project.Description = updatedProjectDTO.Description;
+            project.StartDate = updatedProjectDTO.StartDate;
+
+            var projectModifiedEvent = new EventItem(2, EventType.ProjectModified, DateTime.Now);
+            _context.EventItems.Add(projectModifiedEvent);
+
+            // Project was just finished
+            if (project.IsFinished == false && updatedProjectDTO.IsFinished == true)
+            {
+                project.FinishDate = DateTime.Now;
+                project.IsFinished = updatedProjectDTO.IsFinished;
+
+                // Add event of type "ProjectFinished"
+                var projectFinishedEvent = new EventItem(2, EventType.ProjectFinished, DateTime.Now);
+                _context.EventItems.Add(projectFinishedEvent);
+
+                // Update Avatar Exp points
+                var avatar = await _context.Avatars.FindAsync(2);
+                if (avatar != null)
+                    avatar.Exp += projectFinishedEvent.ExpGained;
+            }
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectExists(id))
+                    return NotFound();
+                else
+                    throw;
+            }
+
+            return NoContent();
+        }
+
+        
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
@@ -117,6 +135,14 @@ namespace PosthumanWebApi.Controllers
             }
 
             _context.Projects.Remove(project);
+
+            var projectDeletedEvent = new EventItem(2, EventType.ProjectDeleted, DateTime.Now);
+            _context.EventItems.Add(projectDeletedEvent);
+
+            var avatar = await _context.Avatars.FindAsync(2);
+            if (avatar != null)
+                avatar.Exp += projectDeletedEvent.ExpGained;
+
             await _context.SaveChangesAsync();
 
             return NoContent();
