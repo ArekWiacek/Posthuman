@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PosthumanWebApi.Models;
 using PosthumanWebApi.Models.Entities;
 
 namespace PosthumanWebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
         private readonly PosthumanContext _context;
 
+        
         public ProjectsController(PosthumanContext context)
         {
             _context = context;
@@ -23,14 +19,21 @@ namespace PosthumanWebApi.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
-            return await _context.Projects.ToListAsync();
+            var projs = _context.Projects.Include(p => p.TodoItems).ToList();
+
+            var projects = _context.Projects.ToList();
+
+            return await _context
+                .Projects
+                .Select(project => ProjectToDTO(project))
+                .ToListAsync();
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(long id)
+        public async Task<ActionResult<Project>> GetProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
 
@@ -45,15 +48,28 @@ namespace PosthumanWebApi.Controllers
         // PUT: api/Projects/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(long id, Project project)
+        public async Task<IActionResult> UpdateProject(int id, ProjectDTO updatedProjectDTO)
         {
-            if (id != project.Id)
-            {
+            if (id != updatedProjectDTO.Id)
                 return BadRequest();
+
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
+                return NotFound();
+
+            project.Title = updatedProjectDTO.Title;
+            project.Description = updatedProjectDTO.Description;
+            project.StartDate = updatedProjectDTO.StartDate;
+
+            // Project was just finished
+            if(project.IsFinished == false && updatedProjectDTO.IsFinished == true)
+            {
+                project.FinishDate = DateTime.Now;
             }
 
-            _context.Entry(project).State = EntityState.Modified;
-
+            project.IsFinished = updatedProjectDTO.IsFinished;
+            
             try
             {
                 await _context.SaveChangesAsync();
@@ -61,32 +77,38 @@ namespace PosthumanWebApi.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ProjectExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
 
         // POST: api/Projects
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<Project>> CreateProject(ProjectDTO projectDTO)
         {
+            var project = new Project(
+                0,
+                projectDTO.Title,
+                projectDTO.Description,
+                false,
+                projectDTO.StartDate);
+
+            project.CreationDate = DateTime.Now;
+            project.TotalSubtasks = 0;
+            project.CompletedSubtasks = 0;
+
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProject", new { id = project.Id }, project);
+            return CreatedAtAction("GetProjects", new { id = project.Id }, project);
         }
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(long id)
+        public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _context.Projects.FindAsync(id);
             if (project == null)
@@ -100,9 +122,19 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
-        private bool ProjectExists(long id)
-        {
-            return _context.Projects.Any(e => e.Id == id);
-        }
+        private bool ProjectExists(int id) =>
+            _context.Projects.Any(e => e.Id == id);
+
+        private static ProjectDTO ProjectToDTO(Project project) =>
+            new ProjectDTO(
+                project.Id,
+                project.Title,
+                project.Description,
+                project.IsFinished,
+                project.StartDate,
+                project.CreationDate,
+                project.FinishDate,
+                project.TotalSubtasks,
+                project.CompletedSubtasks);
     }
 }

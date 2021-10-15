@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+
+var pid = System.Diagnostics.Process.GetCurrentProcess().Id;
 
 string connectionString = builder.Configuration.GetConnectionString("PosthumanDatabaseConnectionString");
 
@@ -18,14 +19,28 @@ builder
     .AddDbContext<PosthumanContext>(
         options => options.UseSqlServer("Data Source=DMITRUSPACE\\SQLEXPRESS;Initial Catalog=PosthumanaeArchivae;Integrated Security=True"));
 
+builder.Services.AddCors();
+builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "PosthumanWebApi", Version = "v1" });
 });
 
 
-
 var app = builder.Build();
+
+using(var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
+
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -33,7 +48,10 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PosthumanWebApi v1"));
+    app.UseSwaggerUI(c => 
+        c.SwaggerEndpoint(
+            "/swagger/v1/swagger.json", 
+            "PosthumanWebApi v1"));
 }
 
 app.UseHttpsRedirection();

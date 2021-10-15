@@ -6,26 +6,28 @@ namespace PosthumanWebApi.Models.Entities
     /// <summary>
     /// Represents single "to-do" task
     /// </summary>
-    [Table("TodoItem")]
+    [Table("TodoItems")]
     public class TodoItem
     {
         public TodoItem(
-            long id,
+            int id,
             string title,
             string description,
             bool isCompleted,
-            DateTime? deadline)
+            DateTime? deadline,
+            int? projectId)
         {
             this.Id = id;
             this.Title = title;
             this.Description = description;
             this.IsCompleted = isCompleted;
             this.Deadline = deadline;
+            this.ProjectId = projectId;
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         public string Title { get; set; }
         public string Description { get; set; }
@@ -35,7 +37,7 @@ namespace PosthumanWebApi.Models.Entities
         public DateTime? CompletionDate { get; set; }       // Date when task was marked as 'Completed'
 
         // Parent project - when to-do item is part of something bigger
-        /*public int? ProjectId { get; set; }
-        public Project? Project { get; set; }*/
+        public int? ProjectId { get; set; }
+        public virtual Project Project { get; set; }
     }
 }

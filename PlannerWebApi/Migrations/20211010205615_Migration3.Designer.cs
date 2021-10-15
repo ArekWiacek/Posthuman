@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PosthumanWebApi.Models;
 
@@ -11,9 +12,10 @@ using PosthumanWebApi.Models;
 namespace PosthumanWebApi.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20211010205615_Migration3")]
+    partial class Migration3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,36 +24,6 @@ namespace PosthumanWebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("PosthumanWebApi.Models.Entities.Avatar", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Bio")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Exp")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Avatars", (string)null);
-                });
-
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>
                 {
                     b.Property<int>("Id")
@@ -59,12 +31,6 @@ namespace PosthumanWebApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("AvatarId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CompletedSubtasks")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -86,12 +52,7 @@ namespace PosthumanWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TotalSubtasks")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AvatarId");
 
                     b.ToTable("Projects", (string)null);
                 });
@@ -134,13 +95,6 @@ namespace PosthumanWebApi.Migrations
                     b.ToTable("TodoItem", (string)null);
                 });
 
-            modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>
-                {
-                    b.HasOne("PosthumanWebApi.Models.Entities.Avatar", null)
-                        .WithMany("Projects")
-                        .HasForeignKey("AvatarId");
-                });
-
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.TodoItem", b =>
                 {
                     b.HasOne("PosthumanWebApi.Models.Entities.Project", "Project")
@@ -148,11 +102,6 @@ namespace PosthumanWebApi.Migrations
                         .HasForeignKey("ProjectId");
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("PosthumanWebApi.Models.Entities.Avatar", b =>
-                {
-                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>

@@ -12,8 +12,8 @@ using PosthumanWebApi.Models;
 namespace PosthumanWebApi.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    [Migration("20211010143710_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20211010184812_Migration1")]
+    partial class Migration1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,11 +26,11 @@ namespace PosthumanWebApi.Migrations
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -59,11 +59,11 @@ namespace PosthumanWebApi.Migrations
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.TodoItem", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime2");
@@ -81,8 +81,8 @@ namespace PosthumanWebApi.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("ProjectId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -97,9 +97,13 @@ namespace PosthumanWebApi.Migrations
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.TodoItem", b =>
                 {
-                    b.HasOne("PosthumanWebApi.Models.Entities.Project", null)
+                    b.HasOne("PosthumanWebApi.Models.Entities.Project", "Project")
                         .WithMany("TodoItems")
-                        .HasForeignKey("ProjectId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("PosthumanWebApi.Models.Entities.Project", b =>
