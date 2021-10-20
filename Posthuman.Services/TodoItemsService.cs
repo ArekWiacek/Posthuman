@@ -32,11 +32,11 @@ namespace Posthuman.Services
 
             var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
 
-            if (todoItem.AvatarId != ownerAvatar.Id)
-            {
+            //if (todoItem.AvatarId != null != ownerAvatar.Id)
+            //{
                 // This todo item is owned by other Avatar - dont return it
-                return null;
-            }
+            //    return null;
+            //}
 
             return mapper.Map<TodoItemDTO>(todoItem);
         }
