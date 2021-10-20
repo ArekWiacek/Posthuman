@@ -24,5 +24,7 @@
         public bool IsCompleted { get; set; }
         public DateTime? Deadline { get; set; }
         public int? ProjectId { get; set; }
+
+        public int AvatarId { get; set; }
     }
 }

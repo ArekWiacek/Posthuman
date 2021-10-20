@@ -11,10 +11,6 @@ namespace Posthuman.Data.Configurations
             builder
                 .HasKey(ti => ti.Id);
 
-            //builder
-              // .Property(ti => ti.Id)
-              // .UseIdentityColumn();
-
             builder
                 .Property(ti => ti.Title)
                 .IsRequired()
@@ -23,11 +19,14 @@ namespace Posthuman.Data.Configurations
             builder
                 .HasOne(ti => ti.Project)
                 .WithMany(p => p.TodoItems)
-                .HasForeignKey(ti => ti.ProjectId);
+                .HasForeignKey(ti => ti.ProjectId)
+                .IsRequired(false);
 
-            builder.ToTable("TodoItems");
+            builder
+                .HasOne<Avatar>(todoItem => todoItem.Avatar)
+                .WithMany(avatar => avatar.TodoItems);
                 
-               // .UseIdentityColumn();
+            builder.ToTable("TodoItems");
         }
     }
 }

@@ -8,7 +8,14 @@ namespace Posthuman.Data.Repositories
     {
         public TodoItemsRepository(PosthumanContext context) : base(context)
         {
+        }
 
+        public async Task<IEnumerable<TodoItem>> GetAllByAvatarId(int id)
+        {
+            return await TodoItemsDbContext
+                .TodoItems
+                .Where(ti => ti.AvatarId == id)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<TodoItem>> GetAllWithProjectsAsync()
@@ -24,20 +31,21 @@ namespace Posthuman.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<TodoItem> GetByIdAsync(int id)
-        {
-            return TodoItemsDbContext
-                .TodoItems
-                .SingleOrDefaultAsync(ti => ti.Id == id);
-        }
+        //public Task<TodoItem?> GetByIdAsync(int id)
+        //{
+        //    return TodoItemsDbContext
+        //        .TodoItems
+        //        .SingleOrDefaultAsync(ti => ti.Id == id);
+        //}
 
-        public Task<TodoItem> GetWithProjectByIdAsync(int id)
-        {
-            return TodoItemsDbContext
-                .TodoItems
-                .Include(ti => ti.Project)
-                .SingleOrDefaultAsync(ti => ti.Id == id);
-        }
+        //public Task<TodoItem?> GetWithProjectByIdAsync(int id)
+        //{
+        //    return TodoItemsDbContext
+        //        .TodoItems
+        //        .Include(ti => ti.Project)
+        //        .SingleOrDefaultAsync(ti => ti.Id == id);
+        //}
+
         private PosthumanContext TodoItemsDbContext
         {
             get { return Context as PosthumanContext; }

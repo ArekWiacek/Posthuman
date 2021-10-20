@@ -17,6 +17,14 @@ namespace Posthuman.Data.Repositories
             get { return Context as PosthumanContext; }
         }
 
+        public async Task<IEnumerable<Project>> GetAllByAvatarId(int id)
+        {
+            return await ProjectsDbContext
+                .Projects
+                .Where(p => p.AvatarId == id)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<TodoItem>> GetAllWithSubtasksAsync()
         {
             return (IEnumerable<TodoItem>)await ProjectsDbContext

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.Data", "Posthuman
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.Services", "Posthuman.Services\Posthuman.Services.csproj", "{F094504F-C1B7-4F40-A3DF-A129600C1755}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PosthumanWebApi", "Posthuman.WebApi\PosthumanWebApi.csproj", "{6E8D75F9-D908-49CF-B2BB-7131C420954B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.WebApi", "Posthuman.WebApi\Posthuman.WebApi.csproj", "{6E8D75F9-D908-49CF-B2BB-7131C420954B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PosthumanWebApi.Models;
-using PosthumanWebApi.Models.Entities;
-using PosthumanWebApi.Models.Enums;
+using Posthuman.Core.Services;
+using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.DTO;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace PosthumanWebApi.Controllers
 {
@@ -10,69 +11,94 @@ namespace PosthumanWebApi.Controllers
     [Route("api/[controller]")]
     public class ProjectsController : ControllerBase
     {
-        private readonly PosthumanContext _context;
+        //private readonly PosthumanContext _context;
+        private readonly ILogger<ProjectsController> logger;
+        private readonly IProjectsService projectsService;
+        //private readonly IMapper mapper;
 
-        
-        public ProjectsController(PosthumanContext context)
+        public ProjectsController(
+            ILogger<ProjectsController> logger,
+            IProjectsService projectsService)
+            //IMapper mapper)
         {
-            _context = context;
+            this.logger = logger;
+            this.projectsService = projectsService;
+            //this.mapper = mapper;
         }
 
         // GET: api/Projects
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
-            var projs = _context.Projects.Include(p => p.TodoItems).ToList();
+            //var projs = _context.Projects.Include(p => p.TodoItems).ToList();
 
-            var projects = _context.Projects.ToList();
+            //var projects = _context.Projects.ToList();
 
-            return await _context
-                .Projects
-                .Select(project => ProjectToDTO(project))
-                .ToListAsync();
+            //return await _context
+            //    .Projects
+            //    .Select(project => ProjectToDTO(project))
+            //    .ToListAsync();
+
+            try 
+            { 
+                var allProjects = await projectsService.GetAllProjectsForActiveAvatar();
+                return Ok(allProjects);
+            }
+            catch(Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return Ok(null);
+            }
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await projectsService.GetProjectById(id);
 
             if (project == null)
                 return NotFound();
 
-            return ProjectToDTO(project);
+            return project;
         }
 
         // POST: api/Projects
         [HttpPost]
         public async Task<ActionResult<Project>> CreateProject(ProjectDTO projectDTO)
         {
-            var project = new Project(
-                0,
-                projectDTO.Title,
-                projectDTO.Description,
-                false,
-                projectDTO.StartDate);
+            var createdProjectDTO = await projectsService.CreateProject(projectDTO);
 
-            project.CreationDate = DateTime.Now;
-            project.TotalSubtasks = 0;
-            project.CompletedSubtasks = 0;
+            return CreatedAtAction(
+                nameof(GetProject),
+                new { id = createdProjectDTO.Id },
+                createdProjectDTO);
 
-            _context.Projects.Add(project);
+            //var project = new Project(
+            //    0,
+            //    projectDTO.Title,
+            //    projectDTO.Description,
+            //    false,
+            //    projectDTO.StartDate);
 
-            await _context.SaveChangesAsync(true);
+            //project.CreationDate = DateTime.Now;
+            //project.TotalSubtasks = 0;
+            //project.CompletedSubtasks = 0;
 
-            var projectCreatedEvent = new EventItem(2, EventType.ProjectCreated, DateTime.Now, EntityType.Project, project.Id);
-            _context.EventItems.Add(projectCreatedEvent);
+            //_context.Projects.Add(project);
 
-            var avatar = await _context.Avatars.FindAsync(2);
-            if (avatar != null)
-                avatar.Exp += projectCreatedEvent.ExpGained;
+            //await _context.SaveChangesAsync(true);
 
-            await _context.SaveChangesAsync();
+            //var projectCreatedEvent = new EventItem(2, EventType.ProjectCreated, DateTime.Now, EntityType.Project, project.Id);
+            //_context.EventItems.Add(projectCreatedEvent);
 
-            return CreatedAtAction("GetProjects", new { id = project.Id }, project);
+            //var avatar = await _context.Avatars.FindAsync(2);
+            //if (avatar != null)
+            //    avatar.Exp += projectCreatedEvent.ExpGained;
+
+            //await _context.SaveChangesAsync();
+
+            //return CreatedAtAction("GetProjects", new { id = project.Id }, project);
         }
 
 
@@ -83,6 +109,9 @@ namespace PosthumanWebApi.Controllers
             if (id != updatedProjectDTO.Id)
                 return BadRequest();
 
+            await projectsService.UpdateProject(updatedProjectDTO);
+
+            /*
             var project = await _context.Projects.FindAsync(id);
 
             if (project == null)
@@ -121,49 +150,36 @@ namespace PosthumanWebApi.Controllers
                     return NotFound();
                 else
                     throw;
-            }
+            }*/
 
             return NoContent();
         }
 
-        
+
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
-            }
+            await projectsService.DeleteProject(id);
 
-            _context.Projects.Remove(project);
+            //var project = await _context.Projects.FindAsync(id);
+            //if (project == null)
+            //{
+            //    return NotFound();
+            //}
 
-            var projectDeletedEvent = new EventItem(2, EventType.ProjectDeleted, DateTime.Now, EntityType.Project, project.Id);
-            _context.EventItems.Add(projectDeletedEvent);
+            //_context.Projects.Remove(project);
 
-            var avatar = await _context.Avatars.FindAsync(2);
-            if (avatar != null)
-                avatar.Exp += projectDeletedEvent.ExpGained;
+            //var projectDeletedEvent = new EventItem(2, EventType.ProjectDeleted, DateTime.Now, EntityType.Project, project.Id);
+            //_context.EventItems.Add(projectDeletedEvent);
 
-            await _context.SaveChangesAsync();
+            //var avatar = await _context.Avatars.FindAsync(2);
+            //if (avatar != null)
+            //    avatar.Exp += projectDeletedEvent.ExpGained;
+
+            //await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
-        private bool ProjectExists(int id) =>
-            _context.Projects.Any(e => e.Id == id);
-
-        private static ProjectDTO ProjectToDTO(Project project) =>
-            new ProjectDTO(
-                project.Id,
-                project.Title,
-                project.Description,
-                project.IsFinished,
-                project.StartDate,
-                project.CreationDate,
-                project.FinishDate,
-                project.TotalSubtasks,
-                project.CompletedSubtasks);
     }
 }

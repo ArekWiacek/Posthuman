@@ -33,15 +33,21 @@ namespace Posthuman.Data.Repositories
             return Context.Set<TEntity>().Where(predicate);
         }
 
+        //public async IAsyncEnumerable<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        //{
+        //    return await Context.Set<TEntity>().Where(predicate).ToListAsync();
+        //}
+
+
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await Context.Set<TEntity>().ToListAsync();
         }
 
 
-        public ValueTask<TEntity> GetByIdAsync(int id)
+        public async ValueTask<TEntity> GetByIdAsync(int id)
         {
-            return Context.Set<TEntity>().FindAsync(id);
+            return await Context.Set<TEntity>().FindAsync(id);
         }
 
 

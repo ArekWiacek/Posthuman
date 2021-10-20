@@ -1,27 +1,24 @@
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Posthuman.Core.Services;
-using PosthumanWebApi.Models;
-using PosthumanWebApi.Models.Entities;
-using PosthumanWebApi.Models.Enums;
 
 using Posthuman.Core.Models.DTO;
 
 namespace PosthumanWebApi.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class TodoItemsController : ControllerBase
     {
-        private readonly ILogger<TodoItemsController> _logger;
+        private readonly ILogger<TodoItemsController> logger;
         private readonly ITodoItemsService todoItemsService;
 
         public TodoItemsController(
             ILogger<TodoItemsController> logger,
             ITodoItemsService todoItemsService)
         {
-            _logger = logger;
-            //_context = context;
+            this.logger = logger;
             this.todoItemsService = todoItemsService;
         }
 
@@ -29,7 +26,10 @@ namespace PosthumanWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
-            var allTodoItems = await todoItemsService.GetAllTodoItems();
+            var allTodoItems = await
+                todoItemsService
+                .GetAllTodoItemsForActiveAvatar();
+
             return Ok(allTodoItems);
 
             //var todoItems = await _context.TodoItems
@@ -53,7 +53,7 @@ namespace PosthumanWebApi.Controllers
         {
             var todoItem = await todoItemsService.GetTodoItemById(id);
 
-            if(todoItem == null)
+            if (todoItem == null)
                 return NotFound();
 
             return Ok(todoItem);
@@ -128,17 +128,5 @@ namespace PosthumanWebApi.Controllers
             */
             return NoContent();
         }
-
-        //private bool TodoItemExists(int id) => 
-        //    _context.TodoItems.Any(todoItem => todoItem.Id == id);
-
-        private static TodoItemDTO TodoItemToDTO(TodoItem todoItem) =>
-            new TodoItemDTO(
-                todoItem.Id,
-                todoItem.Title,
-                todoItem.Description,
-                todoItem.IsCompleted,
-                todoItem.Deadline,
-                todoItem.ProjectId);
     }
 }

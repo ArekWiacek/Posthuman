@@ -10,34 +10,30 @@ namespace Posthuman.Core.Models.Entities
     [Table("Avatars")]
     public class Avatar
     {
-        public Avatar(
-            int id,
-            string name,
-            string bio,
-            DateTime creationDate, 
-            int level = 0,
-            int exp = 0)
-        {
-            this.Id = id;
-            this.Name = name;
-            this.Bio = bio;
-            this.CreationDate = creationDate;
-            this.Level = level;
-            this.Exp = exp;
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Bio { get; set; }
-        public DateTime CreationDate { get; set; }      // Date when user registered account        
+        public string Name { get; set; }            // User nickname
+        public string Bio { get; set; }             // "About" user
+        public DateTime CreationDate { get; set; }  // Date when user created account        
         
-        public int Level { get; set; }                  // Avatar level - it grows when gaining experience
-        public int Exp { get; set; }                    // Experience points
+        public int Level { get; set; }              // Avatar level - it grows when gaining experience
+        public int Exp { get; set; }                // Experience points
+
+
+        // Temporary value to indicate whether this entity is "current user"
+        // This is used to quickly switch between avatars during development
+        public bool IsActive { get; set; }          // Is this current user?
+
 
         // Owned Projects
         [JsonIgnore]
         public virtual ICollection<Project> Projects { get; set; }
+
+        // Owned Todo Items (tasks)
+        [JsonIgnore]
+        public virtual ICollection<TodoItem> TodoItems { get; set; }
+
+        
     }
 }

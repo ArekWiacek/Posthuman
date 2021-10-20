@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PosthumanWebApi.Models;
-using PosthumanWebApi.Models.DTO;
-using PosthumanWebApi.Models.Entities;
+using Posthuman.Core.Models.DTO;
+using Posthuman.Core.Services;
 
 namespace PosthumanWebApi.Controllers
 {
@@ -10,113 +8,65 @@ namespace PosthumanWebApi.Controllers
     [Route("api/[controller]")]
     public class AvatarsController : ControllerBase
     {
-        private readonly PosthumanContext _context;
-        public AvatarsController(PosthumanContext context)
+        private readonly ILogger<AvatarsController> logger;
+        private readonly IAvatarsService avatarsService;
+
+        public AvatarsController(
+            ILogger<AvatarsController> logger,
+            IAvatarsService avatarsService)
         {
-            _context = context;
+            this.logger = logger;
+            this.avatarsService = avatarsService;
         }
 
         // GET: api/Avatars
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AvatarDTO>>> GetAvatars()
         {
-            //var projs = _context.Avatars.Include(p => p.TodoItems).ToList();
-
-            var avatars = _context.Avatars.ToList();
-
-            return await _context
-                .Avatars
-                .Select(avatar => AvatarToDTO(avatar))
-                .ToListAsync();
+            var allAvatars = await avatarsService.GetAllAvatars();
+            return Ok(allAvatars);
         }
 
         // GET: api/Avatars/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<AvatarDTO>> GetProject(int id)
+        public async Task<ActionResult<AvatarDTO>> GetAvatar(int id)
         {
-            var avatar = await _context.Avatars.FindAsync(id);
+            var avatar = await avatarsService.GetAvatarById(id);
 
-            if (avatar == null)
-            {
-                return NotFound();
-            }
-
-            return AvatarToDTO(avatar);
+            return avatar;
         }
 
-        // PUT: api/Avatars/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, AvatarDTO updatedAvatarDTO)
+        // PUT: api/Avatars/5
+        // Currently handles only selecting active avatar
+        public async Task<IActionResult> UpdateAvatar(int id, AvatarDTO updatedAvatarDTO)
         {
             if (id != updatedAvatarDTO.Id)
                 return BadRequest();
 
-            var avatar = await _context.Avatars.FindAsync(id);
-
-            if (avatar == null)
-                return NotFound();
-
-            avatar.Name = updatedAvatarDTO.Name;
-            avatar.Bio = updatedAvatarDTO.Bio;
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProjectExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            await avatarsService.UpdateAvatar(updatedAvatarDTO);
 
             return NoContent();
         }
 
-        // POST: api/Avatars
-        [HttpPost]
-        public async Task<ActionResult<AvatarDTO>> CreateProject(AvatarDTO avatarDTO)
+        // GET: api/Avatar/GetActiveAvatar
+        [HttpGet("GetActiveAvatar")]
+        public async Task<ActionResult<TodoItemDTO>> GetActiveAvatar()
         {
-            var avatar = new Avatar(
-                0,
-                avatarDTO.Name,
-                avatarDTO.Bio,
-                DateTime.Now, 
-                1, 
-                0);
+            var avatar = await avatarsService.GetActiveAvatar();
 
-            _context.Avatars.Add(avatar);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAvatars", new { id = avatar.Id }, avatar);
+            return Ok(avatar);
         }
 
-        // DELETE: api/Avatars/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(int id)
+        // GET: api/Avatar/GetActiveAvatar/5
+        [HttpPut("SetActiveAvatar/{id}")]
+        public async Task<IActionResult> SetActiveAvatar(int id)
         {
-            var avatar = await _context.Avatars.FindAsync(id);
-            if (avatar == null)
-            {
-                return NotFound();
-            }
+            await avatarsService.SetActiveAvatar(id);
 
-            _context.Avatars.Remove(avatar);
-            await _context.SaveChangesAsync();
+            var avatar = await avatarsService.GetActiveAvatar();
 
-            return NoContent();
+            return Ok(avatar);
         }
-
-        private bool ProjectExists(int id) =>
-            _context.Avatars.Any(e => e.Id == id);
-
-        private static AvatarDTO AvatarToDTO(Avatar avatar) =>
-            new AvatarDTO(
-                avatar.Id,
-                avatar.Name,
-                avatar.Bio,
-                avatar.Level,
-                avatar.Exp);
     }
 }

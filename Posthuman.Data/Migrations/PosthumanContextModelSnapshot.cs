@@ -40,6 +40,9 @@ namespace Posthuman.Data.Migrations
                     b.Property<int>("Exp")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -94,7 +97,7 @@ namespace Posthuman.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("AvatarId")
+                    b.Property<int>("AvatarId")
                         .HasColumnType("int");
 
                     b.Property<int>("CompletedSubtasks")
@@ -139,6 +142,9 @@ namespace Posthuman.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("AvatarId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime2");
 
@@ -156,7 +162,6 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int?>("ProjectId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -166,6 +171,8 @@ namespace Posthuman.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarId");
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("TodoItem", (string)null);
@@ -173,18 +180,28 @@ namespace Posthuman.Data.Migrations
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", null)
+                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
                         .WithMany("Projects")
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Avatar");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItem", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.Project", "Project")
+                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
                         .WithMany("TodoItems")
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("AvatarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Posthuman.Core.Models.Entities.Project", "Project")
+                        .WithMany("TodoItems")
+                        .HasForeignKey("ProjectId");
+
+                    b.Navigation("Avatar");
 
                     b.Navigation("Project");
                 });
@@ -192,6 +209,8 @@ namespace Posthuman.Data.Migrations
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Avatar", b =>
                 {
                     b.Navigation("Projects");
+
+                    b.Navigation("TodoItems");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>

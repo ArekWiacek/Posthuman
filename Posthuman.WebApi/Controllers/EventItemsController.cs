@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PosthumanWebApi.Models;
-using PosthumanWebApi.Models.Entities;
+using Posthuman.Core.Models.DTO;
+using Posthuman.Core.Services;
 
 namespace PosthumanWebApi.Controllers
 {
@@ -9,28 +8,35 @@ namespace PosthumanWebApi.Controllers
     [Route("api/[controller]")]
     public class EventItemsController : ControllerBase
     {
-        private readonly PosthumanContext _context;
-        public EventItemsController(PosthumanContext context)
+        private readonly ILogger<EventItemsController> logger;
+        private readonly IEventItemsService eventItemsService;
+        public EventItemsController(
+            ILogger<EventItemsController> logger,
+            IEventItemsService eventItemsService)
         {
-            _context = context;
+            this.logger = logger;
+            this.eventItemsService = eventItemsService;
         }
 
         // GET: api/EventItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventItem>>> GetEventItems()
+        public async Task<ActionResult<IEnumerable<EventItemDTO>>> GetEventItems()
         {
-            var eventItems = _context.EventItems.ToList();
+            var eventItems = await eventItemsService.GetAllEventItems();
 
-            return await _context
-                .EventItems
-                .ToListAsync();
+            return eventItems.ToList();
+            //var eventItems = _context.EventItems.ToList();
+
+            //return await _context
+            //    .EventItems
+            //    .ToListAsync();
         }
 
         // GET: api/EventItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EventItem>> GetEventItem(int id)
+        public async Task<ActionResult<EventItemDTO>> GetEventItem(int id)
         {
-            var eventItem = await _context.EventItems.FindAsync(id);
+            var eventItem = await eventItemsService.GetEventItemById(id);
 
             if (eventItem == null)
             {

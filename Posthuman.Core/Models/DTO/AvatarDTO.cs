@@ -26,5 +26,7 @@
         public int TasksCount { get; set; }
 
         public int DaysAlive { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

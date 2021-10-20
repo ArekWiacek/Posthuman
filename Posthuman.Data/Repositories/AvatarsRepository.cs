@@ -1,4 +1,5 @@
-﻿using Posthuman.Core.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Repositories;
 
 namespace Posthuman.Data.Repositories
@@ -12,6 +13,20 @@ namespace Posthuman.Data.Repositories
         private PosthumanContext AvatarsDbContext
         {
             get { return Context as PosthumanContext; }
+        }
+
+        public async Task<Avatar> GetActiveAvatarAsync()
+        {
+            var avatar = await 
+                AvatarsDbContext
+                .Avatars
+                .Where(a => a.IsActive == true)
+                .FirstOrDefaultAsync();
+
+            if (avatar == null)
+                throw new Exception();
+
+            return avatar;
         }
     }
 }

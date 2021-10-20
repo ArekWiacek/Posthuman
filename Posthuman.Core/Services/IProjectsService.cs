@@ -1,17 +1,21 @@
-﻿using Posthuman.Core.Models.Entities;
+﻿using Posthuman.Core.Models.DTO;
 
 namespace Posthuman.Core.Services
 {
     public interface IProjectsService
     {
-        Task<Project> GetProjectByID(int id);
-        Task<Project> GetProjectWithSubtasks(int projectId);
+        Task<ProjectDTO> GetProjectById(int id);
+        Task<IEnumerable<ProjectDTO>> GetAllProjectsForActiveAvatar();
+        
+        Task<IEnumerable<ProjectDTO>> GetAllProjects();
+        
+        Task<ProjectDTO> GetProjectWithSubtasks(int projectId);
 
-        Task<Project> CreateProject(Project newProject);
+        Task<ProjectDTO> CreateProject(ProjectDTO newProjectDTO);
 
-        Task UpdateProject(Project projectToUpdate);
+        Task UpdateProject(ProjectDTO projectToUpdateDTO);
 
-        Task DeleteProject(Project project);
+        //Task DeleteProject(ProjectDTO project);
         Task DeleteProject(int id);
     }
 }
