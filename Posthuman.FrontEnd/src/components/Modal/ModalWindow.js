@@ -15,9 +15,7 @@ const style = {
 };
 
 const ModalWindow = (props) => {
-    const { activeAvatar } = React.useContext(AvatarContext);
-    const handleCloseModal = () => {
-    }
+    const handleCloseModal = () => props.onClose();
 
     return (
         <Modal

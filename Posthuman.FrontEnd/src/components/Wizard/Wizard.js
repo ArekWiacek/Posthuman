@@ -39,8 +39,8 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) =>
                     onConfirm={handleTaskDoneConfirm}
                     onCancel={handleTaskDoneCancel}
                 >
-                    <Typography variant="h4">{'Confirm task completion'}</Typography>
-                    <Typography variant="body2">{'Did you completed task: "' + todoItem.title + '"?'}</Typography>
+                    <Typography variant="h4">{todoItem.title}</Typography>
+                    <Typography variant="body2">{'Confirm that you completed this task.'}</Typography>
                 </WizardStep>
 
                 <WizardStep

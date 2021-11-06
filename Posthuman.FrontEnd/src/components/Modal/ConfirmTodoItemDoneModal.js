@@ -9,7 +9,8 @@ const ConfirmTodoItemDoneModal = ({ isOpen, onFinished, onCanceled, todoItem, xp
     return (
         <ModalWindow
             isOpen={isOpen}
-            onClose={handleCanceled}>
+            // onClose={handleCanceled}
+        >
 
             <Wizard 
                 todoItem={todoItem} 
