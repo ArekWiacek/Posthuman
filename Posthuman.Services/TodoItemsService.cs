@@ -192,12 +192,28 @@ namespace Posthuman.Services
                 .TodoItems
                 .GetAllByAvatarId(avatar.Id);
 
-            var topLevel = todoItems.Where(ti => ti.IsTopLevel());
+            var newList = new List<TodoItem>();
 
-            var topLevelItemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(topLevel);
+            // Top Level Taski - taski bez parenta
+            var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel());
 
-            return topLevelItemsMapped.ToList();
+            foreach(var topLevelTask in topLevelTasks)
+            {
+                if (topLevelTask.HasSubtasks())
+                {
+                    var subtasks = topLevelTask.Subtasks;
+                    newList.AddRange(subtasks);
+                }
+                else
+                {
+                    newList.Add(topLevelTask);
+                }
+            }
+
+            var itemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(newList);
+
+            return itemsMapped.ToList();
         }
 
         public Task<IEnumerable<TodoItem>> GetByParentProject(int projectId)

@@ -33,7 +33,7 @@ namespace PosthumanWebApi.Controllers
             return Ok(allTodoItems);
         }
 
-        // GET: api/TodoItems
+        // GET: api/TodoItems/Hierarchical
         [HttpGet("/Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
@@ -83,31 +83,6 @@ namespace PosthumanWebApi.Controllers
         {
             await todoItemsService.DeleteTodoItem(id);
 
-            //var todoItem = await _context.TodoItems.FindAsync(id);
-
-            //if (todoItem == null)
-            //    return NotFound();
-
-            //_context.TodoItems.Remove(todoItem);
-
-            // TodoItem was subtask of parent Project - it need to be updated as well
-            /*if (todoItem.ProjectId != null)
-            {
-                var parentProject = await _context.Projects.FindAsync(todoItem.ProjectId.Value);
-
-                if (parentProject != null)
-                    parentProject.TotalSubtasks--;
-            }
-
-            var todoItemDeletedEvent = new EventItem(2, EventType.TodoItemDeleted, DateTime.Now, EntityType.TodoItem, todoItem.Id);
-            _context.EventItems.Add(todoItemDeletedEvent);
-
-            var avatar = await _context.Avatars.FindAsync(2);
-            if(avatar != null)
-                avatar.Exp += todoItemDeletedEvent.ExpGained;
-
-            await _context.SaveChangesAsync();
-            */
             return NoContent();
         }
     }

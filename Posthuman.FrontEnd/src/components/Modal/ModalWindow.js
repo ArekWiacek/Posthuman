@@ -1,32 +1,65 @@
 import * as React from 'react';
 import { Box, Modal, Typography } from '@mui/material';
 
+import Backdrop from '@mui/material/Backdrop';
+
 import { AvatarContext } from "../../App";
 
-const ModalWindow = ({ messageText, confirmatText, cancelText, onConfirmClicked, onCancelClicked }) => {
-    const { activeAvatar } = React.useContext(AvatarContext);
-    
-    const open = true;
+// { children, isOpen, messageText, confirmatText, cancelText, onConfirmClicked, onCancelClicked }
 
-    const handleOnConfirmClicked = event => onConfirmClicked();
-    const handleOnCancelClicked = event => setDescription(event.target.value);
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 600,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+const ModalWindow = (props) => {
+    const { activeAvatar } = React.useContext(AvatarContext);
+
+    console.log(props);
+
+    const handleCloseModal = () => {
+
+    }
 
     return (
         <Modal
-            open={open}
-            onClose={handleOnCancelClicked}
+            open={props.isOpen}
+            // onClose={handleCloseModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+                timeout: 500,
+            }}
         >
             <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Text in a modal
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                </Typography>
-            </Box>
+                {props.children}
+                {/* <Wizard onWizardFinished={handleCloseModal} /> */}
+            </Box> 
         </Modal>
+
+        // <Modal
+        //     open={open}
+        //     onClose={handleOnCancelClicked}
+        //     aria-labelledby="modal-modal-title"
+        //     aria-describedby="modal-modal-description"
+        // >
+        //     <Box sx={style}>
+        //         <Typography id="modal-modal-title" variant="h6" component="h2">
+        //             Text in a modal
+        //         </Typography>
+        //         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        //             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+        //         </Typography>
+        //     </Box>
+        // </Modal>
     );
 }
 

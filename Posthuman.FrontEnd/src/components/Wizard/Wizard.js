@@ -28,7 +28,7 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem } ) => {
     return (
         <div className={`col-12 col-sm-6 offset-sm-3`}>
             <StepWizard
-                onStepChange={onStepChange}
+                // onStepChange={onStepChange}
                 transitions={state.transitions}
                 instance={setInstance}
             >

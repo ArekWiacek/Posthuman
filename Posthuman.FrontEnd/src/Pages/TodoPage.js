@@ -8,12 +8,18 @@ import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObj
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import EditTodoItem from '../components/TodoItem/EditTodoItem';
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
-import ModalWindow from '../components/Modal';
 
-import TodoItemRow from '../components/TodoItem/TodoItemsListHierarchical/TodoItemRow';
-import { TodoItemsHierarchical, TodoItemsHierarchicalRow } from '../components/TodoItem/TodoItemsListHierarchical/TodoItemsHierarchical';
+import ConfirmTodoItemDoneModal from '../components/Modal/ConfirmTodoItemDoneModal';
+// import ModalWindow from '../components/Modal/ModalWindow';
+// import Wizard from '../components/Wizard/Wizard';
+// import StepperWizard from '../components/StepperWizard/StepperWizard';
 
 import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
+
+import Slide from '@mui/material/Slide';
+
+import { Modal, Typography, Box } from '@mui/material';
+import { LogI } from '../Utilities/Utilities';
 
 function todoItemFormInitialValues() {
     return {
@@ -27,6 +33,10 @@ function todoItemFormInitialValues() {
     }
 }
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const TodoPage = () => {
     const { activeAvatar } = React.useContext(AvatarContext);
     const [todoItems, setTodoItems] = React.useState(CreateDummyTodoItems(3));
@@ -34,6 +44,10 @@ const TodoPage = () => {
     const [currentTodoItem, setCurrentTodoItem] = React.useState(todoItemFormInitialValues());
     const [isTodoItemInEditMode, setIsTodoItemInEditMode] = React.useState(false);
     const [parentId, setParentId] = React.useState(0);
+
+
+    const [taskToComplete, setTaskToComplete] = React.useState(todoItemFormInitialValues())
+    const [showDoneConfirmModal, setShowDoneConfirmModal] = React.useState(false);
 
     const handleTodoItemCreated = (newTodoItem) => {
         ApiPost("TodoItems", newTodoItem, (data) => {
@@ -55,15 +69,9 @@ const TodoPage = () => {
     }
 
     const handleTodoItemDone = (completedTodoItem) => {
-        completedTodoItem.isCompleted = true;
-
-        ApiPut("TodoItems", completedTodoItem.id, completedTodoItem, (data) => {
-            const updatedTodoItemList = todoItems.map((todoItem) =>
-                todoItem.id === completedTodoItem ? completedTodoItem : todoItem
-            );
-
-            setTodoItems(updatedTodoItemList);
-        });
+        const task = {...completedTodoItem};
+        setTaskToComplete(task);
+        setShowDoneConfirmModal(true);
     }
 
     const handleTodoItemCancelEdit = () => {
@@ -101,12 +109,41 @@ const TodoPage = () => {
             // margin: theme.spacing(5),
             padding: theme.spacing()
         }
-    }))
+    }));
 
     const classes = useStyles();
 
+    const handleFinishedModal = () => {
+        setShowDoneConfirmModal(false);
+
+        const completedTodoItem = {...taskToComplete};
+        completedTodoItem.isCompleted = true;
+
+        ApiPut("TodoItems", completedTodoItem.id, completedTodoItem, (data) => {
+            const updatedTodoItemList = todoItems.map((todoItem) => 
+                todoItem.id === completedTodoItem.id ? completedTodoItem : todoItem
+            );
+
+            setTodoItems(updatedTodoItemList);
+        });
+    };
+
+    const handleCloseModal = () => {
+        LogI("Modal closed");
+        setShowDoneConfirmModal(false);
+    };
+
     return (
         <Grid container spacing={3}>
+
+            <Grid item xs={6}>
+                <ConfirmTodoItemDoneModal 
+                    isOpen={showDoneConfirmModal}
+                    onFinished={handleFinishedModal}
+                    onCanceled={handleCloseModal} 
+                    todoItem={taskToComplete} />
+            </Grid>
+
             {/* HIERARCHICAL VIEW */}
             {/* <Grid item xs={12}>
                 <TodoItemsHierarchical todoItems></TodoItemsHierarchical>
@@ -159,6 +196,10 @@ const TodoPage = () => {
                     }
                 </Paper>
             </Grid>
+
+            {/* <Grid item xs={6}>
+                <StepperWizard />
+            </Grid> */}
         </Grid>
     );
 }

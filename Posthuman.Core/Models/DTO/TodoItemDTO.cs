@@ -6,7 +6,7 @@
         {
             Title = "";
             Description = "";
-            Subtasks = new List<TodoItemDTO>();
+            // Subtasks = new List<TodoItemDTO>();
         }
 
         public int Id { get; set; }
@@ -25,6 +25,6 @@
 
         // Parent TodoItem
         public int? ParentId { get; set; }
-        public virtual ICollection<TodoItemDTO> Subtasks { get; set; }
+        //public virtual ICollection<TodoItemDTO> Subtasks { get; set; }
     }
 }
