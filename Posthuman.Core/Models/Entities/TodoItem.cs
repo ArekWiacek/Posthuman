@@ -26,10 +26,7 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual TodoItem Parent { get; set; }
 
-        //[JsonIgnore]
-
-        //ReferenceHandler.Preserve
-        [JsonIgnore]            
+        [JsonIgnore]
         public virtual ICollection<TodoItem> Subtasks { get; set; }
 
         // Avatar (Think as user "hero" - with level, exp and so on)
@@ -51,6 +48,11 @@ namespace Posthuman.Core.Models.Entities
             return Subtasks != null && Subtasks.Count > 0;
         }
 
+        public bool HasUnfinishedSubtasks()
+        {
+            return FinishedSubtasksCount() < SubtasksCount();
+        }
+
         public int SubtasksCount()
         {
             if (!HasSubtasks())
@@ -61,10 +63,10 @@ namespace Posthuman.Core.Models.Entities
 
                 count += Subtasks.Count;
 
-                //foreach(var subtask in Subtasks)
-                //{
-                //    count += subtask.SubtasksCount();
-                //}
+                foreach(var subtask in Subtasks)
+                {
+                    count += subtask.SubtasksCount();
+                }
 
                 return count;
             }
@@ -76,16 +78,11 @@ namespace Posthuman.Core.Models.Entities
                 return 0;
             else
             {
-                int count = 0;
+                //int count = 0;
 
-                count += Subtasks.Where(s => s.IsCompleted).ToList().Count;
+                //count += Subtasks.Where(s => s.IsCompleted).ToList().Count;
 
-                //foreach(var subtask in Subtasks)
-                //{
-                //    count += subtask.SubtasksCount();
-                //}
-
-                return count;
+                return Subtasks.Where(s => s.IsCompleted).ToList().Count;
             }
         }
 
@@ -96,10 +93,9 @@ namespace Posthuman.Core.Models.Entities
             if (!IsTopLevel())
             {
                 var parent = this.Parent;
-
                 while (parent != null)
                 {
-                    parent = this.Parent;
+                    parent = parent.Parent;
                     level++;
                 }
             }

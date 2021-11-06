@@ -40,7 +40,10 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             <TableCell component="th" scope="row" >
                 <Typography
                     component="span"
-                    sx={todoItem.isCompleted ? { textDecoration: 'line-through' } : { textDecoration: 'none' }}>
+                    sx={
+                        todoItem.isCompleted ? { textDecoration: 'line-through' } : { textDecoration: 'none' },
+                        { paddingLeft: todoItem.nestingLevel * 2 }
+                    }>
                     {todoItem.title}
                 </Typography>
             </TableCell>
@@ -84,7 +87,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                 <IconButton
                     aria-label="todoitem-done"
                     onClick={(e) => handleDoneClicked(todoItem)}
-                    disabled={todoItem.isCompleted}>
+                    disabled={todoItem.isCompleted || todoItem.hasUnfinishedTasks}>
                     <CheckCircleIcon />
                 </IconButton>
             </TableCell>

@@ -1,7 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Posthuman.Core.Services;
-
 using Posthuman.Core.Models.DTO;
 
 namespace PosthumanWebApi.Controllers
@@ -22,7 +21,10 @@ namespace PosthumanWebApi.Controllers
             this.todoItemsService = todoItemsService;
         }
 
-        // GET: api/TodoItems
+        /// GET: api/TodoItems
+        /// <summary>
+        ///     Returns list of TodoItems for active Avatar
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
@@ -33,7 +35,11 @@ namespace PosthumanWebApi.Controllers
             return Ok(allTodoItems);
         }
 
-        // GET: api/TodoItems/Hierarchical
+        /// GET: api/TodoItems/Hierarchical
+        /// <summary>
+        ///     Returns flat list of TodoItems for active Avatar
+        ///     List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
+        /// </summary>
         [HttpGet("Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
@@ -44,7 +50,10 @@ namespace PosthumanWebApi.Controllers
             return Ok(allTodoItems);
         }
 
-        // GET: api/TodoItem/5
+        /// GET: api/TodoItem/5
+        /// <summary>
+        ///     Returns TodoItem of given ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(int id)
         {
@@ -56,7 +65,10 @@ namespace PosthumanWebApi.Controllers
             return Ok(todoItem);
         }
 
-        // POST: api/TodoItem
+        /// POST: api/TodoItem
+        /// <summary>
+        ///     Creates new TodoItem with all backend logic
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(TodoItemDTO todoItemDTO)
         {
@@ -65,7 +77,10 @@ namespace PosthumanWebApi.Controllers
             return CreatedAtAction(nameof(GetTodoItem), new { id = createdTodoItemDTO.Id }, createdTodoItemDTO);
         }
 
-        // PUT: api/TodoItem/5
+        /// PUT: api/TodoItem/5
+        /// <summary>
+        ///     Updates TodoItem with all backend logic
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodoItem(int id, TodoItemDTO todoItemDTO)
         {
@@ -77,7 +92,10 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
-        // DELETE: api/TodoItem/5
+        /// DELETE: api/TodoItem/5
+        /// <summary>
+        ///     Deletes TodoItem with all backend logic
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {

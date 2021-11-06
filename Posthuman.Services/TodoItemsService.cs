@@ -3,13 +3,7 @@ using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
-using Posthuman.Core.Repositories;
 using Posthuman.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Posthuman.Services
 {
@@ -143,11 +137,6 @@ namespace Posthuman.Services
             await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
 
             await UpdateAvatarExp(todoItemDeletedEvent);
-
-            // Update (decrease) Avatar's Exp points
-            //var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
-            //if (avatar != null)
-            //    avatar.Exp += todoItemDeletedEvent.ExpGained;
         }
 
         public async Task UpdateAvatarExp(EventItem eventItem)
@@ -192,47 +181,13 @@ namespace Posthuman.Services
                 .TodoItems
                 .GetAllByAvatarId(avatar.Id);
 
-            var newList = new List<TodoItem>();
-
-            // Top Level Taski - taski bez parenta
-            var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel());
-
-            foreach(var topLevelTask in topLevelTasks)
-            {
-                newList.Add(topLevelTask);
-
-                if (topLevelTask.HasSubtasks())
-                {
-                    var subtasks = topLevelTask.Subtasks.ToList();
-
-                    foreach(var subtask in subtasks)
-                    {
-                        newList.Add(subtask);
-
-                        if(subtask.HasSubtasks())
-                        {
-                            var subSubtasks = subtask.Subtasks.ToList();
-
-                            foreach (var subSubtask in subSubtasks)
-                            {
-                                newList.Add(subSubtask);
-                            }
-                        }
-                    }
-
-                    // newList.AddRange(subtasks);
-                }
-            }
+            var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel()).ToList();
+            var flattenedTasksList = await FlattenSubtasksListAsync(topLevelTasks);
 
             var itemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(newList);
+                mapper.Map<IEnumerable<TodoItemDTO>>(flattenedTasksList);
 
             return itemsMapped.ToList();
-        }
-
-        public Task<IEnumerable<TodoItem>> GetByParentProject(int projectId)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
@@ -322,6 +277,25 @@ namespace Posthuman.Services
                     await unitOfWork.CommitAsync();
                 }
             }
+        }
+
+
+        private async Task<IEnumerable<TodoItem>> FlattenSubtasksListAsync(IEnumerable<TodoItem> tasks)
+        {
+            var newList = new List<TodoItem>();
+
+            foreach (var task in tasks)
+            {
+                newList.Add(task);
+
+                if (task.HasSubtasks())
+                {
+                    var flattenedSubtasks = await FlattenSubtasksListAsync(task.Subtasks);
+                    newList.AddRange(flattenedSubtasks);
+                }
+            }
+
+            return newList;
         }
     }
 }

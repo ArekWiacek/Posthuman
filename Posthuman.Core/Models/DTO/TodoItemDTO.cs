@@ -6,7 +6,6 @@
         {
             Title = "";
             Description = "";
-            // Subtasks = new List<TodoItemDTO>();
         }
 
         public int Id { get; set; }
@@ -19,13 +18,13 @@
         public int? ProjectId { get; set; }
 
         public bool IsTopLevel { get; set; }
-        public bool HasSubtasks { get; set; }
         public int NestingLevel { get; set; }
+        public bool HasSubtasks { get; set; }
+        public bool HasUnfinishedSubtasks { get; set; }
         public int SubtasksCount { get; set; }
         public int FinishedSubtasksCount { get; set; }
 
         // Parent TodoItem
         public int? ParentId { get; set; }
-        //public virtual ICollection<TodoItemDTO> Subtasks { get; set; }
     }
 }
