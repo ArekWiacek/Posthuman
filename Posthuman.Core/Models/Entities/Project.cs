@@ -31,9 +31,12 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual ICollection<TodoItem> TodoItems { get; set; }
 
-
-
         public int TotalSubtasks { get; set; }
         public int CompletedSubtasks { get; set; }
+
+        public bool IsTopLevel()
+        {
+            return TodoItems != null && TodoItems.Count() > 0;
+        }
     }
 }

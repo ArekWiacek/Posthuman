@@ -11,16 +11,18 @@ const defaultFormValues = {
     description: '',
     deadline: new Date(),
     projectId: 0,
-    avatarId: 0
+    avatarId: 0,
+    parentId: 0
 }
 
-const EditTodoItem = ({ currentTodoItem, onSaveChanges, onCancelEdit, projects }) => {
+const EditTodoItem = ({ currentTodoItem, onSaveChanges, onCancelEdit, projects, todoItems }) => {
     const [todoItem, setTodoItem] = React.useState({ ...currentTodoItem });
 
     const handleTitleChange = event => setTodoItem({ ...todoItem, title: event.target.value });
     const handleDescriptionChange = event => setTodoItem({ ...todoItem, description: event.target.value });
     const handleDeadlineChange = newValue => setTodoItem({ ...todoItem, deadline: newValue });
     const handleProjectIdChange = event => setTodoItem({ ...todoItem, projectId: event.target.value });
+    const handleParentIdChange = event => setTodoItem({ ...todoItem, parentId: event.target.value });
     const handleCancelEdit = () => onCancelEdit();
 
     const handleSubmit = (e) => {
@@ -86,6 +88,23 @@ const EditTodoItem = ({ currentTodoItem, onSaveChanges, onCancelEdit, projects }
                     </MenuItem>
                 ))}
             </TextField>
+
+            <TextField
+                select
+                fullWidth
+                label="Parent task"
+                value={todoItem.parentId != null ? todoItem.parentId : 0}
+                onChange={handleParentIdChange}>
+                <MenuItem key={0} value={0}>
+                    Select parent...
+                </MenuItem>
+                {todoItems.map((todoItem) => (
+                    <MenuItem key={todoItem.id} value={todoItem.id}>
+                        {todoItem.title}
+                    </MenuItem>
+                ))}
+            </TextField>
+
             <Box
                 sx={{
                     display: 'flex',

@@ -5,13 +5,10 @@ import { makeStyles } from '@mui/styles';
 import { AvatarContext } from "../App";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 
-import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
+import TodoItemList from './../components/TodoItem/TodoItemsList';
 import EditTodoItem from '../components/TodoItem/EditTodoItem';
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
-import ModalWindow from '../components/Modal';
-
-import TodoItemRow from '../components/TodoItem/TodoItemsListHierarchical/TodoItemRow';
-import { TodoItemsHierarchical, TodoItemsHierarchicalRow } from '../components/TodoItem/TodoItemsListHierarchical/TodoItemsHierarchical';
+import TodoItemRow from './../components/TodoItem/TodoItemRow';
 
 import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
 
@@ -27,7 +24,7 @@ function todoItemFormInitialValues() {
     }
 }
 
-const TodoPage = () => {
+const TodoPage2 = () => {
     const { activeAvatar } = React.useContext(AvatarContext);
     const [todoItems, setTodoItems] = React.useState(CreateDummyTodoItems(3));
     const [projects, setProjects] = React.useState(CreateDummyProjects(2));
@@ -59,9 +56,9 @@ const TodoPage = () => {
 
         ApiPut("TodoItems", completedTodoItem.id, completedTodoItem, (data) => {
             const updatedTodoItemList = todoItems.map((todoItem) =>
-                todoItem.id === completedTodoItem ? completedTodoItem : todoItem
+                    todoItem.id === completedTodoItem ? completedTodoItem : todoItem
             );
-
+            
             setTodoItems(updatedTodoItemList);
         });
     }
@@ -71,10 +68,7 @@ const TodoPage = () => {
         setCurrentTodoItem(todoItemFormInitialValues());
     }
 
-    const handleAddSubtask = (task) => {
-        setParentId(task.id);
-        // ToDo - set also parent project
-    }
+    const handleAddSubtask = task => setParentId(task.id);
 
     const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
         ApiPut("TodoItems", editedTodoItemId, editedTodoItem, (data) => {
@@ -99,7 +93,7 @@ const TodoPage = () => {
     const useStyles = makeStyles(theme => ({
         rowContent: {
             // margin: theme.spacing(5),
-            padding: theme.spacing()
+            padding: theme.spacing()        
         }
     }))
 
@@ -107,11 +101,6 @@ const TodoPage = () => {
 
     return (
         <Grid container spacing={3}>
-            {/* HIERARCHICAL VIEW */}
-            {/* <Grid item xs={12}>
-                <TodoItemsHierarchical todoItems></TodoItemsHierarchical>
-            </Grid> */}
-
             {/* HIERARCHICAL VIEW */}
             {/* <Grid item xs={12} >
                 

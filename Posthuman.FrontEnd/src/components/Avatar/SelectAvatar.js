@@ -5,10 +5,9 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField, MenuItem } from '@mui/material';
 
-import axios from 'axios';
-
 import { ApiUrl, LogT, LogI, LogW, LogE } from '../../Utilities/Utilities';
 import { AvatarContext } from '../../App';
+import { ApiGet, ApiPut } from '../../Utilities/ApiRepository';
 
 // Component allows to select current user (stub until authentication is implemented)
 const SelectAvatar = () => {
@@ -22,37 +21,18 @@ const SelectAvatar = () => {
 
         var selectedId = event.target.value;
 
-        axios
-            .put(ApiUrl + "Avatars/SetActiveAvatar/" + selectedId)
-            .then(response => {
-                // Avatar set as "Active" in backend - now do the same change in frontend state
-                var selectedAvatar = avatars.find(av => {
-                    return av.id === selectedId;
-                });
-                // selectedAvatar.isSelected = true;
-                setActiveAvatar(selectedAvatar);
-            })
-            .catch(error => {
-                LogE("Error occured when saving changes into Avatar: ", error);
+        ApiPut("Avatars/SetActiveAvatar", selectedId, null, data => {
+            // Avatar set as "Active" in backend - now do the same change in frontend state
+            var selectedAvatar = avatars.find(av => {
+                return av.id === selectedId;
             });
+            // selectedAvatar.isSelected = true;
+            setActiveAvatar(selectedAvatar);
+        });
     };
 
     React.useEffect(() => {
-        LogT("SelectAvatar.useEffect");
-        LogT("SelectAvatar.ApiCall.Avatars.Get...");
-
-        axios
-            .get(ApiUrl + "Avatars")
-            .then(response => {
-                LogI("Avatars obtained: ");
-                LogI(response.data);
-
-                // Save avatars to component state to populate dropdown 
-                setAvatars(response.data);
-            })
-            .catch(error => {
-                LogE("Error occured when obtaining Avatars: ", error);
-            });
+        ApiGet("Avatars", data => setAvatars(data));
     }, [])
 
     return (

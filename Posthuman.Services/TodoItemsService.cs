@@ -30,14 +30,6 @@ namespace Posthuman.Services
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
 
-            var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
-            //if (todoItem.AvatarId != null != ownerAvatar.Id)
-            //{
-                // This todo item is owned by other Avatar - dont return it
-            //    return null;
-            //}
-
             return mapper.Map<TodoItemDTO>(todoItem);
         }
         
@@ -47,6 +39,9 @@ namespace Posthuman.Services
             newTodoItem.IsCompleted = false;            // This always false when creating
             newTodoItem.CreationDate = DateTime.Now;    // This is set by application
 
+            if (newTodoItem == null)
+                throw new Exception();
+
             // Set owner Avatar
             var ownerAvatar = await 
                 unitOfWork
@@ -55,6 +50,16 @@ namespace Posthuman.Services
 
             if (ownerAvatar != null)
                 newTodoItem.Avatar = ownerAvatar;
+
+            // Has parent todo item?
+            if(newTodoItem != null && newTodoItem.ParentId.HasValue)
+            {
+                var parentTodoItem = await unitOfWork.TodoItems.GetByIdAsync(newTodoItem.ParentId.Value);
+                if (parentTodoItem == null)
+                    throw new Exception();
+
+                newTodoItem.Parent = parentTodoItem;
+            }
 
             // New TodoItem has parent Project selected - so update subtasks counter 
             if(newTodoItem.ProjectId != null && newTodoItem.ProjectId.Value != 0)
@@ -93,10 +98,11 @@ namespace Posthuman.Services
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
 
+            var todoItemWithSubtasks = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItem.AvatarId, todoItem.Id);
+
             if (todoItem == null)
                 return; // NotFound()
 
-            unitOfWork.TodoItems.Remove(todoItem);
 
             if (todoItem.ProjectId != null)
             {
@@ -108,27 +114,55 @@ namespace Posthuman.Services
                 }
             }
 
+            await DeleteTodoItemWithSubtasks(todoItem);
+
+            await unitOfWork.CommitAsync();
+        }
+
+        private async Task DeleteTodoItemWithSubtasks(TodoItem todoItem)
+        {
+            if (todoItem.HasSubtasks())
+            {
+                var subtasks = await unitOfWork.TodoItems.GetAllByParentIdAsync(todoItem.Id);
+
+                foreach (var subtask in subtasks)
+                {
+                    await DeleteTodoItemWithSubtasks(subtask);
+                }
+            }
+
+            unitOfWork.TodoItems.Remove(todoItem);
+
             var todoItemDeletedEvent = new EventItem(
-                todoItem.AvatarId, 
-                EventType.TodoItemDeleted, 
-                DateTime.Now, 
-                EntityType.TodoItem, 
+                todoItem.AvatarId,
+                EventType.TodoItemDeleted,
+                DateTime.Now,
+                EntityType.TodoItem,
                 todoItem.Id);
 
             await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
 
-            // Update (decrease) Avatar's Exp points
-            var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
-            if (avatar != null)
-                avatar.Exp += todoItemDeletedEvent.ExpGained;
+            await UpdateAvatarExp(todoItemDeletedEvent);
 
-            await unitOfWork.CommitAsync();
+            // Update (decrease) Avatar's Exp points
+            //var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
+            //if (avatar != null)
+            //    avatar.Exp += todoItemDeletedEvent.ExpGained;
+        }
+
+        public async Task UpdateAvatarExp(EventItem eventItem)
+        {
+            // Update Avatar's Exp points based on what happened
+            var avatar = await unitOfWork.Avatars.GetByIdAsync(eventItem.AvatarId);
+            if (avatar != null)
+                avatar.Exp += eventItem.ExpGained;
         }
 
         public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems()
         {
             var allTodoItems = await
                 unitOfWork.TodoItems.GetAllAsync();
+
 
             return mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
 
@@ -149,11 +183,27 @@ namespace Posthuman.Services
             return allTodoItemsMapped.ToList();
         }
 
+        public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical()
+        {
+            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+
+            var todoItems = await
+                unitOfWork
+                .TodoItems
+                .GetAllByAvatarId(avatar.Id);
+
+            var topLevel = todoItems.Where(ti => ti.IsTopLevel());
+
+            var topLevelItemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(topLevel);
+
+            return topLevelItemsMapped.ToList();
+        }
+
         public Task<IEnumerable<TodoItem>> GetByParentProject(int projectId)
         {
             throw new NotImplementedException();
         }
-
 
         public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
         {
@@ -192,6 +242,13 @@ namespace Posthuman.Services
                     if(ownerAvatar == null)
                     {
                         throw new Exception($"Task owner (Avatar of ID: {ownerAvatar.Id}) could not be found");
+                    }
+
+                    // Assign parent todo item
+                    if(todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
+                    {
+                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
+                        todoItem.Parent = parentTask;
                     }
 
                     var todoItemModifiedEvent = new EventItem(

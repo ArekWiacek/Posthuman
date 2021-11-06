@@ -1,5 +1,4 @@
 import * as React from 'react';
-import axios from 'axios';
 import { Paper, Grid } from '@mui/material';
 
 
@@ -10,8 +9,10 @@ import ProjectsList from '../components/Project/ProjectsList';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 import { AvatarContext } from "../App";
-import { ApiUrl, LogT, LogI, LogE } from '../Utilities/Utilities';
+import { LogT, LogI, LogE } from '../Utilities/Utilities';
 import { CreateDummyProject, CreateDummyProjects } from '../Utilities/DummyObjects';
+
+import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
 
 const ProjectsPage = () => {
   const { activeAvatar } = React.useContext(AvatarContext);
@@ -20,37 +21,29 @@ const ProjectsPage = () => {
   const [currentProject, setCurrentProject] = React.useState(CreateDummyProject());
 
   const handleProjectCreated = (newProject) => {
-    axios.post(ApiUrl + "Projects", newProject)
-      .then(response => {
-        const projectsListWithNewProject = [...projects, response.data];
-        setProjects(projectsListWithNewProject);
-      })
-      .catch(error => LogE("Error occured when creating new Project: ", error));
+    ApiPost("Projects", newProject, data => {
+      const projectsListWithNewProject = [...projects, data];
+      setProjects(projectsListWithNewProject);
+    });
   }
 
   const handleProjectDeleted = (projectId) => {
-    axios
-      .delete(ApiUrl + "Projects" + "/" + projectId)
-      .then(response => {
-        const projectsList = projects.filter((project) => project.id !== projectId);
-        setProjects(projectsList);
-      })
-      .catch(error => LogE("Error occured when deleting Project: ", error));
+    ApiDelete("Projects", projectId, () => {
+      const projectsList = projects.filter((project) => project.id !== projectId);
+      setProjects(projectsList);
+    });
   }
 
   const handleProjectSaveChanges = (editedProjectId, editedProject) => {
-    axios
-      .put(ApiUrl + "Projects" + "/" + editedProjectId, editedProject)
-      .then(response => {
-        const updatedProjectsList = projects.map((project) =>
-          project.id === editedProjectId ? editedProject : project
-        );
+    ApiPut("Projects", editedProjectId, editedProject, () => {
+      const updatedProjectsList = projects.map((project) =>
+        project.id === editedProjectId ? editedProject : project
+      );
 
-        setProjects(updatedProjectsList);
-        setIsProjectInEditMode(false);
-        setCurrentProject(CreateDummyProject());
-      })
-      .catch(error => LogE("Error occured when saving changes into Project: ", error));
+      setProjects(updatedProjectsList);
+      setIsProjectInEditMode(false);
+      setCurrentProject(CreateDummyProject());
+    })
   }
 
   const handleProjectEdited = (projectToEdit) => {
@@ -64,53 +57,43 @@ const ProjectsPage = () => {
   }
 
   React.useEffect(() => {
-    LogT("ProjectsPage.useEffect");
-    LogI("ProjectsPage.ApiCall.Projects.Get");
-    
-    axios
-      .get(ApiUrl + "Projects")
-      .then(response => {
-        setProjects(response.data);
-      })
-      .catch(error => {
-        LogE("Error occured when obtaining Projects: ", error);
-      });
-  }, [ activeAvatar ])
+    ApiGet("Projects", data => setProjects(data));
+  }, [activeAvatar])
 
   return (
     <Grid container spacing={3}>
       {/* PROJECTS LIST */}
       <Grid item xs={12}>
         <ProjectsList
-            projects={projects}
-            onProjectDeleted={handleProjectDeleted}
-            onProjectEdited={handleProjectEdited} />
+          projects={projects}
+          onProjectDeleted={handleProjectDeleted}
+          onProjectEdited={handleProjectEdited} />
       </Grid>
 
       {/* PROJECT CREATE / EDIT */}
       <Grid item xs={3} >
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {
-              isProjectInEditMode ?
-                (<EditProject
-                  onSaveChanges={handleProjectSaveChanges}
-                  onCancelEdit={handleProjectCancelEdit}
-                  currentProject={currentProject}
-                  key={currentProject.id} />) : (
-                  <CreateProject onCreateProject={handleProjectCreated} />)
-            }
-          </Paper>
-        </Grid>
+        <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+          {
+            isProjectInEditMode ?
+              (<EditProject
+                onSaveChanges={handleProjectSaveChanges}
+                onCancelEdit={handleProjectCancelEdit}
+                currentProject={currentProject}
+                key={currentProject.id} />) : (
+                <CreateProject onCreateProject={handleProjectCreated} />)
+          }
+        </Paper>
+      </Grid>
 
       {/* PROJECTS LIST */}
       <Grid item xs={12} md={12} lg={12}>
-            {
-              projects.map((project) => (
-                <ProjectView key={project.id} project={project} />
-              ))
-            }
+        {
+          projects.map((project) => (
+            <ProjectView key={project.id} project={project} />
+          ))
+        }
       </Grid>
-      
+
     </Grid>
   );
 }

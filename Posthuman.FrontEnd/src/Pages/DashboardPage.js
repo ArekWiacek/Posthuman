@@ -7,7 +7,7 @@ import axios from 'axios';
 
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
 import EditTodoItem from '../components/TodoItem/EditTodoItem';
-import TodoItemList from '../components/TodoItem/TodoItemsList';
+import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 
 import CreateProject from '../components/Project/CreateProject';
 import EditProject from '../components/Project/EditProject';
@@ -17,6 +17,7 @@ import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 import { AvatarContext } from "../App";
 import { ApiUrl, LogT, LogI, LogE } from '../Utilities/Utilities';
+import { ApiRepository } from '../Utilities/ApiRepository';
 
 function todoItemFormInitialValues() {
   return {
@@ -256,23 +257,23 @@ const DashboardPage = () => {
 
         {/* PROJECTS LIST */}
         <Grid item xs={12} md={12} lg={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+          {/* <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}> */}
             <ProjectsList
               projects={projects}
               onProjectDeleted={handleProjectDeleted}
               onProjectEdited={handleProjectEdited} />
-          </Paper>
+          {/* </Paper> */}
         </Grid>
 
         {/* TODO ITEMS LIST */}
         <Grid item xs={12} md={12} lg={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+          {/* <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}> */}
             <TodoItemList
               todoItems={todoItems}
               onTodoItemDeleted={handleTodoItemDeleted}
               onTodoItemEdited={handleTodoItemEdited}
               onTodoItemDone={handleTodoItemDone} />
-          </Paper>
+          {/* </Paper> */}
         </Grid>
       </Grid>
   );

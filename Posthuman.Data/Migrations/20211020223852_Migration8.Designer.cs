@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Posthuman.Data;
 
@@ -11,9 +12,10 @@ using Posthuman.Data;
 namespace Posthuman.Data.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20211020223852_Migration8")]
+    partial class Migration8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

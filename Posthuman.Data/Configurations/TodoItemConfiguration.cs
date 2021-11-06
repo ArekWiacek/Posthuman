@@ -25,7 +25,13 @@ namespace Posthuman.Data.Configurations
             builder
                 .HasOne<Avatar>(todoItem => todoItem.Avatar)
                 .WithMany(avatar => avatar.TodoItems);
-                
+
+            builder
+                .HasOne(ti => ti.Parent)
+                .WithMany(p => p.Subtasks)
+                .HasForeignKey(ti => ti.ParentId)
+                .IsRequired(false);
+
             builder.ToTable("TodoItems");
         }
     }

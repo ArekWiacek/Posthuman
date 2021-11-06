@@ -4,25 +4,35 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 
 import { AvatarContext } from "../../App";
-import { LogW } from '../../Utilities/Utilities';
+import { LogI, LogW } from '../../Utilities/Utilities';
 
-const CreateTodoItem = ({ onCreateTodoItem, projects }) => {
+const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId}) => {
     const { activeAvatar } = React.useContext(AvatarContext);
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [deadline, setDeadline] = React.useState(new Date());
     const [projectId, setProjectId] = React.useState(0);
+    const [parentId, setParentId] = React.useState(parentTaskId);
 
     const handleTitleChange = event => setTitle(event.target.value);
     const handleDescriptionChange = event => setDescription(event.target.value);
     const handleDeadlineChange = newValue => setDeadline(newValue.toDate());
     const handleProjectIdChange = event => setProjectId(event.target.value);
+    const handleParentIdChange = event => setParentId(event.target.value);
+
+    if(todoItems == null) {
+        todoItems = [];
+    }
+
+    React.useEffect(() => {
+        setParentId(parentTaskId);
+      }, [parentTaskId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (title === "" || deadline == null) {
-            LogW("Cannot create TodoItem - title or deadline not provided");
+        if (title === "") {
+            LogW("Cannot create TodoItem - title not provided");
             return;
         }
 
@@ -36,7 +46,8 @@ const CreateTodoItem = ({ onCreateTodoItem, projects }) => {
             description: description,
             deadline: deadline,
             projectId: projectId != 0 ? projectId : null,
-            avatarId: activeAvatar.id
+            parentId: parentId != 0 ? parentId : null,
+            avatarId: activeAvatar.id,
         };
 
         onCreateTodoItem(newTodoItem);
@@ -44,6 +55,7 @@ const CreateTodoItem = ({ onCreateTodoItem, projects }) => {
         setTitle("");
         setDescription("");
         setDeadline(new Date());
+        setParentId(0);
         // setProjectId(0);         // Resetting project id turned off to easier add subtasks one by one to project 
     }
 
@@ -73,15 +85,16 @@ const CreateTodoItem = ({ onCreateTodoItem, projects }) => {
                 value={deadline}
                 onChange={handleDeadlineChange}
                 renderInput={(params) => <TextField {...params} />} />
-
+                
             <TextField
                 select
                 fullWidth
                 label="Project"
+                disabled={projects == null || projects.length == 0}
                 value={projectId}
                 onChange={handleProjectIdChange}>
                 <MenuItem key={0} value={0}>
-                    Select project...
+                    Select project
                 </MenuItem>
                 {projects.map((project) => (
                     <MenuItem key={project.id} value={project.id}>
@@ -89,6 +102,25 @@ const CreateTodoItem = ({ onCreateTodoItem, projects }) => {
                     </MenuItem>
                 ))}
             </TextField>
+
+            <TextField
+                select
+                fullWidth
+                label="Parent task"
+                disabled={todoItems == null || todoItems.length == 0}
+                value={parentId}
+                onChange={handleParentIdChange}>
+                <MenuItem key={0} value={0}>
+                    Select parent task
+                </MenuItem>
+                {
+                    todoItems.map((todoItem) => (
+                    <MenuItem key={todoItem.id} value={todoItem.id}>
+                       {todoItem.title}
+                    </MenuItem>
+                ))}
+            </TextField>
+
             <Button
                 sx={{ m: 1, width: '30ch' }}
                 variant="contained"

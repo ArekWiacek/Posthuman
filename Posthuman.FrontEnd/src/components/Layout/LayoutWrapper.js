@@ -8,14 +8,13 @@ import Container from "@mui/material/Container";
 import CustomRouter from "./CustomRouter";
 import CustomAppBar from './CustomAppBar';
 import CustomDrawer from './CustomDrawer';
-import { AvatarContext } from "../../App";
 
 import AdapterMoment from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 const mdTheme = createTheme({
   palette: {
-    mode: 'dark',
+     mode: 'dark',
   },
 });
 
@@ -24,10 +23,6 @@ const LayoutWrapper = () => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const ctx = React.useContext(AvatarContext);
-  console.log("LayoutWrapper: Context.ActiveAvatar: ");
-  console.log(ctx.activeAvatar);
 
   return (
     <ThemeProvider theme={mdTheme}>

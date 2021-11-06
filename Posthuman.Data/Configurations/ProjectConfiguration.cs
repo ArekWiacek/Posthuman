@@ -16,15 +16,7 @@ namespace Posthuman.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(50);
 
-
-            //builder
-            ///    .HasOne(ti => ti.Project)
-            //    .WithMany(p => p.TodoItems)
-            //    .HasForeignKey(ti => ti.ProjectId);
-
             builder.ToTable("Projects");
-                
-               // .UseIdentityColumn();
         }
     }
 }

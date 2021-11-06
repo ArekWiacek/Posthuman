@@ -31,20 +31,17 @@ namespace PosthumanWebApi.Controllers
                 .GetAllTodoItemsForActiveAvatar();
 
             return Ok(allTodoItems);
+        }
 
-            //var todoItems = await _context.TodoItems
-            //    .Select(todoItem => TodoItemToDTO(todoItem))
-            //    .ToListAsync();
+        // GET: api/TodoItems
+        [HttpGet("/Hierarchical")]
+        public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
+        {
+            var allTodoItems = await
+                todoItemsService
+                .GetTodoItemsHierarchical();
 
-            //var withProjects = await _context.TodoItems
-            //    .Include(todoItem => todoItem.Project)
-            //    .Select(todoItem => TodoItemToDTO(todoItem))
-            //    .ToListAsync();
-
-            //return await _context.TodoItems
-            //    .Include(todoItem => todoItem.Project)
-            //    .Select(todoItem => TodoItemToDTO(todoItem))
-            //    .ToListAsync();
+            return Ok(allTodoItems);
         }
 
         // GET: api/TodoItem/5
@@ -65,10 +62,7 @@ namespace PosthumanWebApi.Controllers
         {
             var createdTodoItemDTO = await todoItemsService.CreateTodoItem(todoItemDTO);
 
-            return CreatedAtAction(
-                nameof(GetTodoItem),
-                new { id = createdTodoItemDTO.Id },
-                createdTodoItemDTO);
+            return CreatedAtAction(nameof(GetTodoItem), new { id = createdTodoItemDTO.Id }, createdTodoItemDTO);
         }
 
         // PUT: api/TodoItem/5
@@ -80,18 +74,6 @@ namespace PosthumanWebApi.Controllers
 
             await todoItemsService.UpdateTodoItem(todoItemDTO);
 
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!TodoItemExists(id))
-            //        return NotFound();
-            //    else
-            //        throw;
-            //}
-            //*/
             return NoContent();
         }
 

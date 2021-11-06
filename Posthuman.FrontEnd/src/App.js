@@ -2,9 +2,9 @@ import * as React from 'react';
 import './App.css';
 import { useState, createContext, useMemo } from 'react';
 import LayoutWrapper from "./components/Layout/LayoutWrapper";
-import axios from 'axios';
 
-import { ApiUrl, LogT, LogI, LogW, LogE } from './Utilities/Utilities';
+import { LogT, LogI, LogW } from './Utilities/Utilities';
+import { ApiGet } from './Utilities/ApiRepository';
 
 export const AvatarContext = createContext({
   activeAvatar: {},
@@ -28,22 +28,14 @@ const App = () => {
     LogT("App.useEffect");
     LogI("App.ApiCall.Avatars.GetActiveAvatar");
 
-    axios
-      .get(ApiUrl + "Avatars/GetActiveAvatar")
-      .then(response => {
-        LogI("Active Avatar obtained: ");
-        LogI(response.data);
-
-        if (response != undefined && response.data != undefined &&
-          response.data.id != undefined && response.data.id != 0) {
-          var avatar = response.data;
-          LogW("Calling 'setActiveAvatar' with Avatar of ID: " + avatar.id);
-          setActiveAvatar(avatar);
-        }
-      })
-      .catch(error => {
-        LogE("Error occured when obtaining Avatar: ", error);
-      })
+    ApiGet("Avatars/GetActiveAvatar", data => {
+      if (data != undefined && data.id != undefined && 
+        data.id != 0) {
+        var avatar = data;
+        LogW("Calling 'setActiveAvatar' with Avatar of ID: " + avatar.id);
+        setActiveAvatar(avatar);
+      }
+    });
   }, [])
 
   return (

@@ -9,8 +9,10 @@ namespace Posthuman.Core.Services
         Task<TodoItemDTO> GetTodoItemById(int id);
 
         Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar();
+        Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical();
         // Task<TodoItemDTO> GetTodoItemByIdForActiveAvatar(int id);
-
+        
+        
         Task<TodoItemDTO> CreateTodoItem(TodoItemDTO todoItemDTO);
         Task UpdateTodoItem(TodoItemDTO todoItemDTO);
         Task DeleteTodoItem(int id);

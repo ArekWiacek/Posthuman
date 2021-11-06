@@ -19,41 +19,53 @@ BuildSwagger();
 
 var app = builder.Build();
 
-using(var scope = app.Services.CreateScope())
+try
 {
-    var services = scope.ServiceProvider;
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
 
-    //SeedData.Initialize(services);
+        //SeedData.Initialize(services);
+    }
+
+    app.UseCors(builder =>
+    {
+        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+            c.SwaggerEndpoint(
+                "/swagger/v1/swagger.json",
+                "PosthumanWebApi v1"));
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    //app.MapControllerRoute(
+    //    name: "default",
+    //    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    app.Run();
+
+}
+catch(Exception e)
+{
+    int x = 0;
+    x = x + 5;
+
 }
 
-app.UseCors(builder =>
-{
-    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-});
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    
-    app.UseSwagger();
-    app.UseSwaggerUI(c => 
-        c.SwaggerEndpoint(
-            "/swagger/v1/swagger.json", 
-            "PosthumanWebApi v1"));
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
 
 void BuildAutoMapper()
 {

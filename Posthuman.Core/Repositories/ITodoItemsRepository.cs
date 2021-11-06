@@ -10,6 +10,10 @@ namespace Posthuman.Core.Repositories
     {
         public Task<IEnumerable<TodoItem>> GetAllByAvatarId(int id);
 
+        public Task<IEnumerable<TodoItem>> GetAllByParentIdAsync(int id);
+
+        public Task<TodoItem> GetByIdWithSubtasksAsync(int avatarId, int todoItemId);
+
         public Task<IEnumerable<TodoItem>> GetAllWithProjectsAsync();
     }
 }

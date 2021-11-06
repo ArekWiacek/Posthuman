@@ -40,7 +40,7 @@ export function CreateDummyProject() {
 
 export function CreateDummyProjects(howMany) {
     var dummyProjects = [];
-
+    
     for (var i = 1; i <= howMany; i++) {
         var dummyProject = {
             id: i,
@@ -50,7 +50,7 @@ export function CreateDummyProjects(howMany) {
             startDate: new Date(),
             avatarId: 1,
             totalSubtasks: 4,
-            completedSubtasks: i % 3
+            completedSubtasks: i % 3,
         };
         dummyProjects.push(dummyProject);
     }

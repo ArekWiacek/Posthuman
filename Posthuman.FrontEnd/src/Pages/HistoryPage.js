@@ -3,9 +3,9 @@ import { Box, Paper, TableContainer, Table, TableHead,
     TableBody, TableRow, TableCell, TableFooter, TablePagination } from '@mui/material';
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid';
-import axios from 'axios';
-import { ApiUrl, LogE } from '../Utilities/Utilities';
 import Moment from 'react-moment';
+
+import { ApiGet } from '../Utilities/ApiRepository';
 
 const HistoryPage = () => {
     const [eventItems, setEventItems] = React.useState([
@@ -71,14 +71,7 @@ const HistoryPage = () => {
     };
 
     React.useEffect(() => {
-        axios
-            .get(ApiUrl + "EventItems")
-            .then(response => {
-                setEventItems(response.data);
-            })
-            .catch(error => {
-                LogE("Error occured when obtaining EventItems: ", error);
-            })
+        ApiGet("EventItems", data => setEventItems(data));
     }, [])
 
     return (
