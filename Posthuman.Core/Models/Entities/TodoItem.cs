@@ -10,6 +10,12 @@ namespace Posthuman.Core.Models.Entities
     [Table("TodoItems")]
     public class TodoItem
     {
+        public TodoItem()
+        {
+            Title = "";
+            Description = "";
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -21,13 +27,13 @@ namespace Posthuman.Core.Models.Entities
         public DateTime? CreationDate { get; set; }         // Date when task was created
         public DateTime? CompletionDate { get; set; }       // Date when task was marked as 'Completed'
 
-        // Parent TodoItem
+        // Parent & Subtasks
         public int? ParentId { get; set; }
         [JsonIgnore]
         public virtual TodoItem Parent { get; set; }
-
         [JsonIgnore]
         public virtual ICollection<TodoItem> Subtasks { get; set; }
+
 
         // Avatar (Think as user "hero" - with level, exp and so on)
         public int AvatarId { get; set; }
@@ -37,6 +43,7 @@ namespace Posthuman.Core.Models.Entities
         // Parent project - when to-do item is part of something bigger
         public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
+
 
         public bool IsTopLevel()
         {
@@ -59,11 +66,9 @@ namespace Posthuman.Core.Models.Entities
                 return 0;
             else
             {
-                int count = 0;
+                var count = Subtasks.Count;
 
-                count += Subtasks.Count;
-
-                foreach(var subtask in Subtasks)
+                foreach (var subtask in Subtasks)
                 {
                     count += subtask.SubtasksCount();
                 }
@@ -78,11 +83,14 @@ namespace Posthuman.Core.Models.Entities
                 return 0;
             else
             {
-                //int count = 0;
+                var count = Subtasks.Where(s => s.IsCompleted).Count();
 
-                //count += Subtasks.Where(s => s.IsCompleted).ToList().Count;
+                foreach(var subtask in Subtasks)
+                {
+                    count += subtask.FinishedSubtasksCount();
+                }
 
-                return Subtasks.Where(s => s.IsCompleted).ToList().Count;
+                return count;
             }
         }
 

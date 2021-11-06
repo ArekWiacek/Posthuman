@@ -139,14 +139,6 @@ namespace Posthuman.Services
             await UpdateAvatarExp(todoItemDeletedEvent);
         }
 
-        public async Task UpdateAvatarExp(EventItem eventItem)
-        {
-            // Update Avatar's Exp points based on what happened
-            var avatar = await unitOfWork.Avatars.GetByIdAsync(eventItem.AvatarId);
-            if (avatar != null)
-                avatar.Exp += eventItem.ExpGained;
-        }
-
         public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems()
         {
             var allTodoItems = await
@@ -296,6 +288,14 @@ namespace Posthuman.Services
             }
 
             return newList;
+        }
+
+        private async Task UpdateAvatarExp(EventItem eventItem)
+        {
+            // Update Avatar's Exp points based on what happened
+            var avatar = await unitOfWork.Avatars.GetByIdAsync(eventItem.AvatarId);
+            if (avatar != null)
+                avatar.Exp += eventItem.ExpGained;
         }
     }
 }
