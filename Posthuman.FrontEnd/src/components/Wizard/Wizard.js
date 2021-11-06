@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import StepWizard from 'react-step-wizard';
 import WizardStep from './WizardStep';
-import Typography from '@mui/material/Typography';
+import { Box, Typography } from '@mui/material';
 
-const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem } ) => {
+const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) => {
     const [state, updateState] = useState({
         transitions: {
             enterRight: `animated enterRight`,
@@ -39,7 +39,7 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem } ) => {
                     onConfirm={handleTaskDoneConfirm}
                     onCancel={handleTaskDoneCancel}
                 >
-                    <Typography variant="h3">{'Confirm task completion'}</Typography>
+                    <Typography variant="h4">{'Confirm task completion'}</Typography>
                     <Typography variant="body2">{'Did you completed task: "' + todoItem.title + '"?'}</Typography>
                 </WizardStep>
 
@@ -48,9 +48,14 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem } ) => {
                     confirmText={'Thanks!'}
                     onConfirm={handleXpGainedConfirm}
                 >
-                    <Typography variant="h3">{'XP Gained!'}</Typography>
-                    <Typography variant="body2">{'You gained 25 XP for completing task: "' + todoItem.title + '"!'}</Typography>
-                    <Typography variant="body2">{'Congratulations!'}</Typography>
+                    <Typography 
+                        variant="h4" 
+                        sx={{color: 'success.main'}}>
+                            {'+ ' + xpGained + ' XP!'}
+                    </Typography>
+                    <Typography variant="body2">
+                        {'For completing task "' + todoItem.title + '".'}
+                    </Typography>
                 </WizardStep>
             </StepWizard>
         </div>

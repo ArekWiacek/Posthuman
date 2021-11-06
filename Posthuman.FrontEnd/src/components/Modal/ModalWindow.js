@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { Box, Modal, Typography } from '@mui/material';
-
-import Backdrop from '@mui/material/Backdrop';
-
+import { Box, Modal, Backdrop } from '@mui/material';
 import { AvatarContext } from "../../App";
-
-// { children, isOpen, messageText, confirmatText, cancelText, onConfirmClicked, onCancelClicked }
 
 const style = {
     position: 'absolute',
@@ -18,13 +13,10 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
+
 const ModalWindow = (props) => {
     const { activeAvatar } = React.useContext(AvatarContext);
-
-    console.log(props);
-
     const handleCloseModal = () => {
-
     }
 
     return (

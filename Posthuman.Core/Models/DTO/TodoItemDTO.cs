@@ -20,6 +20,7 @@
 
         public bool IsTopLevel { get; set; }
         public bool HasSubtasks { get; set; }
+        public int NestingLevel { get; set; }
         public int SubtasksCount { get; set; }
         public int FinishedSubtasksCount { get; set; }
 

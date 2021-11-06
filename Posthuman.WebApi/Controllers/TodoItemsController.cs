@@ -34,7 +34,7 @@ namespace PosthumanWebApi.Controllers
         }
 
         // GET: api/TodoItems/Hierarchical
-        [HttpGet("/Hierarchical")]
+        [HttpGet("Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
             var allTodoItems = await

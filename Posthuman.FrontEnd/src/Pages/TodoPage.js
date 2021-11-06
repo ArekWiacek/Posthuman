@@ -101,7 +101,9 @@ const TodoPage = () => {
     }, [activeAvatar]);
 
     React.useEffect(() => {
-        ApiGet("TodoItems", todoItems => setTodoItems(todoItems));
+        //ApiGet("TodoItems", todoItems => setTodoItems(todoItems));
+
+        ApiGet("TodoItems/Hierarchical", todoItems => setTodoItems(todoItems));
     }, [activeAvatar]);
 
     const useStyles = makeStyles(theme => ({
@@ -141,7 +143,8 @@ const TodoPage = () => {
                     isOpen={showDoneConfirmModal}
                     onFinished={handleFinishedModal}
                     onCanceled={handleCloseModal} 
-                    todoItem={taskToComplete} />
+                    todoItem={taskToComplete}
+                    xpGained={25} />
             </Grid>
 
             {/* HIERARCHICAL VIEW */}

@@ -199,14 +199,28 @@ namespace Posthuman.Services
 
             foreach(var topLevelTask in topLevelTasks)
             {
+                newList.Add(topLevelTask);
+
                 if (topLevelTask.HasSubtasks())
                 {
-                    var subtasks = topLevelTask.Subtasks;
-                    newList.AddRange(subtasks);
-                }
-                else
-                {
-                    newList.Add(topLevelTask);
+                    var subtasks = topLevelTask.Subtasks.ToList();
+
+                    foreach(var subtask in subtasks)
+                    {
+                        newList.Add(subtask);
+
+                        if(subtask.HasSubtasks())
+                        {
+                            var subSubtasks = subtask.Subtasks.ToList();
+
+                            foreach (var subSubtask in subSubtasks)
+                            {
+                                newList.Add(subSubtask);
+                            }
+                        }
+                    }
+
+                    // newList.AddRange(subtasks);
                 }
             }
 
