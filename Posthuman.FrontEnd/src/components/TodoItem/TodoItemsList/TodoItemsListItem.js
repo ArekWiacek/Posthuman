@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { TableRow, TableCell, Typography, IconButton } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -32,6 +33,11 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
         return progressText;
     }
 
+    // const getFontSizeForTodoItemTitle = (nestLevel) => { 
+    //     var titleSizes = { 0: '2rem', 1: '1.3rem', 2: '1rem' };
+    //     return nestLevel < 2 ? titleSizes[nestLevel] : '0.875rem';
+    // };
+
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             {/* <TableCell component="th" scope="row" >
@@ -43,8 +49,10 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                     component="span"
                     sx={{
                         textDecoration: todoItem.isCompleted ? 'line-through' : 'none',
-                        paddingLeft: todoItem.nestingLevel * 2
+                        paddingLeft: todoItem.nestingLevel * 2,
+                        // fontSize: {getFontSizeForTodoItemTitle(todoItem.nestingLevel)}
                     }}>
+                    
                     {todoItem.title}
                 </Typography>
             </TableCell>
@@ -69,25 +77,25 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             <TableCell align="right">
                 <IconButton
                     aria-label="add-subtask"
-                    onClick={(e) => handleAddSubtaskClicked(todoItem)}
+                    onClick={() => handleAddSubtaskClicked(todoItem)}
                     disabled={todoItem.isCompleted}>
                     <AddIcon />
                 </IconButton>
                 <IconButton
                     aria-label="delete-todoitem"
-                    onClick={(e) => handleDeleteClicked(todoItem.id)}
+                    onClick={() => handleDeleteClicked(todoItem.id)}
                     disabled={todoItem.isCompleted}>
                     <DeleteIcon />
                 </IconButton>
                 <IconButton
                     aria-label="edit-subtask"
-                    onClick={(e) => handleEditClicked(todoItem)}
+                    onClick={() => handleEditClicked(todoItem)}
                     disabled={todoItem.isCompleted}>
                     <EditIcon />
                 </IconButton>
                 <IconButton
                     aria-label="todoitem-done"
-                    onClick={(e) => handleDoneClicked(todoItem)}
+                    onClick={() => handleDoneClicked(todoItem)}
                     disabled={todoItem.isCompleted || todoItem.hasUnfinishedSubtasks}>
                     <CheckCircleIcon />
                 </IconButton>

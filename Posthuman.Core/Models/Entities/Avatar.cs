@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace Posthuman.Core.Models.Entities
 {
     /// <summary>
-    /// Represents game player character (hero)
+    /// This class represents game player character (hero)
     /// </summary>
     [Table("Avatars")]
     public class Avatar
@@ -16,14 +16,16 @@ namespace Posthuman.Core.Models.Entities
         public string Name { get; set; }            // User nickname
         public string Bio { get; set; }             // "About" user
         public DateTime CreationDate { get; set; }  // Date when user created account        
-        
-        public int Level { get; set; }              // Avatar level - it grows when gaining experience
-        public int Exp { get; set; }                // Experience points
 
 
         // Temporary value to indicate whether this entity is "current user"
         // This is used to quickly switch between avatars during development
         public bool IsActive { get; set; }          // Is this current user?
+
+
+        public int Level { get; set; }              // Avatar level - it grows when gaining experience
+        public int Exp { get; set; }                // Experience points
+        public int ExpToNewLevel { get; set; }      // When new level will be reached 
 
 
         // Owned Projects
@@ -34,6 +36,13 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual ICollection<TodoItem> TodoItems { get; set; }
 
-        
+
+        // NOT YET SURE... - TEST PROPERTIES :)
+        // Hacker
+        // Wirus
+        // Sztuczna inteligencja
+        // Cyborg itd...
+        public string CybertribeName { get; set; }
+
     }
 }

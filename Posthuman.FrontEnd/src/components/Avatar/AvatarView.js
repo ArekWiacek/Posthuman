@@ -1,79 +1,63 @@
 import * as React from 'react';
-import { Card, CardContent, CardMedia, CardActions, Button, Typography, Grid } from '@mui/material';
+import {
+    Card, CardContent, CardMedia, CardActions, Button,
+    Typography, Divider, Stack, LinearProgress, Box
+} from '@mui/material';
+import { AvatarContext } from "../../App";
+
 
 const AvatarView = ({ avatar }) => {
+    const { activeAvatar } = React.useContext(AvatarContext);
+    const calculateNewLevelProgress = () => { return 67; };
+
     return (
-        // <Grid container spacing={2}>
-        //     <Grid item xs={4}>
-                    <Card sx={{ maxWidth: 345 }}>
-                        <CardMedia
-                            component="img"
-                            height="140"
-                            image="/static/images/cards/contemplative-reptile.jpg"
-                            alt="green iguana"
-                        />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
-                                Lizard
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Lizards are a widespread group of squamate reptiles, with over 6,000
-                                species, ranging across all continents except Antarctica
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button size="small">Share</Button>
-                            <Button size="small">Learn More</Button>
-                        </CardActions>
-                    
+        <Card sx={{ maxWidth: 400 }}>
+            <CardMedia
+                component="img"
+                height="140"
+                image="cyborg_brain.jpg"
+                alt="Cyborg brain" />
+            <CardContent>
+                <Typography gutterBottom variant="h4" component="div">
+                    {avatar.name}
+                </Typography>
+                <Typography variant="h3" component="div">
+                    {avatar.level} lvl
+                </Typography>
 
-                    <CardContent>
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            Your Avatar
-                        </Typography>
-                        <Typography variant="h5" component="div">
-                            {avatar.name}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            CYBORG
-                            {/* TODO - change to some "range" - Neuron ArtificalInteligence etc */}
-                        </Typography>
-                        <Typography variant="body2">
-                            {avatar.bio}
-                        </Typography>
-                    </CardContent>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    spacing={2}>
+                    <Typography>{avatar.exp} XP</Typography>
+                    <Typography>1000 XP</Typography>
+                </Stack>
+                <Box sx={{ width: '100%' }}>
+                    <LinearProgress variant="determinate" value={calculateNewLevelProgress()} />
+                </Box>
+            </CardContent>
 
-                    <CardContent>
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            Level
-                        </Typography>
-                        <Typography variant="h5" component="div">
-                            {avatar.level}
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            (sth about level)
-                        </Typography>
-                        <Typography variant="body2">
-                            Gain exp to reach new level
-                        </Typography>
-                    </CardContent>
+            <Divider />
 
-                    <CardContent>
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                            Experience
-                        </Typography>
-                        <Typography variant="h5" component="div">
-                            {avatar.exp} XP
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            Next level
-                        </Typography>
-                        <Typography variant="body2">
-                            {avatar.exp} / 1000
-                            {/* TODO - add calculating xp needed to reach new level */}
-                        </Typography>
-                    </CardContent>
-                </Card>
+            <CardContent>
+                <Typography variant="body2" color="text.secondary">XXX XP gained this week</Typography>
+                <Typography variant="body2" color="text.secondary">YYY XP gained last week</Typography>
+            </CardContent>
+
+            <Divider />
+
+            <CardContent>
+                <Typography variant="h5" component="div">
+                    Cyborg
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {avatar.bio ? avatar.bio : ''}
+                    Cyborg is a futuristic fusion of cybernetic and organism-like being,
+                    with both organic and biomechatronic body parts.
+                </Typography>
+            </CardContent>
+        </Card>
     );
 }
 

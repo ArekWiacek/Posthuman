@@ -120,7 +120,7 @@ const TodoPage = () => {
             <Grid item xs={12}>
                 <TodoItemList
                     todoItems={todoItems}
-                    onTodoItemDelet={handleTodoItemDelete}
+                    onTodoItemDelete={handleTodoItemDelete}
                     onTodoItemEdit={handleTodoItemEdit}
                     onTodoItemDone={handleTodoItemCompleted}
                     onAddSubtask={handleSubtaskCreate}
