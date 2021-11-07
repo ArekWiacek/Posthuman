@@ -1,18 +1,5 @@
 import axios from 'axios';
-import { LogT, LogI, LogW, LogE } from './Utilities';
-
-
-class RequestType {
-    static Get = 0;
-    static Put = 1;
-    static Post = 2;
-    static Delete = 3;
-
-    static get GET() { return this.Get; }
-    static get PUT() { return this.Put; }
-    static get POST() { return this.Post; }
-    static get DELETE() { return this.Delete; }
-}
+import { LogE } from './Utilities';
 
 const ApiUrl = "https://localhost:7201/api/";
 

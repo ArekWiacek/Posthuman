@@ -1,27 +1,19 @@
 import * as React from 'react';
-import { Box, TextField, Button, MenuItem, Typography, IconButton, TableRow, TableCell } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-
-import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-
+import { TextField, IconButton, TableRow, TableCell } from '@mui/material';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { AvatarContext } from "../../../App";
-import { LogI, LogW } from '../../../Utilities/Utilities';
 
-const CreateTodoItemInline = ({ parentTask, onCreate, onDiscard }) => {
+const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
     const { activeAvatar } = React.useContext(AvatarContext);
-    const [title, setTitle] = React.useState("");
+    const [title, setTitle] = React.useState('');
 
+    const handleDiscardClicked = () => onDiscard();
     const handleTitleChange = event => setTitle(event.target.value);
-    
-    const handleCreateClicked = (parent) => {
-        if (title === "") {
-            LogW("Cannot create TodoItem - title not provided");
-            return;
-        }
+    const paddingLeftPx = (parentTodoItem.nestingLevel + 1) * 2;
 
-        if (activeAvatar == null || activeAvatar.id == 0) {
-            LogW("Cannot create TodoItem - active avatar unknown");
+    const createSubtask = (parent) => {
+        if (title === '' || activeAvatar === null || activeAvatar.id === 0) {
             return;
         }
 
@@ -29,51 +21,65 @@ const CreateTodoItemInline = ({ parentTask, onCreate, onDiscard }) => {
             title: title,
             description: '',
             deadline: parent.deadline,
-            projectId: parent.projectId != 0 ? parent.projectId : null,
+            projectId: parent.projectId !== 0 ? parent.projectId : null,
             parentId: parent.id,
             avatarId: activeAvatar.id,
             nestingLevel: parent.nestingLevel + 1
         }
 
         onCreate(newSubtask);
-    };
 
-    const handleDiscardClicked = () => {
-        onDiscard();
-    };
+        setTitle('');
+    }
+
+    const handleCreateClicked = (parent) => {
+        createSubtask(parent);
+    }
+
+    const handleKeyDown = (event, parentTodoItem) => {
+        switch (event.key) {
+            case 'Enter':
+                createSubtask(parentTodoItem);
+                break;
+
+            case 'Escape':
+                onDiscard();
+                break;
+
+            default:
+                break;
+        }
+    }
 
     return (
-        <TableRow key={"subtask_of_" + parentTask.id}>
-            <TableCell component="th" scope="row">
-                {/* Parent: {parentTask.id} */}
-            </TableCell>
-
-            <TableCell component="th" scope="row" colSpan={7}>
+        <TableRow>
+            <TableCell component="th" scope="row" colSpan={4}>
                 <TextField
-                    id="title"
-                    label="Title"
-                    variant="outlined"
+                    variant="standard"
+                    margin="dense" size="small"
+                    placeholder="Type subtask title"
                     value={title}
                     onChange={handleTitleChange}
-                    sx={{width: '100%'}}
-                    required 
-                    autoFocus />
-            </TableCell>
-
-            <TableCell align="right">
-                <IconButton
-                    aria-label="add-subtask"
-                    onClick={() => handleCreateClicked(parentTask)}>
-                    <AddIcon />
-                </IconButton>
-                <IconButton
-                    aria-label="discard-subtask"
-                    onClick={() => handleDiscardClicked()}>
-                    <DeleteIcon />
-                </IconButton>
+                    required autoFocus fullWidth
+                    sx={{ minWidth: '600px', paddingRight: '80px', paddingLeft: paddingLeftPx }}
+                    onKeyDown={(e) => handleKeyDown(e, parentTodoItem)}
+                    InputProps={{
+                        endAdornment:
+                            <React.Fragment>
+                                <IconButton
+                                    aria-label="exit-subtask-creation"
+                                    onClick={() => handleDiscardClicked()}>
+                                    <CancelIcon />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="subtask-create"
+                                    onClick={() => handleCreateClicked(parentTodoItem)}>
+                                    <ControlPointIcon />
+                                </IconButton>
+                            </React.Fragment>
+                    }} />
             </TableCell>
         </TableRow>
-
     );
 }
 

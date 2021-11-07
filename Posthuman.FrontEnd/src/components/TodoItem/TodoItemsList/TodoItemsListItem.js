@@ -11,22 +11,22 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
     const handleAddSubtaskClicked = todoItem => onAddSubtaskClicked(todoItem);
-    
+
     const createRewardDisplayText = () => { return "+20XP"; }
 
     const createParentProjectDisplayText = (todoItem) => {
-         return todoItem.projectId ? ("ID: " + todoItem.projectId) : "-";
+        return todoItem.projectId ? ("ID: " + todoItem.projectId) : "-";
     }
 
     const createProgressText = (todoItem) => {
         var progressText = "";
 
-        if(todoItem.hasSubtasks) {
+        if (todoItem.hasSubtasks) {
             var progressPercentage = Math.round((todoItem.finishedSubtasksCount / todoItem.subtasksCount) * 100);
             progressText = todoItem.finishedSubtasksCount + " / " + todoItem.subtasksCount + " (" + progressPercentage + "%)";
         }
         else {
-            todoItem.isCompleted ? progressText = "Done!" : progressText = "Not completed"; 
+            todoItem.isCompleted ? progressText = "Done!" : progressText = "Not completed";
         }
 
         return progressText;
@@ -34,14 +34,15 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
 
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-            <TableCell component="th" scope="row" >
+            {/* <TableCell component="th" scope="row" >
                 {todoItem.id}
-            </TableCell>
+            </TableCell> */}
+            
             <TableCell component="th" scope="row" >
                 <Typography
                     component="span"
                     sx={{
-                        textDecoration: todoItem.isCompleted ? 'line-through' : 'none', 
+                        textDecoration: todoItem.isCompleted ? 'line-through' : 'none',
                         paddingLeft: todoItem.nestingLevel * 2
                     }}>
                     {todoItem.title}
@@ -50,7 +51,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             <TableCell align="left">
                 <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment>
             </TableCell>
-            <TableCell align="left">
+            {/* <TableCell align="left">
                 <Moment format="dddd">{todoItem.deadline}</Moment>
             </TableCell>
             <TableCell align="right">
@@ -61,7 +62,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             </TableCell>
             <TableCell align="right">
                 {todoItem.parentId != null ? todoItem.parentId : "-"}
-            </TableCell>
+            </TableCell> */}
             <TableCell align="right">
                 {createProgressText(todoItem)}
             </TableCell>

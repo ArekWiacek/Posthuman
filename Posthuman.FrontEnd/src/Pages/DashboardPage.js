@@ -235,7 +235,7 @@ const DashboardPage = () => {
         </Grid>
 
         {/* TODO ITEM CREATE / EDIT */}
-        <Grid item xs={12} md={4} lg={3}>
+        {/* <Grid item xs={12} md={4} lg={3}>
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             {
               isTaskInEditMode ?
@@ -248,7 +248,7 @@ const DashboardPage = () => {
                   <CreateTodoItem onCreateTodoItem={handleTodoItemCreated} projects={projects} />)
             }
           </Paper>
-        </Grid>
+        </Grid> */}
 
         {/* SELECT AVATAR */}
         <Grid item xs={12} md={4} lg={3}>

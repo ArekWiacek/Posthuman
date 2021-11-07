@@ -1,24 +1,18 @@
 import * as React from 'react';
-
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField, MenuItem } from '@mui/material';
-
-import { ApiUrl, LogT, LogI, LogW, LogE } from '../../Utilities/Utilities';
+import { LogT } from '../../Utilities/Utilities';
 import { AvatarContext } from '../../App';
 import { ApiGet, ApiPut } from '../../Utilities/ApiRepository';
 
-// Component allows to select current user (stub until authentication is implemented)
+// This component allows to select current user from dropdown (stub until authentication is implemented)
 const SelectAvatar = () => {
-    LogT("SelectAvatar.Constructor");
-
     const { activeAvatar, setActiveAvatar } = React.useContext(AvatarContext);
     const [avatars, setAvatars] = React.useState([]);
 
     const handleAvatarChange = (event) => {
-        LogT("SelectAvatar.handleAvatarChange - ID: " + event.target.value);
-
         var selectedId = event.target.value;
 
         ApiPut("Avatars/SetActiveAvatar", selectedId, null, data => {
@@ -33,7 +27,7 @@ const SelectAvatar = () => {
 
     React.useEffect(() => {
         ApiGet("Avatars", data => setAvatars(data));
-    }, [])
+    }, []);
 
     return (
         <Card sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>

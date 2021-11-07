@@ -21,7 +21,7 @@ const EditProject = ({ currentProject, onSaveChanges, onCancelEdit }) => {
             return;
         }
 
-        if (project.avatarId == null || project.avatarId == 0) {
+        if (project.avatarId === null || project.avatarId === 0) {
             LogW("Cannot save Project - active Avatar unknown");
             return;
         }

@@ -1,11 +1,32 @@
 import * as React from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Card, CardContent, CardMedia, CardActions, Button, Typography, Grid } from '@mui/material';
 
 const AvatarView = ({ avatar }) => {
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={4}>
-                <Card >
+        // <Grid container spacing={2}>
+        //     <Grid item xs={4}>
+                    <Card sx={{ maxWidth: 345 }}>
+                        <CardMedia
+                            component="img"
+                            height="140"
+                            image="/static/images/cards/contemplative-reptile.jpg"
+                            alt="green iguana"
+                        />
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="div">
+                                Lizard
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Lizards are a widespread group of squamate reptiles, with over 6,000
+                                species, ranging across all continents except Antarctica
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Share</Button>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    
+
                     <CardContent>
                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                             Your Avatar
@@ -14,20 +35,14 @@ const AvatarView = ({ avatar }) => {
                             {avatar.name}
                         </Typography>
                         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            Rookie 
+                            CYBORG
                             {/* TODO - change to some "range" - Neuron ArtificalInteligence etc */}
                         </Typography>
                         <Typography variant="body2">
                             {avatar.bio}
                         </Typography>
                     </CardContent>
-                    {/* <CardActions>
-                        <Button size="small">Edit details</Button>
-                    </CardActions> */}
-                </Card>
-            </Grid>
-            <Grid item xs={4}>
-                <Card >
+
                     <CardContent>
                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                             Level
@@ -42,10 +57,7 @@ const AvatarView = ({ avatar }) => {
                             Gain exp to reach new level
                         </Typography>
                     </CardContent>
-                </Card>
-            </Grid>
-            <Grid item xs={4}>
-                <Card >
+
                     <CardContent>
                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                             Experience
@@ -62,8 +74,6 @@ const AvatarView = ({ avatar }) => {
                         </Typography>
                     </CardContent>
                 </Card>
-            </Grid>
-        </Grid>
     );
 }
 

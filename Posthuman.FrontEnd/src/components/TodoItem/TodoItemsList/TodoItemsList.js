@@ -5,38 +5,27 @@ import TodoItemsListItem from './TodoItemsListItem';
 import TodoItemsListFooter from './TodoItemsListFooter';
 import CreateTodoItemInline from './CreateTodoItemInline';
 
-const TodoItemsList = ({ todoItems, onTodoItemDeleted, onTodoItemEdited, onTodoItemDone, onAddSubtask }) => {
+// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask }) => {
     const [isDensePadding, setIsDensePadding] = React.useState(true);
     const [showFinished, setShowFinished] = React.useState(false);
-
     const [parentId, setParentId] = React.useState(0);
     
-    const handleTodoItemDeleted = todoItemId => onTodoItemDeleted(todoItemId);
-    const handleTodoItemEdit = todoItem => onTodoItemEdited(todoItem);
+    const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
+    const handleTodoItemEdit = todoItem => onTodoItemEdit(todoItem);
     const handleTodoItemDone = todoItem => onTodoItemDone(todoItem);
+    const handleAddSubtask = todoItem => setParentId(todoItem.id);
+    const handleDiscardSubtask = () => setParentId(0);
+    const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
 
-    const handleAddSubtask = todoItem => setParentId(todoItem.id); //todoItem => onAddSubtask(todoItem);
-
-    const handleDiscardSubtask = () => {
-        setParentId(0);
-    };
-
-    const handleCreateSubtask = newSubtask => {
-        onAddSubtask(newSubtask);
-        setParentId(0);
-    };
-
-    const handleDensePaddingChecked = (isChecked) => {
-        setIsDensePadding(isChecked);
-    };
-
-    const handleShowFinishedChecked = (isChecked) => {
-        setShowFinished(isChecked);
-    };
-
-    const renderCreateSubtaskInline = (todoItem) => {
+    const handleDensePaddingChecked = (isChecked) => setIsDensePadding(isChecked);
+    const handleShowFinishedChecked = (isChecked) => setShowFinished(isChecked);
+    
+    const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id == parentId) {
-            return <CreateTodoItemInline key={'createSubtaskFor_' + todoItem.id} parentTask={todoItem} onCreate={handleCreateSubtask} onDiscard={handleDiscardSubtask} />;
+            return <CreateTodoItemInline parentTodoItem={todoItem} onCreate={handleCreateSubtask} onDiscard={handleDiscardSubtask} />;
         }
     };
 
@@ -48,7 +37,6 @@ const TodoItemsList = ({ todoItems, onTodoItemDeleted, onTodoItemEdited, onTodoI
                 <TableBody>
                     {todoItems.map((todoItem) => {
                         if (!showFinished && todoItem.isCompleted) {
-
                         }
                         else {
                             return (
@@ -56,12 +44,12 @@ const TodoItemsList = ({ todoItems, onTodoItemDeleted, onTodoItemEdited, onTodoI
                                     <TodoItemsListItem
                                         todoItem={todoItem}
                                         onAddSubtaskClicked={handleAddSubtask}
-                                        onDeleteClicked={handleTodoItemDeleted}
+                                        onDeleteClicked={handleTodoItemDelete}
                                         onDoneClicked={handleTodoItemDone}
                                         onEditClicked={handleTodoItemEdit}
                                     />
 
-                                    {renderCreateSubtaskInline(todoItem)}
+                                    {renderCreateSubtaskInlineComponent(todoItem)}
                                 </React.Fragment>
                             )
                         }

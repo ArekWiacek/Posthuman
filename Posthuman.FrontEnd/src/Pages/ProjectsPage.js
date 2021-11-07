@@ -6,10 +6,8 @@ import CreateProject from '../components/Project/CreateProject';
 import EditProject from '../components/Project/EditProject';
 import ProjectView from '../components/Project/ProjectView';
 import ProjectsList from '../components/Project/ProjectsList';
-import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 import { AvatarContext } from "../App";
-import { LogT, LogI, LogE } from '../Utilities/Utilities';
 import { CreateDummyProject, CreateDummyProjects } from '../Utilities/DummyObjects';
 
 import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
