@@ -49,9 +49,18 @@ const RemoveObjectFromArray = (array, property, value) => {
 
 // Inserts object to array at given index
 // Returns array copy
-const InsertObjectAtIndex = (array, object, index) => {
-    var arrayCopy = CreateArrayCopy(array);
-    return arrayCopy.splice(index, 0, object);
+const InsertObjectAtIndex = (sourceArray, objectToInsert, index) => {
+    var arrayCopy = CreateArrayCopy(sourceArray);
+    arrayCopy.splice(index, 0, objectToInsert);
+    return arrayCopy;
+};
+
+// Inserts object at the end of array
+// Returns array copy
+const InsertObject = (sourceArray, objectToInsert) => {
+    var arrayCopy = CreateArrayCopy(sourceArray);
+    arrayCopy = [...arrayCopy, objectToInsert];
+    return arrayCopy;
 };
 
 // Returns exact copy of given object
@@ -59,7 +68,8 @@ const CreateObjectCopy = (object) => {
 };
 
 // Returns copy of object with modified property 
-const UpdateObjectProperty = (object, property, value) => {
+const UpdateObjectProperty = (sourceObject, property, value) => {
+    return { ...sourceObject, [property]: value };
 };
 
 // Replaces first object in array that has the same 'property' value
@@ -91,6 +101,7 @@ export {
 
     ReplaceObjectInArray,
     FindObjectIndexByProperty, 
+    InsertObject,
     InsertObjectAtIndex, 
     RemoveObjectFromArray 
 }
