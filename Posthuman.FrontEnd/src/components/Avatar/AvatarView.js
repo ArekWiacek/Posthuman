@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 
-
 const AvatarView = ({ avatar }) => {
     return (
         <Grid container spacing={2}>

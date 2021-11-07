@@ -33,7 +33,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
     }
 
     return (
-        <TableRow key={todoItem.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell component="th" scope="row" >
                 {todoItem.id}
             </TableCell>

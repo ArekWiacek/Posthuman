@@ -10,16 +10,13 @@ import EditTodoItem from '../components/TodoItem/EditTodoItem';
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
 
 import ConfirmTodoItemDoneModal from '../components/Modal/ConfirmTodoItemDoneModal';
-// import ModalWindow from '../components/Modal/ModalWindow';
-// import Wizard from '../components/Wizard/Wizard';
-// import StepperWizard from '../components/StepperWizard/StepperWizard';
 
 import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
 
 import Slide from '@mui/material/Slide';
 
-import { Modal, Typography, Box } from '@mui/material';
 import { LogI } from '../Utilities/Utilities';
+import { FindObjectIndexByProperty, CreateArrayCopy, InsertObjectAtIndex, ReplaceObjectInArray, RemoveObjectFromArray } from '../Utilities/ArrayHelper';
 
 function todoItemFormInitialValues() {
     return {
@@ -63,13 +60,12 @@ const TodoPage = () => {
 
     const handleTodoItemDeleted = (todoItemId) => {
         ApiDelete("TodoItems", todoItemId, (data) => {
-            const todoItemsList = todoItems.filter((todoItem) => todoItem.id !== todoItemId);
-            setTodoItems(todoItemsList);
+            setTodoItems(RemoveObjectFromArray(todoItems, "id", todoItemId));
         });
     }
 
-    const handleTodoItemDone = (completedTodoItem) => {
-        const task = {...completedTodoItem};
+    const handleTodoItemDone = (todoItemToComplete) => {
+        const task = {...todoItemToComplete};
         setTaskToComplete(task);
         setShowDoneConfirmModal(true);
     }
@@ -79,18 +75,18 @@ const TodoPage = () => {
         setCurrentTodoItem(todoItemFormInitialValues());
     }
 
-    const handleAddSubtask = (task) => {
-        setParentId(task.id);
-        // ToDo - set also parent project
-    }
+
+    const handleAddSubtask = (newSubtask) => {
+        ApiPost("TodoItems", newSubtask, (createdSubtask) => {
+            var parentTodoItemIndex = FindObjectIndexByProperty(todoItems, "id", newSubtask.parentId);
+            createdSubtask.nestingLevel = newSubtask.nestingLevel;                                          // Todo - find out why not calculating correctly
+            setTodoItems(InsertObjectAtIndex(todoItems, createdSubtask, parentTodoItemIndex));
+        });
+    };
 
     const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
-        ApiPut("TodoItems", editedTodoItemId, editedTodoItem, (data) => {
-            const updatedTodoItemList = todoItems.map((todoItem) =>
-                todoItem.id === editedTodoItemId ? editedTodoItem : todoItem
-            );
-
-            setTodoItems(updatedTodoItemList);
+        ApiPut("TodoItems", editedTodoItemId, editedTodoItem, () => {
+            setTodoItems(ReplaceObjectInArray(todoItems, editedTodoItem, "id", editedTodoItemId));
             setIsTodoItemInEditMode(false);
             setCurrentTodoItem(todoItemFormInitialValues());
         });
@@ -101,8 +97,6 @@ const TodoPage = () => {
     }, [activeAvatar]);
 
     React.useEffect(() => {
-        //ApiGet("TodoItems", todoItems => setTodoItems(todoItems));
-
         ApiGet("TodoItems/Hierarchical", todoItems => setTodoItems(todoItems));
     }, [activeAvatar]);
 
@@ -118,6 +112,8 @@ const TodoPage = () => {
     const handleFinishedModal = () => {
         setShowDoneConfirmModal(false);
 
+        // Update
+
         const completedTodoItem = {...taskToComplete};
         completedTodoItem.isCompleted = true;
 
@@ -131,7 +127,6 @@ const TodoPage = () => {
     };
 
     const handleCloseModal = () => {
-        LogI("Modal closed");
         setShowDoneConfirmModal(false);
     };
 

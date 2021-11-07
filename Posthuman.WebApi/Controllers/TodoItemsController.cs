@@ -5,7 +5,6 @@ using Posthuman.Core.Models.DTO;
 
 namespace PosthumanWebApi.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class TodoItemsController : ControllerBase
