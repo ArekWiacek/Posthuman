@@ -19,14 +19,16 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string Bio { get; set; }
+        public bool IsActive { get; set; }
+
         public int Level { get; set; }
         public int Exp { get; set; }
-
+        public int ExpToNewLevel { get; set; }    
+        
         public int ProjectsCount { get; set; }
         public int TasksCount { get; set; }
-
         public int DaysAlive { get; set; }
 
-        public bool IsActive { get; set; }
+        public string CybertribeName { get; set; }
     }
 }

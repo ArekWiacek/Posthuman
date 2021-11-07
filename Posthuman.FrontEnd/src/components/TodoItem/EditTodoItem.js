@@ -28,18 +28,12 @@ const EditTodoItem = ({ currentTodoItem, onSaveChanges, onCancelEdit, projects, 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (todoItem.title === "" || todoItem.deadline === null) {
-            LogW("Cannot edit TodoItem - title or deadline not provided");
-            return;
-        }
-
-        if (todoItem.avatarId == null || todoItem.avatarId == 0) {
-            LogW("Cannot edit TodoItem - active avatar unknown");
+        if (todoItem.title === "" || todoItem.avatarId == null || todoItem.avatarId == 0) {
             return;
         }
 
         // "Select" form control uses 0 as "not-selected"
-        // Backend model uses "null", so quick convert: 
+        // Backend model uses "null", so needs to be converted: 
         if (todoItem.projectId == 0) {
             todoItem.projectId = null;
         }

@@ -25,7 +25,7 @@ namespace Posthuman.Core.Models.Entities
             this.RelatedEntityType = relatedEntityType;
             this.RelatedEntityId = relatedEntityId;
 
-            this.ExpGained = ExpReward[type];
+            //this.ExpGained = ExpReward[type];
         }
 
         [Key]
@@ -43,21 +43,5 @@ namespace Posthuman.Core.Models.Entities
         public int? RelatedEntityId { get; set; }
         
         public int ExpGained { get; set; }              // How much XP user gained from this action
-
-        // Exp points rewards for different events
-        private Dictionary<EventType, int> ExpReward = new Dictionary<EventType, int>()
-        {
-            { EventType.None, 0 },
-
-            { EventType.TodoItemCreated, 10 },
-            { EventType.TodoItemDeleted, -10 },
-            { EventType.TodoItemModified, 0 },
-            { EventType.TodoItemCompleted, 30 },
-
-            { EventType.ProjectCreated, 30 },
-            { EventType.ProjectDeleted, -30 },
-            { EventType.ProjectModified, 0 },
-            { EventType.ProjectFinished, 100 }
-        };
     }
 }

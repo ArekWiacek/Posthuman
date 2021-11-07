@@ -3,7 +3,7 @@ import { Table, TableContainer, TableBody, Paper } from '@mui/material';
 import TodoItemsListHeader from './TodoItemsListHeader';
 import TodoItemsListItem from './TodoItemsListItem';
 import TodoItemsListFooter from './TodoItemsListFooter';
-import CreateTodoItemInline from './CreateTodoItemInline';
+import CreateTodoItemInline from '../CreateTodoItemInline';
 
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';

@@ -7,10 +7,12 @@ using Posthuman.Core.Services;
 
 namespace Posthuman.Services
 {
-    public class TodoItemsService : ITodoItemsService
+    public partial class TodoItemsService : ITodoItemsService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+
+        private ExperienceManager expManager;
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
@@ -18,6 +20,8 @@ namespace Posthuman.Services
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+
+            expManager = new ExperienceManager();
         }
 
         public async Task<TodoItemDTO> GetTodoItemById(int id)
@@ -26,7 +30,6 @@ namespace Posthuman.Services
 
             return mapper.Map<TodoItemDTO>(todoItem);
         }
-        
         public async Task<TodoItemDTO> CreateTodoItem(TodoItemDTO newTodoItemDTO)
         {
             var newTodoItem = mapper.Map<TodoItem>(newTodoItemDTO);
@@ -37,7 +40,7 @@ namespace Posthuman.Services
                 throw new Exception();
 
             // Set owner Avatar
-            var ownerAvatar = await 
+            var ownerAvatar = await
                 unitOfWork
                 .Avatars
                 .GetByIdAsync(newTodoItemDTO.AvatarId);
@@ -46,7 +49,7 @@ namespace Posthuman.Services
                 newTodoItem.Avatar = ownerAvatar;
 
             // Has parent todo item?
-            if(newTodoItem != null && newTodoItem.ParentId.HasValue)
+            if (newTodoItem != null && newTodoItem.ParentId.HasValue)
             {
                 var parentTodoItem = await unitOfWork.TodoItems.GetByIdAsync(newTodoItem.ParentId.Value);
                 if (parentTodoItem == null)
@@ -56,14 +59,14 @@ namespace Posthuman.Services
             }
 
             // New TodoItem has parent Project selected - so update subtasks counter 
-            if(newTodoItem.ProjectId != null && newTodoItem.ProjectId.Value != 0)
+            if (newTodoItem.ProjectId != null && newTodoItem.ProjectId.Value != 0)
             {
-                var parentProject = await 
+                var parentProject = await
                     unitOfWork
                     .Projects
                     .GetByIdAsync(newTodoItem.ProjectId.Value);
 
-                if(parentProject != null)
+                if (parentProject != null)
                 {
                     parentProject.TotalSubtasks += 1;
                 }
@@ -73,15 +76,17 @@ namespace Posthuman.Services
             await unitOfWork.CommitAsync();
 
             var todoItemCreatedEvent = new EventItem(
-                ownerAvatar.Id, 
-                EventType.TodoItemCreated, 
-                DateTime.Now, 
-                EntityType.TodoItem, 
+                ownerAvatar.Id,
+                EventType.TodoItemCreated,
+                DateTime.Now,
+                EntityType.TodoItem,
                 newTodoItem.Id);
 
-            await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
+            var experienceForEvent = expManager.CalculateExperienceForEvent(todoItemCreatedEvent, null);
+            ownerAvatar.Exp += experienceForEvent;
+            todoItemCreatedEvent.ExpGained = experienceForEvent;
 
-            ownerAvatar.Exp += todoItemCreatedEvent.ExpGained;
+            await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
 
             await unitOfWork.CommitAsync();
 
@@ -184,7 +189,7 @@ namespace Posthuman.Services
 
         public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
         {
-            if(todoItemDTO != null && todoItemDTO.Id != 0)
+            if (todoItemDTO != null && todoItemDTO.Id != 0)
             {
                 var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
 
@@ -216,23 +221,23 @@ namespace Posthuman.Services
                     }
 
                     var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-                    if(ownerAvatar == null)
+                    if (ownerAvatar == null)
                     {
                         throw new Exception($"Task owner (Avatar of ID: {ownerAvatar.Id}) could not be found");
                     }
 
                     // Assign parent todo item
-                    if(todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
+                    if (todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
                     {
                         var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
                         todoItem.Parent = parentTask;
                     }
 
                     var todoItemModifiedEvent = new EventItem(
-                        ownerAvatar.Id, 
-                        EventType.TodoItemModified, 
-                        DateTime.Now, 
-                        EntityType.TodoItem, 
+                        ownerAvatar.Id,
+                        EventType.TodoItemModified,
+                        DateTime.Now,
+                        EntityType.TodoItem,
                         todoItem.Id);
 
                     await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
@@ -255,10 +260,10 @@ namespace Posthuman.Services
                         // Add event of completion
 
                         var todoItemCompletedEvent = new EventItem(
-                            ownerAvatar.Id, 
-                            EventType.TodoItemCompleted, 
-                            DateTime.Now, 
-                            EntityType.TodoItem, 
+                            ownerAvatar.Id,
+                            EventType.TodoItemCompleted,
+                            DateTime.Now,
+                            EntityType.TodoItem,
                             todoItem.Id);
                         await unitOfWork.EventItems.AddAsync(todoItemCompletedEvent);
 

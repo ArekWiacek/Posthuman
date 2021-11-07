@@ -1,14 +1,17 @@
 import * as React from 'react';
 import {
-    Card, CardContent, CardMedia, CardActions, Button,
-    Typography, Divider, Stack, LinearProgress, Box
-} from '@mui/material';
+    Card, CardContent, CardMedia, Typography, 
+    Divider, Stack, LinearProgress, Box } from '@mui/material';
 import { AvatarContext } from "../../App";
 
 
 const AvatarView = ({ avatar }) => {
     const { activeAvatar } = React.useContext(AvatarContext);
-    const calculateNewLevelProgress = () => { return 67; };
+
+    const calculateNewLevelProgress = () => {
+        var levelProgress = (activeAvatar.exp / activeAvatar.expToNewLevel) * 100;
+        return Math.round(levelProgress);
+    }
 
     return (
         <Card sx={{ maxWidth: 400 }}>
@@ -41,8 +44,8 @@ const AvatarView = ({ avatar }) => {
             <Divider />
 
             <CardContent>
-                <Typography variant="body2" color="text.secondary">XXX XP gained this week</Typography>
-                <Typography variant="body2" color="text.secondary">YYY XP gained last week</Typography>
+                <Typography variant="body2" color="text.secondary">325 XP gained this week</Typography>
+                <Typography variant="body2" color="text.secondary">120 XP gained last week</Typography>
             </CardContent>
 
             <Divider />

@@ -45,34 +45,21 @@ namespace Posthuman.Core.Models.Entities
         public virtual Project Project { get; set; }
 
 
-        public bool IsTopLevel()
-        {
-            return ParentId == null;
-        }
-
-        public bool HasSubtasks()
-        {
-            return Subtasks != null && Subtasks.Count > 0;
-        }
-
-        public bool HasUnfinishedSubtasks()
-        {
-            return FinishedSubtasksCount() < SubtasksCount();
-        }
-
+        public bool IsTopLevel() =>  ParentId == null;
+        public bool HasSubtasks() => Subtasks != null && Subtasks.Count > 0;
+        public bool HasUnfinishedSubtasks() => FinishedSubtasksCount() < SubtasksCount();
         public int SubtasksCount()
         {
             if (!HasSubtasks())
                 return 0;
             else
             {
+                //var subtasksSum = Subtasks.Count;
+                //subtasksSum = Subtasks.Sum(s => s.SubtasksCount());
+
                 var count = Subtasks.Count;
-
                 foreach (var subtask in Subtasks)
-                {
                     count += subtask.SubtasksCount();
-                }
-
                 return count;
             }
         }
@@ -84,20 +71,16 @@ namespace Posthuman.Core.Models.Entities
             else
             {
                 var count = Subtasks.Where(s => s.IsCompleted).Count();
-
                 foreach(var subtask in Subtasks)
-                {
                     count += subtask.FinishedSubtasksCount();
-                }
-
                 return count;
             }
         }
 
+        // Indicates how deep in tasks hierarchy this todo item is
         public int NestingLevel()
         {
             int level = 0;
-
             if (!IsTopLevel())
             {
                 var parent = this.Parent;
@@ -107,7 +90,6 @@ namespace Posthuman.Core.Models.Entities
                     level++;
                 }
             }
-
             return level;
         }
     }

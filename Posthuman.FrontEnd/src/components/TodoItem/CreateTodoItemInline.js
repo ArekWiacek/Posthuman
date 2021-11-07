@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextField, IconButton, TableRow, TableCell } from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { AvatarContext } from "../../../App";
+import { AvatarContext } from "../../App";
 
 const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
     const { activeAvatar } = React.useContext(AvatarContext);
@@ -28,7 +28,6 @@ const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
         }
 
         onCreate(newSubtask);
-
         setTitle('');
     }
 
