@@ -14,7 +14,7 @@ namespace Posthuman.Data.Configurations
             builder
                 .Property(ti => ti.Title)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(150);
 
             builder
                 .HasOne(ti => ti.Project)

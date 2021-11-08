@@ -16,7 +16,7 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId}) 
 
     const handleTitleChange = event => setTitle(event.target.value);
     const handleDescriptionChange = event => setDescription(event.target.value);
-    const handleDeadlineChange = newValue => setDeadline(newValue.toDate());
+    const handleDeadlineChange = newValue => newValue ? setDeadline(newValue.toDate()) : setDeadline(null);
     const handleProjectIdChange = event => setProjectId(event.target.value);
     const handleParentIdChange = event => setParentId(event.target.value);
 
@@ -54,9 +54,6 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId}) 
 
         setTitle("");
         setDescription("");
-        setDeadline(new Date());
-        setParentId(0);
-        // setProjectId(0);         // Resetting project id turned off to easier add subtasks one by one to project 
     }
 
     return (

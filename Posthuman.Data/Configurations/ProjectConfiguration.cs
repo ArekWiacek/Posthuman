@@ -14,7 +14,7 @@ namespace Posthuman.Data.Configurations
             builder
                 .Property(p => p.Title)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.ToTable("Projects");
         }

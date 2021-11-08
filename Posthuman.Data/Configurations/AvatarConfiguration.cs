@@ -11,16 +11,7 @@ namespace Posthuman.Data.Configurations
             builder
                 .HasKey(p => p.Id);
 
-            
-
-            //builder
-            ///    .HasOne(ti => ti.Project)
-            //    .WithMany(p => p.TodoItems)
-            //    .HasForeignKey(ti => ti.ProjectId);
-
             builder.ToTable("Projects");
-                
-               // .UseIdentityColumn();
         }
     }
 }
