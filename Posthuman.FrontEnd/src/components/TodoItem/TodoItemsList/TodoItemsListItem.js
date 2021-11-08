@@ -7,6 +7,15 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddIcon from '@mui/icons-material/Add';
 import Moment from 'react-moment';
 
+const renderCreateSubtaskInlineComponent = (date) => {
+    if (date != null && date != undefined) {
+        return <Moment format="DD.MM.YYYY">{date}</Moment>;
+    } else {
+        return <div>'guuuuuuuuuuuuuuffj'</div>;
+    }
+};
+
+
 const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked }) => {
     const handleDeleteClicked = todoItemId => onDeleteClicked(todoItemId);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
@@ -33,26 +42,26 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
         return progressText;
     }
 
-    // const getFontSizeForTodoItemTitle = (nestLevel) => { 
-    //     var titleSizes = { 0: '2rem', 1: '1.3rem', 2: '1rem' };
-    //     return nestLevel < 2 ? titleSizes[nestLevel] : '0.875rem';
-    // };
-
+    
+    function getFontSizeForTodoItemTitle(nestingLevel) { 
+         var titleSizes = { 0: '1.3rem', 1: '1.2rem', 2: '1.1rem' };
+         if(nestingLevel < 2) {
+            return titleSizes[nestingLevel];
+        } else {
+            return '1rem';
+        }
+    }
+    
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-            {/* <TableCell component="th" scope="row" >
-                {todoItem.id}
-            </TableCell> */}
-            
             <TableCell component="th" scope="row" >
                 <Typography
                     component="span"
                     sx={{
                         textDecoration: todoItem.isCompleted ? 'line-through' : 'none',
                         paddingLeft: todoItem.nestingLevel * 2,
-                        // fontSize: {getFontSizeForTodoItemTitle(todoItem.nestingLevel)}
+                        fontSize: getFontSizeForTodoItemTitle(todoItem.nestingLevel)
                     }}>
-                    
                     {todoItem.title}
                 </Typography>
             </TableCell>
