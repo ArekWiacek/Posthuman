@@ -1,11 +1,13 @@
 ﻿using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace Posthuman.Services
 {
     public class ExperienceManager
     {
-        private readonly Random random = new();
+        private readonly Random random = new Random();
 
         public ExperienceManager()
         {
@@ -66,7 +68,7 @@ namespace Posthuman.Services
         }
 
         // Exp points for different events
-        private Dictionary<EventType, int> BaseExpRewards = new()
+        private Dictionary<EventType, int> BaseExpRewards = new Dictionary<EventType, int>()
         {
             { EventType.None, 0 },
 
@@ -83,7 +85,7 @@ namespace Posthuman.Services
         };
 
         // Exp points for minor details like editions etc
-        private Dictionary<SubeventType, int> SubeventExpRewards = new()
+        private Dictionary<SubeventType, int> SubeventExpRewards = new Dictionary<SubeventType, int>()
         {
             { SubeventType.TodoItemDescriptionAdded, 2 },
             { SubeventType.TodoItemDeadlineAdded, 2 },

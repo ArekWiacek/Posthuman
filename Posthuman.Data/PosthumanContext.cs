@@ -2,6 +2,7 @@
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Data.Configurations;
+using System;
 
 namespace Posthuman.Data
 {

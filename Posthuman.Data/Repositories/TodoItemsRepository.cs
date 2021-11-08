@@ -1,6 +1,10 @@
 ﻿using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using System.Linq;
 
 namespace Posthuman.Data.Repositories
 {

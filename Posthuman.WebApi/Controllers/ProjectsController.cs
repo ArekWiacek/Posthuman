@@ -4,6 +4,9 @@ using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.DTO;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace PosthumanWebApi.Controllers
 {

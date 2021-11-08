@@ -1,4 +1,6 @@
-﻿namespace Posthuman.Core.Models.DTO
+﻿using System;
+
+namespace Posthuman.Core.Models.DTO
 {
     public class ProjectDTO
     {

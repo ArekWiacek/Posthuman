@@ -1,4 +1,5 @@
 ﻿using Posthuman.Core.Models.Enums;
+using System;
 
 namespace Posthuman.Core.Models.DTO
 {
