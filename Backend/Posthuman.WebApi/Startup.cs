@@ -21,22 +21,15 @@ namespace Posthuman.WebApi
 {
     public class Startup
     {
-        public Startup(
-            IConfiguration configuration)
-            //ILogger<Startup> logger)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            //this.logger = logger;
         }
 
         public IConfiguration Configuration { get; }
-        //private readonly ILogger<Startup> logger;
-        private bool IsDevelopment;
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //logger.LogInformation("test");
-
             BuildServices(services);
             BuildAutoMapper(services);
             BuildSwagger(services);
@@ -44,9 +37,12 @@ namespace Posthuman.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Todo - remove from here, now it stays for debugging purposes
+            app.UseDeveloperExceptionPage();
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
 
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
@@ -76,27 +72,18 @@ namespace Posthuman.WebApi
         private string BuildConnectionString()
         {
             var envType = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var dbConnectionString = "";
+            string? dbConnectionString;
 
             if (envType == "Development")
-            {
-                //logger.LogInformation("DEVELOPMENT ENVIRONMENT");
                 dbConnectionString = Configuration.GetConnectionString("PosthumanDatabaseDevelopment");
-            }
             else
-            {
-                //logger.LogInformation($"{envType} ENVIRONMENT (assuming production...");
                 dbConnectionString = Configuration.GetConnectionString("PosthumanDatabaseProduction");
-            }
-
-            //logger.LogInformation($"I WILL USE THIS CONNECTION: {dbConnectionString}");
 
             return dbConnectionString;
         }
 
         private void BuildServices(IServiceCollection services)
         {
-            
             services
                 .AddDbContext<PosthumanContext>(
                     options => options
@@ -121,13 +108,8 @@ namespace Posthuman.WebApi
 
         private void BuildAutoMapper(IServiceCollection services)
         {
-            // TODO: fix
             var assembly1 = typeof(TodoItemDTO).Assembly;
-            var name = assembly1.GetName().Name;
-
             var assembly2 = typeof(ProjectsController).Assembly;
-            var name2 = assembly1.GetName().Name;
-
             services.AddAutoMapper(new Assembly[] { assembly1, assembly2 });
         }
 

@@ -1,9 +1,7 @@
-// using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Posthuman.WebApi;
 
-namespace Posthuman.WebApi2
+namespace Posthuman.WebApi
 {
     public class Program
     {
@@ -17,10 +15,7 @@ namespace Posthuman.WebApi2
 
         public static void Main(string[] args)
         {
-
             CreateHostBuilder(args).Build().Run();
-
-
         }
     }
 }

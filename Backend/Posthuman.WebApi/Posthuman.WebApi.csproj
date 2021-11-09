@@ -4,19 +4,22 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<UserSecretsId>9ee870c1-6b95-4ed9-a4af-0a18bfedd5cc</UserSecretsId>
-  <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-		<PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.2.7" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
 	  <ProjectReference Include="..\Posthuman.Data\Posthuman.Data.csproj" />
 	  <ProjectReference Include="..\Posthuman.Services\Posthuman.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
 	</ItemGroup>
 </Project>

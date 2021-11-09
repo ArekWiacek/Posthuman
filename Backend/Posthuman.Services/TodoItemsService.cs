@@ -15,8 +15,7 @@ namespace Posthuman.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-
-        private ExperienceManager expManager;
+        private readonly ExperienceManager expManager;
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
@@ -34,6 +33,7 @@ namespace Posthuman.Services
 
             return mapper.Map<TodoItemDTO>(todoItem);
         }
+
         public async Task<TodoItemDTO> CreateTodoItem(TodoItemDTO newTodoItemDTO)
         {
             var newTodoItem = mapper.Map<TodoItem>(newTodoItemDTO);
@@ -101,7 +101,7 @@ namespace Posthuman.Services
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
 
-            var todoItemWithSubtasks = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItem.AvatarId, todoItem.Id);
+            //var todoItemWithSubtasks = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItem.AvatarId, todoItem.Id);
 
             if (todoItem == null)
                 return; // NotFound()
@@ -279,7 +279,6 @@ namespace Posthuman.Services
                 }
             }
         }
-
 
         private async Task<IEnumerable<TodoItem>> FlattenSubtasksListAsync(IEnumerable<TodoItem> tasks)
         {

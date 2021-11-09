@@ -68,7 +68,7 @@ namespace Posthuman.Services
         }
 
         // Exp points for different events
-        private Dictionary<EventType, int> BaseExpRewards = new Dictionary<EventType, int>()
+        private readonly Dictionary<EventType, int> BaseExpRewards = new Dictionary<EventType, int>()
         {
             { EventType.None, 0 },
 
