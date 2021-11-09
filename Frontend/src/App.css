@@ -144,13 +144,6 @@
 .exitLeft {
   animation-name: exitLeft;
 }
-/*# sourceMappingURL=transitions.css.map */
-
-
-.rsw-wrapper {
-  /* width: 600px; */
-  /* min-height: 500px !important;  */
-}
 
 /** Progress Bar */
 @keyframes stripes {

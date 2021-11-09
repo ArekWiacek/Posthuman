@@ -2,7 +2,9 @@ import * as React from 'react';
 import { Button, Table, TableRow, TableCell, TableHead, TableContainer, TableBody, Paper } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit'
-import Moment from 'react-moment';
+
+import moment from 'moment';
+// import Moment from 'react-moment';
 
 const ProjectsList = ({ projects, onProjectEdited, onProjectDeleted }) => {
     const handleProjectDeleted = projectId => onProjectDeleted(projectId);
@@ -39,7 +41,7 @@ const ProjectsList = ({ projects, onProjectEdited, onProjectDeleted }) => {
                                 {project.title}
                             </TableCell>
                             <TableCell align="right">
-                                {project.startDate ? <Moment format="DD.MM.YYYY">{project.startDate}</Moment> : "Start date not set"}
+                                {/* {project.startDate ? <Moment format="DD.MM.YYYY">{project.startDate}</Moment> : "Start date not set"} */}
                             </TableCell>
                             <TableCell align="right">
                                 {project.completedSubtasks} / {project.totalSubtasks}

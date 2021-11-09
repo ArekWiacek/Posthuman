@@ -12,7 +12,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const [isDensePadding, setIsDensePadding] = React.useState(true);
     const [showFinished, setShowFinished] = React.useState(false);
     const [parentId, setParentId] = React.useState(0);
-    
+
     const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
     const handleTodoItemEdit = todoItem => onTodoItemEdit(todoItem);
     const handleTodoItemDone = todoItem => onTodoItemDone(todoItem);
@@ -22,7 +22,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
     const handleDensePaddingChecked = (isChecked) => setIsDensePadding(isChecked);
     const handleShowFinishedChecked = (isChecked) => setShowFinished(isChecked);
-    
+
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id == parentId) {
             return <CreateTodoItemInline parentTodoItem={todoItem} onCreate={handleCreateSubtask} onDiscard={handleDiscardSubtask} />;

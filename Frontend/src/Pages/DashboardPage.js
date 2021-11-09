@@ -1,9 +1,5 @@
 import * as React from 'react';
-
-import Grid from '@mui/material/Grid';
-import { Paper } from '@mui/material';
-
-import axios from 'axios';
+import { Grid, Paper, Typography } from '@mui/material';
 
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
 import EditTodoItem from '../components/TodoItem/EditTodoItem';
@@ -16,7 +12,7 @@ import ProjectsList from '../components/Project/ProjectsList';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 import { AvatarContext } from "../App";
-import { ApiUrl, LogT, LogI, LogE } from '../Utilities/Utilities';
+import { LogT, LogI, LogE } from '../Utilities/Utilities';
 import { ApiRepository } from '../Utilities/ApiRepository';
 
 function todoItemFormInitialValues() {
@@ -89,88 +85,88 @@ const DashboardPage = () => {
   const [currentProject, setCurrentProject] = React.useState(createEmptyProject());
 
   const handleTodoItemCreated = (newTodoItem) => {
-    axios
-      .post(ApiUrl + "TodoItems", newTodoItem)
-      .then(response => {
-        const todoItemListWithNewTodoItem = [...todoItems, response.data];
-        setTodoItems(todoItemListWithNewTodoItem);
-      })
-      .catch(error => LogE("Error occured when creating new TodoItem: ", error))
-      .then(() => { });
+    // axios
+    //   .post(ApiUrl + "TodoItems", newTodoItem)
+    //   .then(response => {
+    //     const todoItemListWithNewTodoItem = [...todoItems, response.data];
+    //     setTodoItems(todoItemListWithNewTodoItem);
+    //   })
+    //   .catch(error => LogE("Error occured when creating new TodoItem: ", error))
+    //   .then(() => { });
   }
 
   const handleProjectCreated = (newProject) => {
-    axios.post(ApiUrl + "Projects", newProject)
-      .then(response => {
-        const projectsListWithNewProject = [...projects, response.data];
-        setProjects(projectsListWithNewProject);
-      })
-      .catch(error => LogE("Error occured when creating new Project: ", error));
+    // axios.post(ApiUrl + "Projects", newProject)
+    //   .then(response => {
+    //     const projectsListWithNewProject = [...projects, response.data];
+    //     setProjects(projectsListWithNewProject);
+    //   })
+    //   .catch(error => LogE("Error occured when creating new Project: ", error));
   }
 
   const handleTodoItemDeleted = (todoItemId) => {
-    axios
-      .delete(ApiUrl + "TodoItems" + "/" + todoItemId)
-      .then(response => {
-        const todoItemsList = todoItems.filter((todoItem) => todoItem.id !== todoItemId);
-        setTodoItems(todoItemsList);
-      })
-      .catch(error => LogE("Error occured when deleting TodoItem: ", error));
+    // axios
+    //   .delete(ApiUrl + "TodoItems" + "/" + todoItemId)
+    //   .then(response => {
+    //     const todoItemsList = todoItems.filter((todoItem) => todoItem.id !== todoItemId);
+    //     setTodoItems(todoItemsList);
+    //   })
+    //   .catch(error => LogE("Error occured when deleting TodoItem: ", error));
   }
 
   const handleProjectDeleted = (projectId) => {
-    axios
-      .delete(ApiUrl + "Projects" + "/" + projectId)
-      .then(response => {
-        const projectsList = projects.filter((project) => project.id !== projectId);
-        setProjects(projectsList);
-      })
-      .catch(error => LogE("Error occured when deleting Project: ", error));
+    // axios
+    //   .delete(ApiUrl + "Projects" + "/" + projectId)
+    //   .then(response => {
+    //     const projectsList = projects.filter((project) => project.id !== projectId);
+    //     setProjects(projectsList);
+    //   })
+    //   .catch(error => LogE("Error occured when deleting Project: ", error));
   }
 
   const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
-    axios
-      .put(ApiUrl + "TodoItems" + "/" + editedTodoItemId, editedTodoItem)
-      .then(response => {
-        const updatedTodoItemList = todoItems.map((todoItem) =>
-          todoItem.id === editedTodoItemId ? editedTodoItem : todoItem
-        );
+    // axios
+    //   .put(ApiUrl + "TodoItems" + "/" + editedTodoItemId, editedTodoItem)
+    //   .then(response => {
+    //     const updatedTodoItemList = todoItems.map((todoItem) =>
+    //       todoItem.id === editedTodoItemId ? editedTodoItem : todoItem
+    //     );
 
-        setTodoItems(updatedTodoItemList);
-        setIsTaskInEditMode(false);
-        setCurrentTodoItem(todoItemFormInitialValues());
-      })
-      .catch(error => LogE("Error occured when saving changes into TodoItem: ", error));
+    //     setTodoItems(updatedTodoItemList);
+    //     setIsTaskInEditMode(false);
+    //     setCurrentTodoItem(todoItemFormInitialValues());
+    //   })
+    //   .catch(error => LogE("Error occured when saving changes into TodoItem: ", error));
   }
 
   const handleProjectSaveChanges = (editedProjectId, editedProject) => {
-    axios
-      .put(ApiUrl + "Projects" + "/" + editedProjectId, editedProject)
-      .then(response => {
-        const updatedProjectsList = projects.map((project) =>
-          project.id === editedProjectId ? editedProject : project
-        );
+    // axios
+    //   .put(ApiUrl + "Projects" + "/" + editedProjectId, editedProject)
+    //   .then(response => {
+    //     const updatedProjectsList = projects.map((project) =>
+    //       project.id === editedProjectId ? editedProject : project
+    //     );
 
-        setProjects(updatedProjectsList);
-        setIsProjectInEditMode(false);
-        setCurrentProject(createEmptyProject());
-      })
-      .catch(error => LogE("Error occured when saving changes into Project: ", error));
+    //     setProjects(updatedProjectsList);
+    //     setIsProjectInEditMode(false);
+    //     setCurrentProject(createEmptyProject());
+    //   })
+    //   .catch(error => LogE("Error occured when saving changes into Project: ", error));
   }
 
   const handleTodoItemDone = (completedTodoItem) => {
-    completedTodoItem.isCompleted = true;
+    // completedTodoItem.isCompleted = true;
 
-    axios
-      .put(ApiUrl + "TodoItems" + "/" + completedTodoItem.id, completedTodoItem)
-      .then(response => {
-        const updatedTodoItemList = todoItems.map((todoItem) =>
-          todoItem.id === completedTodoItem ? completedTodoItem : todoItem
-        );
+    // axios
+    //   .put(ApiUrl + "TodoItems" + "/" + completedTodoItem.id, completedTodoItem)
+    //   .then(response => {
+    //     const updatedTodoItemList = todoItems.map((todoItem) =>
+    //       todoItem.id === completedTodoItem ? completedTodoItem : todoItem
+    //     );
 
-        setTodoItems(updatedTodoItemList);
-      })
-      .catch(error => LogE("Error occured when saving changes into TodoItem: ", error));
+    //     setTodoItems(updatedTodoItemList);
+    //   })
+    //   .catch(error => LogE("Error occured when saving changes into TodoItem: ", error));
   }
 
   const handleTodoItemEdited = (todoItemToEdit) => {
@@ -197,30 +193,35 @@ const DashboardPage = () => {
     LogT("DashboardPage.useEffect");
 
     LogI("Getting Projects...")
-    axios
-      .get(ApiUrl + "Projects")
-      .then(response => {
-        setProjects(response.data);
-      })
-      .catch(error => {
-        LogE("Error occured when obtaining Projects: ", error);
-      });
+    // axios
+    //   .get(ApiUrl + "Projects")
+    //   .then(response => {
+    //     setProjects(response.data);
+    //   })
+    //   .catch(error => {
+    //     LogE("Error occured when obtaining Projects: ", error);
+    //   });
 
-    LogI("Getting TodoItems...");
-    axios
-      .get(ApiUrl + "TodoItems")
-      .then(response => {
-        setTodoItems(response.data);
-      })
-      .catch(error => {
-        LogE("Error occured when obtaining TodoItems: ", error);
-      });
+    // LogI("Getting TodoItems...");
+    // axios
+    //   .get(ApiUrl + "TodoItems")
+    //   .then(response => {
+    //     setTodoItems(response.data);
+    //   })
+    //   .catch(error => {
+    //     LogE("Error occured when obtaining TodoItems: ", error);
+    //   });
   }, [activeAvatar]);
 
   return (
       <Grid container spacing={3}>
         {/* PROJECT CREATE */}
         <Grid item xs={12} md={4} lg={3}>
+        
+        <Typography>Title: {process.env.REACT_APP_TITLE} </Typography>
+          <Typography>Desc: {process.env.REACT_APP_DESCRIPTION} </Typography>
+          <div>Env: {process.env.NODE_ENV}</div>
+
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             {
               isProjectInEditMode ?

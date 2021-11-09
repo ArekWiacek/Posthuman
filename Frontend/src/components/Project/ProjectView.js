@@ -5,12 +5,11 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import Grid from '@mui/material/Grid';
 
 
 const ProjectView = ({ project }) => {    
     const calculateProjectProgress = (project) => {
-        if(project.totalSubtasks == 0)
+        if(project.totalSubtasks === 0)
             return 0;
 
         var projectProgress = (project.completedSubtasks / project.totalSubtasks) * 100;

@@ -5,15 +5,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddIcon from '@mui/icons-material/Add';
-import Moment from 'react-moment';
+import moment from 'moment';
+// import Moment from 'react-moment';
 
-const renderCreateSubtaskInlineComponent = (date) => {
-    if (date != null && date != undefined) {
-        return <Moment format="DD.MM.YYYY">{date}</Moment>;
-    } else {
-        return <div>'guuuuuuuuuuuuuuffj'</div>;
-    }
-};
+// const renderCreateSubtaskInlineComponent = (date) => {
+//     if (date != null && date != undefined) {
+//         return <Moment format="DD.MM.YYYY">{date}</Moment>;
+//     } else {
+//         return <div>'guuuuuuuuuuuuuuffj'</div>;
+//     }
+// };
 
 
 const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked }) => {
@@ -66,7 +67,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                 </Typography>
             </TableCell>
             <TableCell align="left">
-                <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment>
+                {/* <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment> */}
             </TableCell>
             {/* <TableCell align="left">
                 <Moment format="dddd">{todoItem.deadline}</Moment>

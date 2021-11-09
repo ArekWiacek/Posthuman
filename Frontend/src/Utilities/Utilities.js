@@ -15,8 +15,6 @@ class LogLevelType {
     static get DISABLED() { return this.Disabled; }
 }
 
-export const ApiUrl = "https://localhost:7201/api/";
-
 const LoggingEnabled = true;
 const LogLevel = LogLevelType.TRACE;
 

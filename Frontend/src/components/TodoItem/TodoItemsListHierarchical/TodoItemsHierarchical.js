@@ -5,7 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import AddIcon from '@mui/icons-material/Add';
-import Moment from 'react-moment';
+import moment from 'moment';
+// import Moment from 'react-moment';
 
 const TodoItemsHierarchical = ({ todoItems, onTodoItemDeleted, onTodoItemEdited, onTodoItemDone, onAddSubtask }) => {
     const handleTodoItemDeleted = todoItemId => onTodoItemDeleted(todoItemId);
@@ -65,10 +66,10 @@ const TodoItemsHierarchicalRow = ({ todoItem, onTodoItemDeleted, onTodoItemEdite
                 {todoItem.title}
             </TableCell>
             <TableCell align="left">
-                <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment>
+                {/* <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment> */}
             </TableCell>
             <TableCell align="left">
-                <Moment format="dddd">{todoItem.deadline}</Moment>
+                {/* <Moment format="dddd">{todoItem.deadline}</Moment> */}
             </TableCell>
             <TableCell align="right">
                 {createRewardDisplayText(todoItem)}
