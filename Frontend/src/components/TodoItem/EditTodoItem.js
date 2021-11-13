@@ -4,8 +4,6 @@ import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import { LogW } from '../../Utilities/Utilities';
-
 const defaultFormValues = {
     title: '',
     description: '',
@@ -28,7 +26,7 @@ const EditTodoItem = ({ currentTodoItem, onSaveChanges, onCancelEdit, projects, 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (todoItem.title === "" || todoItem.avatarId == null || todoItem.avatarId == 0) {
+        if (!todoItem || !todoItem.avatarId || !todoItem.avatarId) {
             return;
         }
 

@@ -6,7 +6,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import AddIcon from '@mui/icons-material/Add';
 import moment from 'moment';
-// import Moment from 'react-moment';
 
 const TodoItemsHierarchical = ({ todoItems, onTodoItemDeleted, onTodoItemEdited, onTodoItemDone, onAddSubtask }) => {
     const handleTodoItemDeleted = todoItemId => onTodoItemDeleted(todoItemId);

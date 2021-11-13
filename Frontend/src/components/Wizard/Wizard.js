@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { Typography } from '@mui/material';
 import StepWizard from 'react-step-wizard';
 import WizardStep from './WizardStep';
-import { Box, Typography } from '@mui/material';
 
-const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) => {
+const Wizard = ( {onWizardFinished, onWizardCanceled, todoItem, xpGained} ) => {
     const [state, updateState] = useState({
         transitions: {
             enterRight: `animated enterRight`,
@@ -14,12 +14,7 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) =>
         }
     });
 
-    const setInstance = SW => updateState({
-        ...state,
-        SW,
-    });
-
-    const { SW, demo } = state;
+    const setInstance = SW => updateState({ ...state, SW });
 
     const handleTaskDoneConfirm = () => state.SW.nextStep();
     const handleTaskDoneCancel = () => onWizardCanceled();
@@ -28,17 +23,14 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) =>
     return (
         <div className={`col-12 col-sm-6 offset-sm-3`}>
             <StepWizard
-                // onStepChange={onStepChange}
                 transitions={state.transitions}
-                instance={setInstance}
-            >
+                instance={setInstance}>
                 <WizardStep
                     key={1}
                     confirmText={'Yes'}
                     cancelText={'No'}
                     onConfirm={handleTaskDoneConfirm}
-                    onCancel={handleTaskDoneCancel}
-                >
+                    onCancel={handleTaskDoneCancel}>
                     <Typography variant="h4">{todoItem.title}</Typography>
                     <Typography variant="body2">{'Confirm that you completed this task.'}</Typography>
                 </WizardStep>
@@ -46,12 +38,9 @@ const Wizard = ( { onWizardFinished, onWizardCanceled, todoItem, xpGained } ) =>
                 <WizardStep
                     key={2}
                     confirmText={'Thanks!'}
-                    onConfirm={handleXpGainedConfirm}
-                >
-                    <Typography 
-                        variant="h4" 
-                        sx={{color: 'success.main'}}>
-                            {'+ ' + xpGained + ' XP!'}
+                    onConfirm={handleXpGainedConfirm}>
+                    <Typography variant="h4" sx={{color: 'success.main'}}>
+                        {'+ ' + xpGained + ' XP!'}
                     </Typography>
                     <Typography variant="body2">
                         {'For completing task "' + todoItem.title + '".'}

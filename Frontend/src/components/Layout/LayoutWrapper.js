@@ -1,11 +1,12 @@
-import * as React from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material/Container";
+import * as React from 'react';
+import { useState } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
 
-import CustomRouter from "./CustomRouter";
+import CustomRouter from './CustomRouter';
 import CustomAppBar from './CustomAppBar';
 import CustomDrawer from './CustomDrawer';
 
@@ -14,15 +15,13 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 const mdTheme = createTheme({
   palette: {
-     // mode: 'dark',
+      mode: 'dark',
   },
 });
 
 const LayoutWrapper = () => {
-  const [open, setOpen] = React.useState(false);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const [open, setOpen] = useState(false);
+  const toggleDrawer = () => setOpen(!open);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -32,8 +31,7 @@ const LayoutWrapper = () => {
         <CustomAppBar
           title="Posthuman"
           open={open}
-          onToggleDrawerClicked={toggleDrawer}
-        />
+          onToggleDrawerClicked={toggleDrawer} />
 
         <CustomDrawer
           open={open}
@@ -43,7 +41,7 @@ const LayoutWrapper = () => {
           backgroundColor: (theme) =>
             theme.palette.mode === "light"
               ? theme.palette.grey[100]
-              : theme.palette.grey[900],
+              : theme.palette.grey[1000],
           flexGrow: 1,
           height: "100vh",
           overflow: "auto"

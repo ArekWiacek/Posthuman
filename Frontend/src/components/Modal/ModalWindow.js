@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Box, Modal, Backdrop } from '@mui/material';
-import { AvatarContext } from "../../App";
 
 const style = {
     position: 'absolute',
@@ -25,31 +24,11 @@ const ModalWindow = (props) => {
             aria-describedby="modal-modal-description"
             closeAfterTransition
             BackdropComponent={Backdrop}
-            BackdropProps={{
-                timeout: 500,
-            }}
-        >
+            BackdropProps={{ timeout: 500 }}>
             <Box sx={style}>
                 {props.children}
-                {/* <Wizard onWizardFinished={handleCloseModal} /> */}
             </Box> 
         </Modal>
-
-        // <Modal
-        //     open={open}
-        //     onClose={handleOnCancelClicked}
-        //     aria-labelledby="modal-modal-title"
-        //     aria-describedby="modal-modal-description"
-        // >
-        //     <Box sx={style}>
-        //         <Typography id="modal-modal-title" variant="h6" component="h2">
-        //             Text in a modal
-        //         </Typography>
-        //         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-        //             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        //         </Typography>
-        //     </Box>
-        // </Modal>
     );
 }
 

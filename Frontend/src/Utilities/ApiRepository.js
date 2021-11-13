@@ -2,8 +2,7 @@ import axios from 'axios';
 import { LogW, LogE } from './Utilities';
 
 const developmentApi = "https://localhost:7201/api/";
-const productionApi = "http://posthumanae-001-site1.itempurl.com/api/";
-
+const productionApi = "http://posthumanbackapp-001-site1.btempurl.com/api/";
 const ApiUrl = (process.env.NODE_ENV == "development") ? developmentApi : productionApi;
 
 const ApiGet = (entityName, successCallback, errorCallback) => {
@@ -58,4 +57,4 @@ const ApiDelete = (entityName, entityId, successCallback, errorCallback) => {
         });
 }
 
-export { ApiGet, ApiPost, ApiPut, ApiDelete }
+export { ApiGet, ApiPost, ApiPut, ApiDelete };

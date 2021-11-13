@@ -3,22 +3,16 @@ import ModalWindow from '../Modal/ModalWindow';
 import Wizard from '../Wizard/Wizard';
 
 const ConfirmTodoItemDoneModal = ({ isOpen, onFinished, onCanceled, todoItem, xpGained }) => {
-    const handleFinished = () => onFinished();
-    const handleCanceled = () => onCanceled();
+//     const handleFinished = () => onFinished();
+//     const handleCanceled = () => onCanceled();
 
     return (
-        <ModalWindow
-            isOpen={isOpen}
-            // onClose={handleCanceled}
-        >
-
+        <ModalWindow isOpen={isOpen}>
             <Wizard 
                 todoItem={todoItem} 
                 xpGained={xpGained}
-                onWizardFinished={handleFinished} 
-                onWizardCanceled={handleCanceled} 
-            />
-        
+                onWizardFinished={onFinished} 
+                onWizardCanceled={onCanceled} />
         </ModalWindow>
     );
 }

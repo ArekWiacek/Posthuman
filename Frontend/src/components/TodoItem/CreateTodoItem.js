@@ -1,98 +1,68 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
-import AddTaskIcon from '@mui/icons-material/AddTask';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-
-import { AvatarContext } from "../../App";
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import { LogI, LogW } from '../../Utilities/Utilities';
 
-const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId}) => {
-    const { activeAvatar } = React.useContext(AvatarContext);
-    const [title, setTitle] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [deadline, setDeadline] = React.useState(new Date());
-    const [projectId, setProjectId] = React.useState(0);
-    const [parentId, setParentId] = React.useState(parentTaskId);
-
-    const handleTitleChange = event => setTitle(event.target.value);
-    const handleDescriptionChange = event => setDescription(event.target.value);
-    const handleDeadlineChange = newValue => newValue ? setDeadline(newValue.toDate()) : setDeadline(null);
-    const handleProjectIdChange = event => setProjectId(event.target.value);
-    const handleParentIdChange = event => setParentId(event.target.value);
-
-    if(todoItems == null) {
-        todoItems = [];
-    }
+const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
+    const [formState, setFormState] = useState({
+        title: '', description: '', deadline: null,
+        parentId: parentTaskId ? parentTaskId : '',
+        projectId: parentProjectId ? parentProjectId: ''
+    });
 
     React.useEffect(() => {
-        setParentId(parentTaskId);
-      }, [parentTaskId]);
+        setFormState({ ...formState, parentId: parentTaskId });
+    }, [parentTaskId]);
 
-    const handleSubmit = (e) => {
+    const handleInputChange = e => {
+        const { name, value } = e.target;
+        setFormState({ ...formState, [name]: value });
+    };
+
+    const handleDeadlineChange = newValue => {
+        setFormState({ ...formState, deadline: (newValue ? newValue.toDate() : null )});
+    };
+
+    const handleSubmit = e => {
         e.preventDefault();
 
-        if (title === "") {
+        if (formState.title === "") {
             LogW("Cannot create TodoItem - title not provided");
             return;
         }
 
-        if (activeAvatar == null || activeAvatar.id == 0) {
-            LogW("Cannot create TodoItem - active avatar unknown");
-            return;
-        }
-
-        const newTodoItem = {
-            title: title,
-            description: description,
-            deadline: deadline,
-            projectId: projectId != 0 ? projectId : null,
-            parentId: parentId != 0 ? parentId : null,
-            avatarId: activeAvatar.id,
-        };
-
-        onCreateTodoItem(newTodoItem);
-
-        setTitle("");
-        setDescription("");
-    }
+        onCreateTodoItem(formState);
+        setFormState({...formState, title: '', description: ''});
+    };
 
     return (
         <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '30ch' } }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
-            <Typography variant="h5">Create task</Typography>
+
+            <Typography variant="h5">Create tusk</Typography>
+
             <TextField
-                id="title"
-                label="Title"
-                variant="outlined"
-                value={title}
-                onChange={handleTitleChange}
-                required />
+                label="Title" name="title" variant="outlined" required
+                value={formState.title} onChange={handleInputChange} />
+
             <TextField
-                id="description"
-                label="Description"
-                multiline
-                rows={3}
-                value={description}
-                onChange={handleDescriptionChange} />
+                label="Description" name="description" value={formState.description}
+                onChange={handleInputChange} multiline rows={3} />
 
             <DesktopDatePicker
-                label="Deadline"
-                inputFormat="DD.MM.YYYY"
-                mask="__.__.____"
-                value={deadline}
-                onChange={handleDeadlineChange}
+                label="Deadline" name="deadline" inputFormat="DD.MM.YYYY" mask="__.__.____"
+                value={formState.deadline} onChange={handleDeadlineChange}
                 renderInput={(params) => <TextField {...params} />} />
-                
+
             <TextField
-                select
-                fullWidth
-                label="Project"
-                disabled={projects == null || projects.length == 0}
-                value={projectId}
-                onChange={handleProjectIdChange}>
-                <MenuItem key={0} value={0}>
-                    Select project
-                </MenuItem>
+                label="Project" select fullWidth name="projectId"
+                disabled={!projects || projects.length === 0} disabled
+                value={formState.projectId} onChange={handleInputChange}>
+
+                <MenuItem key={0} value={0}>Select project</MenuItem>
+
                 {projects.map((project) => (
                     <MenuItem key={project.id} value={project.id}>
                         {project.title}
@@ -101,32 +71,34 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId}) 
             </TextField>
 
             <TextField
-                select
-                fullWidth
-                label="Parent task"
-                disabled={todoItems == null || todoItems.length == 0}
-                value={parentId}
-                onChange={handleParentIdChange}>
-                <MenuItem key={0} value={0}>
-                    Select parent task
-                </MenuItem>
-                {
-                    todoItems.map((todoItem) => (
+                label="Parent task" select fullWidth name="parentId"
+                disabled={!todoItems || todoItems.length === 0}
+                value={formState.parentId} onChange={handleInputChange}>
+
+                <MenuItem key={0} value={0}>Select parent task</MenuItem>
+
+                {todoItems.map((todoItem) => (
                     <MenuItem key={todoItem.id} value={todoItem.id}>
-                       {todoItem.title}
+                        {todoItem.title}
                     </MenuItem>
                 ))}
             </TextField>
 
             <Button
                 sx={{ m: 1, width: '30ch' }}
-                variant="contained"
-                startIcon={<AddTaskIcon />}
-                type="submit">
+                variant="contained" type="submit"
+                startIcon={<AddTaskIcon />}>
                 Create
             </Button>
         </Box>
     );
 }
+
+CreateTodoItem.defaultProps = {
+    todoItems: [], 
+    projects: [],
+    parentId: '',
+    projectId: '' 
+};
 
 export default CreateTodoItem;
