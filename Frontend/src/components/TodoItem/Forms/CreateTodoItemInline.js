@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
 import { TextField, IconButton, TableRow, TableCell } from '@mui/material';
-import { ControlPointIcon } from '@mui/icons-material/ControlPoint';
-import { CancelIcon }  from '@mui/icons-material/Cancel';
-import { AvatarContext } from "../../App";
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { AvatarContext } from "../../../App";
 
-const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
+const CreateTodoItemInline = ({ parentTodoItem, onCreate, onCancel }) => {
     const { activeAvatar } = useContext(AvatarContext);
     const [title, setTitle] = useState('');
     const paddingLeftPx = (parentTodoItem.nestingLevel + 1) * 2;
 
     const handleTitleChange = event => setTitle(event.target.value);
     const handleCreateClicked = parentTask => createSubtask(parentTask);
-    const handleDiscardClicked = () => onDiscard();
+    const handleCancelClicked = () => onCancel();
 
     const createSubtask = (parent) => {
         if (!title || !activeAvatar || !activeAvatar.id) 
@@ -39,7 +39,7 @@ const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
                 break;
 
             case 'Escape':
-                onDiscard();
+                onCancel();
                 break;
 
             default:
@@ -60,17 +60,18 @@ const CreateTodoItemInline = ({ parentTodoItem, onCreate, onDiscard }) => {
                         endAdornment: (
                             <React.Fragment>
                                 <IconButton
-                                    aria-label="exit-subtask-creation"
-                                    onClick={() => handleDiscardClicked()}>
+                                    aria-label="cancel-subtask-creation"
+                                    onClick={() => handleCancelClicked()}>
                                     <CancelIcon />
                                 </IconButton>
                                 <IconButton
-                                    aria-label="subtask-create"
+                                    aria-label="create-subtask"
                                     onClick={() => handleCreateClicked(parentTodoItem)}>
                                     <ControlPointIcon />
                                 </IconButton>
-                            </React.Fragment> 
-                    )}} />
+                            </React.Fragment>        
+                        )}} 
+                /> 
             </TableCell>
         </TableRow>
     );

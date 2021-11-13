@@ -15,7 +15,6 @@ const Wizard = ( {onWizardFinished, onWizardCanceled, todoItem, xpGained} ) => {
     });
 
     const setInstance = SW => updateState({ ...state, SW });
-
     const handleTaskDoneConfirm = () => state.SW.nextStep();
     const handleTaskDoneCancel = () => onWizardCanceled();
     const handleXpGainedConfirm = () => onWizardFinished();

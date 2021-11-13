@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
 
-import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
-import EditTodoItem from '../components/TodoItem/EditTodoItem';
+import CreateTodoItemForm from '../components/TodoItem/Forms/CreateTodoItemForm';
+import EditTodoItemForm from '../components/TodoItem/Forms/EditTodoItemForm';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 
 import CreateProject from '../components/Project/CreateProject';
@@ -217,11 +217,6 @@ const DashboardPage = () => {
       <Grid container spacing={3}>
         {/* PROJECT CREATE */}
         <Grid item xs={12} md={4} lg={3}>
-        
-        <Typography>Title: {process.env.REACT_APP_TITLE} </Typography>
-          <Typography>Desc: {process.env.REACT_APP_DESCRIPTION} </Typography>
-          <div>Env: {process.env.NODE_ENV}</div>
-
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             {
               isProjectInEditMode ?

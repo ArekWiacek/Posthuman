@@ -2,23 +2,12 @@ import * as React from 'react';
 import { TableRow, TableCell, Typography, IconButton } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AddIcon from '@mui/icons-material/Add';
-import moment from 'moment';
+import Deadline from '../../Common/Deadline';
 
-// import Moment from 'react-moment';
-
-// const renderCreateSubtaskInlineComponent = (date) => {
-//     if (date != null && date != undefined) {
-//         return <Moment format="DD.MM.YYYY">{date}</Moment>;
-//     } else {
-//         return <div>'guuuuuuuuuuuuuuffj'</div>;
-//     }
-// };
-
-
-const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked }) => {
+const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onCreateNewTaskClicked }) => {
     const handleDeleteClicked = todoItemId => onDeleteClicked(todoItemId);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
@@ -44,7 +33,6 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
         return progressText;
     }
 
-    
     function getFontSizeForTodoItemTitle(nestingLevel) { 
          var titleSizes = { 0: '1.3rem', 1: '1.2rem', 2: '1.1rem' };
          if(nestingLevel < 2) {
@@ -53,7 +41,7 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             return '1rem';
         }
     }
-    
+
     return (
         <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell component="th" scope="row" >
@@ -67,21 +55,11 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                     {todoItem.title}
                 </Typography>
             </TableCell>
+
             <TableCell align="left">
-                {/* <Moment format="DD.MM.YYYY">{todoItem.deadline}</Moment> */}
+                <Deadline todo={todoItem} when={todoItem.deadline} />
             </TableCell>
-            {/* <TableCell align="left">
-                <Moment format="dddd">{todoItem.deadline}</Moment>
-            </TableCell>
-            <TableCell align="right">
-                {createRewardDisplayText(todoItem)}
-            </TableCell>
-            <TableCell align="right">
-                {createParentProjectDisplayText(todoItem)}
-            </TableCell>
-            <TableCell align="right">
-                {todoItem.parentId != null ? todoItem.parentId : "-"}
-            </TableCell> */}
+            
             <TableCell align="right">
                 {createProgressText(todoItem)}
             </TableCell>
@@ -112,6 +90,15 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                 </IconButton>
             </TableCell>
         </TableRow>
+
+        //import AddIcon from '@mui/icons-material/Add';
+        // const renderCreateSubtaskInlineComponent = (date) => {
+        //     if (date != null && date != undefined) {
+        //         return <Moment format="DD.MM.YYYY">{date}</Moment>;
+        //     } else {
+        //         return <div>'guuuuuuuuuuuuuuffj'</div>;
+        //     }
+        // };
     );
 }
 

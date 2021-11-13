@@ -14,6 +14,7 @@ namespace PosthumanWebApi.Controllers
     {
         private readonly ILogger<EventItemsController> logger;
         private readonly IEventItemsService eventItemsService;
+
         public EventItemsController(
             ILogger<EventItemsController> logger,
             IEventItemsService eventItemsService)
@@ -29,11 +30,6 @@ namespace PosthumanWebApi.Controllers
             var eventItems = await eventItemsService.GetAllEventItems();
 
             return eventItems.ToList();
-            //var eventItems = _context.EventItems.ToList();
-
-            //return await _context
-            //    .EventItems
-            //    .ToListAsync();
         }
 
         // GET: api/EventItems/5
@@ -43,9 +39,7 @@ namespace PosthumanWebApi.Controllers
             var eventItem = await eventItemsService.GetEventItemById(id);
 
             if (eventItem == null)
-            {
                 return NotFound();
-            }
 
             return eventItem;
         }

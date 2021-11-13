@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useContext} from 'react'
 import Grid from '@mui/material/Grid';
 import AvatarView from '../components/Avatar/AvatarView';
 import { AvatarContext } from '../App';
@@ -7,7 +8,7 @@ import { LogT } from '../Utilities/Utilities';
 const AvatarPage = () => {
     LogT("AvatarPage.Constructor");
 
-    const { activeAvatar, setActiveAvatar } = React.useContext(AvatarContext);
+    const { activeAvatar, setActiveAvatar } = useContext(AvatarContext);
     const avatar = activeAvatar;
 
     return (

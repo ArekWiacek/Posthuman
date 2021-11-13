@@ -73,14 +73,13 @@ const HistoryPage = () => {
 
     React.useEffect(() => {
         ApiGet("EventItems", data => setEventItems(data));
-    }, [])
+    }, []);
 
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
                 <TableContainer component={Paper}>
                     <Typography variant="h5">Historical events</Typography>
-                
                         <Table sx={{ minWidth: 600 }} size="small" aria-label="Historical events">
                             <TableHead>
                                 <TableRow>
@@ -90,7 +89,6 @@ const HistoryPage = () => {
                                     <TableCell align="right">Reward</TableCell>
                                 </TableRow>
                             </TableHead>
-
                             <TableBody>
                                 {eventItems.map((eventItem) => (
                                     <TableRow

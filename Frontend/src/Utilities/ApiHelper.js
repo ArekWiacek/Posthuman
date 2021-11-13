@@ -5,7 +5,7 @@ const developmentApi = "https://localhost:7201/api/";
 const productionApi = "http://posthumanbackapp-001-site1.btempurl.com/api/";
 const ApiUrl = (process.env.NODE_ENV == "development") ? developmentApi : productionApi;
 
-const ApiHelper = {
+const Api = {
     Get: (entityName, successCallback, errorCallback) => {
         axios
             .get(ApiUrl + entityName)
@@ -51,4 +51,4 @@ const ApiHelper = {
     }
 }
 
-export default ApiHelper;
+export default Api;

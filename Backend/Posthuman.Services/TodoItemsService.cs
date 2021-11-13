@@ -43,7 +43,7 @@ namespace Posthuman.Services
             if (newTodoItem == null)
                 throw new Exception();
 
-            // Set owner Avatar
+            // Set owner Avatar, if not provided then set active user
             var ownerAvatar = await
                 unitOfWork
                 .Avatars
@@ -51,6 +51,11 @@ namespace Posthuman.Services
 
             if (ownerAvatar != null)
                 newTodoItem.Avatar = ownerAvatar;
+            else
+            {
+                ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+                newTodoItem.Avatar = ownerAvatar;
+            }
 
             // Has parent todo item?
             if (newTodoItem != null && newTodoItem.ParentId.HasValue)

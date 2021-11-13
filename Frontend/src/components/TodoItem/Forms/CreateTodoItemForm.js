@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { LogI, LogW } from '../../Utilities/Utilities';
+import { LogI, LogW } from '../../../Utilities/Utilities';
 
-const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
+const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
     const [formState, setFormState] = useState({
         title: '', description: '', deadline: null,
         parentId: parentTaskId ? parentTaskId : '',
         projectId: parentProjectId ? parentProjectId: ''
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         setFormState({ ...formState, parentId: parentTaskId });
     }, [parentTaskId]);
 
@@ -22,26 +22,36 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, p
     };
 
     const handleDeadlineChange = newValue => {
-        setFormState({ ...formState, deadline: (newValue ? newValue.toDate() : null )});
+        setFormState({ ...formState, deadline: (newValue ? newValue.toDate() : null) });
     };
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        if (formState.title === "") {
+        if (!formState.title) {
             LogW("Cannot create TodoItem - title not provided");
             return;
         }
 
-        onCreateTodoItem(formState);
+        var todoItem = {
+            title: formState.title,
+            description: formState.description,
+            deadline: formState.deadline,
+            parentId: formState.parentId ? formState.parentId : null,
+            projectId: formState.projectId ? formState.projectId : null
+        };
+
+        onCreateTodoItem(todoItem);
         setFormState({...formState, title: '', description: ''});
     };
 
     return (
-        <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '30ch' } }}
+        <Box component="form" sx={{ 
+            '& .MuiTextField-root': { m: 1, width: '100%' },
+            display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
-            <Typography variant="h5">Create tusk</Typography>
+            <Typography variant="h5">Create task</Typography>
 
             <TextField
                 label="Title" name="title" variant="outlined" required
@@ -57,7 +67,7 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, p
                 renderInput={(params) => <TextField {...params} />} />
 
             <TextField
-                label="Project" select fullWidth name="projectId"
+                label="Project" name="projectId" select 
                 disabled={!projects || projects.length === 0} disabled
                 value={formState.projectId} onChange={handleInputChange}>
 
@@ -67,11 +77,11 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, p
                     <MenuItem key={project.id} value={project.id}>
                         {project.title}
                     </MenuItem>
-                ))}
+                ))} 
             </TextField>
 
             <TextField
-                label="Parent task" select fullWidth name="parentId"
+                label="Parent task" name="parentId" select 
                 disabled={!todoItems || todoItems.length === 0}
                 value={formState.parentId} onChange={handleInputChange}>
 
@@ -94,11 +104,11 @@ const CreateTodoItem = ({ onCreateTodoItem, todoItems, projects, parentTaskId, p
     );
 }
 
-CreateTodoItem.defaultProps = {
+CreateTodoItemForm.defaultProps = {
     todoItems: [], 
     projects: [],
     parentId: '',
     projectId: '' 
 };
 
-export default CreateTodoItem;
+export default CreateTodoItemForm;

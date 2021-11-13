@@ -3,10 +3,7 @@ import { Table, TableContainer, TableBody, Paper } from '@mui/material';
 import TodoItemsListHeader from './TodoItemsListHeader';
 import TodoItemsListItem from './TodoItemsListItem';
 import TodoItemsListFooter from './TodoItemsListFooter';
-import CreateTodoItemInline from '../CreateTodoItemInline';
-
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CreateTodoItemInline from '../Forms/CreateTodoItemInline';
 
 const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask }) => {
     const [isDensePadding, setIsDensePadding] = React.useState(true);
@@ -17,7 +14,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleTodoItemEdit = todoItem => onTodoItemEdit(todoItem);
     const handleTodoItemDone = todoItem => onTodoItemDone(todoItem);
     const handleAddSubtask = todoItem => setParentId(todoItem.id);
-    const handleDiscardSubtask = () => setParentId(0);
+    const handleCancelSubtask = () => setParentId(0);
     const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
 
     const handleDensePaddingChecked = (isChecked) => setIsDensePadding(isChecked);
@@ -25,7 +22,8 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id == parentId) {
-            return <CreateTodoItemInline parentTodoItem={todoItem} onCreate={handleCreateSubtask} onDiscard={handleDiscardSubtask} />;
+            return <CreateTodoItemInline parentTodoItem={todoItem} 
+                onCreate={handleCreateSubtask} onCancel={handleCancelSubtask} />;
         }
     };
 

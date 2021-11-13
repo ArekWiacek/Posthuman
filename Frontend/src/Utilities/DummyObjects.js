@@ -11,7 +11,7 @@ export function CreateDummyTodoItems(howMany) {
             title: "[Dummy todo title: " + i + "]",
             description: "[Sample description: " + i + "]",
             isCompleted: i % 2 ? false : true,
-            deadline: new Date(),
+            deadline: null, //new Date(),
             projectId: null,
             avatarId: 1
         };

@@ -18,16 +18,6 @@ class LogLevelType {
 const LoggingEnabled = true;
 const LogLevel = LogLevelType.TRACE;
 
-const buildExeptionMessage = (error) => {
-    var exMsg = "";
-    if (error.message) {
-        exMsg += error.message;
-    }
-    if (error.stack) {
-        exMsg += ' | stack: ' + error.stack;
-    }
-}
-
 // Log SPECIAL - log level that beats all, it logs message no matter what log level is set 
 export const LogS = (message) => {
     Log(message);
@@ -68,4 +58,14 @@ export const Log = message => {
 export const FormatDate = (string) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(string).toLocaleDateString([],options);
+}
+
+const buildExeptionMessage = (error) => {
+    var exMsg = "";
+    if (error.message) {
+        exMsg += error.message;
+    }
+    if (error.stack) {
+        exMsg += ' | stack: ' + error.stack;
+    }
 }

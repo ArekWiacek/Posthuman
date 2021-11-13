@@ -17,6 +17,9 @@ namespace Posthuman.Core.Models.Entities
         {
             Title = "";
             Description = "";
+
+            ParentId = null;
+            ProjectId = null;
         }
 
         [Key]
