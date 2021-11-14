@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import {
     Card, CardContent, CardMedia, Typography, 
     Divider, Stack, LinearProgress, Box } from '@mui/material';
 import { AvatarContext } from "../../App";
 
-
 const AvatarView = ({ avatar }) => {
-    const { activeAvatar } = React.useContext(AvatarContext);
+    const { activeAvatar } = useContext(AvatarContext);
 
     const calculateNewLevelProgress = () => {
-        var levelProgress = (activeAvatar.exp / activeAvatar.expToNewLevel) * 100;
+        var levelProgress = ((activeAvatar.exp - activeAvatar.expToCurrentLevel) / (activeAvatar.expToNewLevel - activeAvatar.expToCurrentLevel)) * 100;
         return Math.round(levelProgress);
-    }
+    };
 
     return (
         <Card sx={{ maxWidth: 400 }}>
@@ -34,7 +34,7 @@ const AvatarView = ({ avatar }) => {
                     alignItems="flex-start"
                     spacing={2}>
                     <Typography>{avatar.exp} XP</Typography>
-                    <Typography>1000 XP</Typography>
+                    <Typography>{avatar.expToNewLevel} XP</Typography>
                 </Stack>
                 <Box sx={{ width: '100%' }}>
                     <LinearProgress variant="determinate" value={calculateNewLevelProgress()} />
@@ -52,10 +52,18 @@ const AvatarView = ({ avatar }) => {
 
             <CardContent>
                 <Typography variant="h5" component="div">
-                    Cyborg
+                    Bio
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     {avatar.bio ? avatar.bio : ''}
+                </Typography>
+            </CardContent>
+
+            <CardContent>
+                <Typography variant="h5" component="div">
+                    Cyborg
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
                     Cyborg is a futuristic fusion of cybernetic and organism-like being,
                     with both organic and biomechatronic body parts.
                 </Typography>

@@ -3,7 +3,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField, MenuItem } from '@mui/material';
-import { LogT } from '../../Utilities/Utilities';
 import { AvatarContext } from '../../App';
 import { ApiGet, ApiPut } from '../../Utilities/ApiRepository';
 

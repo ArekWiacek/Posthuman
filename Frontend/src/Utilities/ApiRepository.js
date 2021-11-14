@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { LogW, LogE } from './Utilities';
+import { LogE } from './Utilities';
 
 const developmentApi = "https://localhost:7201/api/";
 const productionApi = "http://posthumanbackapp-001-site1.btempurl.com/api/";
-const ApiUrl = (process.env.NODE_ENV == "development") ? developmentApi : productionApi;
+const ApiUrl = (process.env.NODE_ENV === "development") ? developmentApi : productionApi;
 
 const ApiGet = (entityName, successCallback, errorCallback) => {
     axios
@@ -16,7 +16,7 @@ const ApiGet = (entityName, successCallback, errorCallback) => {
             if(errorCallback)
                 errorCallback(error);
         });
-}
+};
 
 const ApiPut = (entityName, entityId, entityData, successCallback, errorCallback) => {
     axios
@@ -29,7 +29,7 @@ const ApiPut = (entityName, entityId, entityData, successCallback, errorCallback
             if(errorCallback)
                 errorCallback(error);
         });
-}
+};
 
 const ApiPost = (entityName, entityData, successCallback, errorCallback) => {
     axios
@@ -42,7 +42,7 @@ const ApiPost = (entityName, entityData, successCallback, errorCallback) => {
             if(errorCallback)
                 errorCallback(error);
         });
-}
+};
 
 const ApiDelete = (entityName, entityId, successCallback, errorCallback) => {
     axios
@@ -55,6 +55,6 @@ const ApiDelete = (entityName, entityId, successCallback, errorCallback) => {
             if(errorCallback)
                 errorCallback(error);
         });
-}
+};
 
 export { ApiGet, ApiPost, ApiPut, ApiDelete };

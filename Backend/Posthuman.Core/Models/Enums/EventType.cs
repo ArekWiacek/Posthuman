@@ -12,6 +12,9 @@
         ProjectCreated = 5,
         ProjectModified = 6,
         ProjectDeleted = 7,
-        ProjectFinished = 8
+        ProjectFinished = 8,
+
+        LevelGained = 9,
+        ExpGained = 10
     }
 }

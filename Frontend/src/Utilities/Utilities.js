@@ -21,39 +21,39 @@ const LogLevel = LogLevelType.TRACE;
 // Log SPECIAL - log level that beats all, it logs message no matter what log level is set 
 export const LogS = (message) => {
     Log(message);
-}
+};
 
 // Log ERROR - worst scenario
 export const LogE = (message, error) => {
     if(LogLevel <= LogLevelType.ERROR) {
         console.error("[ERROR] " + message);
-        buildExeptionMessage(error);
+        console.error(buildExeptionMessage(error));
     }
-}
+};
 
 // Log WARNING - important, emphasized info 
 export const LogW = (message) => {
     if(LogLevel <= LogLevelType.WARNING)
         console.warn("[WARNING] " + message);
-}
+};
 
 // Log INFORMATION 
 export const LogI = (message) => {
     if(LogLevel <= LogLevelType.INFO)
         Log(message);
-}
+};
 
 // Log TRACE - messages about program flow
 export const LogT = (message) => {
     if(LogLevel <= LogLevelType.TRACE)
         Log(message);
-}
+};
 
 export const Log = message => {
     if(LoggingEnabled) {
         console.log(message);
     }
-}
+};
 
 export const FormatDate = (string) => {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -68,4 +68,5 @@ const buildExeptionMessage = (error) => {
     if (error.stack) {
         exMsg += ' | stack: ' + error.stack;
     }
-}
+    return exMsg;
+};

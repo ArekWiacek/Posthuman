@@ -29,8 +29,7 @@ const App = () => {
     LogI("App.ApiCall.Avatars.GetActiveAvatar");
 
     ApiGet("Avatars/GetActiveAvatar", data => {
-      if (data != undefined && data.id != undefined && 
-        data.id != 0) {
+      if (data !== undefined && data.id !== undefined && data.id !== 0) {
         var avatar = data;
         LogW("Calling 'setActiveAvatar' with Avatar of ID: " + avatar.id);
         setActiveAvatar(avatar);

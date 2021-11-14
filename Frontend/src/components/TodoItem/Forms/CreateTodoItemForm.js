@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { LogI, LogW } from '../../../Utilities/Utilities';
+import { LogW } from '../../../Utilities/Utilities';
 
 const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
     const [formState, setFormState] = useState({
@@ -38,7 +38,8 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
             description: formState.description,
             deadline: formState.deadline,
             parentId: formState.parentId ? formState.parentId : null,
-            projectId: formState.projectId ? formState.projectId : null
+            projectId: formState.projectId ? formState.projectId : null,
+            isVisible: true
         };
 
         onCreateTodoItem(todoItem);
@@ -47,8 +48,8 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
 
     return (
         <Box component="form" sx={{ 
-            '& .MuiTextField-root': { m: 1, width: '100%' },
-            display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            width: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center',
+            '& .MuiTextField-root': { m: 1, width: '100%' } }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
             <Typography variant="h5">Create task</Typography>
@@ -107,7 +108,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
 CreateTodoItemForm.defaultProps = {
     todoItems: [], 
     projects: [],
-    parentId: '',
+    parentTaskId: '',
     projectId: '' 
 };
 

@@ -1,14 +1,24 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Table, TableContainer, TableBody, Paper } from '@mui/material';
 import TodoItemsListHeader from './TodoItemsListHeader';
 import TodoItemsListItem from './TodoItemsListItem';
 import TodoItemsListFooter from './TodoItemsListFooter';
 import CreateTodoItemInline from '../Forms/CreateTodoItemInline';
 
-const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask }) => {
-    const [isDensePadding, setIsDensePadding] = React.useState(true);
-    const [showFinished, setShowFinished] = React.useState(false);
-    const [parentId, setParentId] = React.useState(0);
+const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask, onTodoItemVisibleOnOff }) => {
+    const [displayOptions, setDisplayOptions] = useState({
+        isDensePadding: true,
+        showFinished: false,
+        showHidden: true
+    });
+
+    const setDisplayOption = (option, value) => setDisplayOptions({ ...displayOptions, [option]: value });
+    
+    //const [isDensePadding, setIsDensePadding] = useState(true);
+    //const [showFinished, setShowFinished] = useState(false);
+    //const [showHidden, setShowHidden] = useState(true);
+    const [parentId, setParentId] = useState(0);
 
     const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
     const handleTodoItemEdit = todoItem => onTodoItemEdit(todoItem);
@@ -16,12 +26,14 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleAddSubtask = todoItem => setParentId(todoItem.id);
     const handleCancelSubtask = () => setParentId(0);
     const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
+    const handleTodoItemVisibleOnOff = todoItem => onTodoItemVisibleOnOff(todoItem);
 
-    const handleDensePaddingChecked = (isChecked) => setIsDensePadding(isChecked);
-    const handleShowFinishedChecked = (isChecked) => setShowFinished(isChecked);
+    const handleDensePaddingChecked = isChecked => setDisplayOption('isDensePadding', isChecked);
+    const handleShowFinishedChecked = isChecked => setDisplayOption('showFinished', isChecked);
+    const handleShowHiddenChecked = isChecked => setDisplayOption('showHidden', isChecked);
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
-        if (todoItem.id == parentId) {
+        if (todoItem.id === parentId) {
             return <CreateTodoItemInline parentTodoItem={todoItem} 
                 onCreate={handleCreateSubtask} onCancel={handleCancelSubtask} />;
         }
@@ -29,12 +41,16 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} size={isDensePadding ? "small" : ""} aria-label="TodoItems list">
+            <Table sx={{ minWidth: 700 }} size={displayOptions.isDensePadding ? "small" : ""} aria-label="TodoItems list">
                 <TodoItemsListHeader />
 
                 <TableBody>
                     {todoItems.map((todoItem) => {
-                        if (!showFinished && todoItem.isCompleted) {
+                        // Don't show finished and task is completed - skip
+                        if (!displayOptions.showFinished && todoItem.isCompleted) {
+                        }
+                        // Don't show hidden and task is hidden - skip
+                        else if (!displayOptions.showHidden && !todoItem.isVisible) {
                         }
                         else {
                             return (
@@ -45,6 +61,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                                         onDeleteClicked={handleTodoItemDelete}
                                         onDoneClicked={handleTodoItemDone}
                                         onEditClicked={handleTodoItemEdit}
+                                        onVisibleOnOffClicked={handleTodoItemVisibleOnOff}
                                     />
 
                                     {renderCreateSubtaskInlineComponent(todoItem)}
@@ -55,10 +72,12 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                 </TableBody>
             </Table>
             <TodoItemsListFooter
-                isDensePadding={isDensePadding}
+                isDensePadding={displayOptions.isDensePadding}
                 onDensePaddingChecked={handleDensePaddingChecked}
-                showFinished={showFinished}
-                onShowFinishedChecked={handleShowFinishedChecked} />
+                showFinished={displayOptions.showFinished}
+                onShowFinishedChecked={handleShowFinishedChecked}
+                showHidden={displayOptions.showHidden}
+                onShowHiddenChecked={handleShowHiddenChecked} />
         </TableContainer>
     );
 }

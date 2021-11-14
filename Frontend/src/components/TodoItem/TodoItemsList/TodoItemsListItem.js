@@ -1,23 +1,14 @@
 import * as React from 'react';
-import { TableRow, TableCell, Typography, IconButton } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { TableRow, TableCell, Typography } from '@mui/material';
 import Deadline from '../../Common/Deadline';
+import TodoItemListItemActionButtons from './TodoItemsListItemActionButtons';
 
-const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onCreateNewTaskClicked }) => {
-    const handleDeleteClicked = todoItemId => onDeleteClicked(todoItemId);
+const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+    const handleDeleteClicked = todoItem => onDeleteClicked(todoItem.id);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
     const handleAddSubtaskClicked = todoItem => onAddSubtaskClicked(todoItem);
-
-    const createRewardDisplayText = () => { return "+20XP"; }
-
-    const createParentProjectDisplayText = (todoItem) => {
-        return todoItem.projectId ? ("ID: " + todoItem.projectId) : "-";
-    }
+    const handleVisibleOnOffClicked = todoItem => onVisibleOnOffClicked(todoItem);
 
     const createProgressText = (todoItem) => {
         var progressText = "";
@@ -31,19 +22,19 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
         }
 
         return progressText;
-    }
+    };
 
-    function getFontSizeForTodoItemTitle(nestingLevel) { 
-         var titleSizes = { 0: '1.3rem', 1: '1.2rem', 2: '1.1rem' };
-         if(nestingLevel < 2) {
+    function getFontSizeForTodoItemTitle(nestingLevel) {
+        var titleSizes = { 0: '1.2rem', 1: '1.1rem', 2: '1rem' };
+        if (nestingLevel < 2) {
             return titleSizes[nestingLevel];
         } else {
-            return '1rem';
+            return '0.9rem';
         }
-    }
+    };
 
     return (
-        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+        <TableRow sx={{ opacity: todoItem.isVisible ? '100%' : '30%' }}>
             <TableCell component="th" scope="row" >
                 <Typography
                     component="span"
@@ -56,49 +47,24 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                 </Typography>
             </TableCell>
 
-            <TableCell align="left">
-                <Deadline todo={todoItem} when={todoItem.deadline} />
+            <TableCell align="left" sx={{ width: '250px' }}>
+                <Deadline when={todoItem.deadline} />
             </TableCell>
-            
-            <TableCell align="right">
+
+            <TableCell align="right" sx={{ width: '150px' }}>
                 {createProgressText(todoItem)}
             </TableCell>
-            <TableCell align="right">
-                <IconButton
-                    aria-label="add-subtask"
-                    onClick={() => handleAddSubtaskClicked(todoItem)}
-                    disabled={todoItem.isCompleted}>
-                    <AddIcon />
-                </IconButton>
-                <IconButton
-                    aria-label="delete-todoitem"
-                    onClick={() => handleDeleteClicked(todoItem.id)}
-                    disabled={todoItem.isCompleted}>
-                    <DeleteIcon />
-                </IconButton>
-                <IconButton
-                    aria-label="edit-subtask"
-                    onClick={() => handleEditClicked(todoItem)}
-                    disabled={todoItem.isCompleted}>
-                    <EditIcon />
-                </IconButton>
-                <IconButton
-                    aria-label="todoitem-done"
-                    onClick={() => handleDoneClicked(todoItem)}
-                    disabled={todoItem.isCompleted || todoItem.hasUnfinishedSubtasks}>
-                    <CheckCircleIcon />
-                </IconButton>
+
+            <TableCell align="right" sx={{ width: '250px' }}>
+                <TodoItemListItemActionButtons 
+                    todoItem={todoItem}
+                    onDeleteClicked={handleDeleteClicked} 
+                    onEditClicked={handleEditClicked}
+                    onDoneClicked={handleDoneClicked}
+                    onAddSubtaskClicked={handleAddSubtaskClicked} 
+                    onVisibleOnOffClicked={handleVisibleOnOffClicked} />
             </TableCell>
         </TableRow>
-
-        //import AddIcon from '@mui/icons-material/Add';
-        // const renderCreateSubtaskInlineComponent = (date) => {
-        //     if (date != null && date != undefined) {
-        //         return <Moment format="DD.MM.YYYY">{date}</Moment>;
-        //     } else {
-        //         return <div>'guuuuuuuuuuuuuuffj'</div>;
-        //     }
-        // };
     );
 }
 

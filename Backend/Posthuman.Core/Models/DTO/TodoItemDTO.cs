@@ -15,6 +15,7 @@ namespace Posthuman.Core.Models.DTO
         public string Description { get; set; }
         public bool IsCompleted { get; set; }
         public DateTime? Deadline { get; set; }
+        public bool IsVisible { get; set; }
 
         public int AvatarId { get; set; }
         public int? ProjectId { get; set; }

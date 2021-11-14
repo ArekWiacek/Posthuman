@@ -30,19 +30,23 @@ namespace Posthuman.Data.Repositories
                 .ToListAsync();
         }
 
-        Task<IEnumerable<TodoItem>> ITodoItemsRepository.GetAllWithProjectsAsync()
+        public async Task<TodoItem> GetByIdWithSubtasksAsync(int todoItemId)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<TodoItem> GetByIdWithSubtasksAsync(int avatarId, int todoItemId)
-        {
-            return await TodoItemsDbContext
+            var coll1 = await TodoItemsDbContext
                 .TodoItems
                 .Include(ti => ti.Subtasks)
-                .Where(ti => ti.Id == todoItemId && ti.AvatarId == avatarId)
+                .Where(ti => ti.Id == todoItemId)
                 .FirstOrDefaultAsync();
+
+            var coll2 = await TodoItemsDbContext
+             .TodoItems
+             .Where(ti => ti.Id == todoItemId)
+             .Include(ti => ti.Subtasks)
+             .FirstOrDefaultAsync();
+
+            return coll1;
         }
+    
 
         public async Task<IEnumerable<TodoItem>> GetAllByParentIdAsync(int id)
         {

@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { useRef } from 'react';
+import { Typography } from '@mui/material';
 import moment from 'moment';
 
-const Deadline = (date) => {
+const Deadline = ({ when }) => {
     const noDeadlineDefaultText = '-';
     const defaultDateFormat = 'DD.MM.YYYY';
+    const isOverdue = useRef(false);
 
     const calculateDaysToDeadline = (deadlineDate) => {
         let now = moment().endOf('day');
@@ -12,12 +15,15 @@ const Deadline = (date) => {
         return daysToDeadline;
     };
 
-    const getDeadlineText = ({ when }) => {
+    const getDeadlineText = (when) => {
         if(!when) 
             return noDeadlineDefaultText;
 
         let deadlineText = '';
         let daysToDeadline = calculateDaysToDeadline(when);
+
+        if(daysToDeadline < 0) 
+            isOverdue.current = true;
 
         switch (daysToDeadline) {
             case -1:
@@ -33,7 +39,13 @@ const Deadline = (date) => {
                 break;
 
             default:
-                deadlineText = moment(when).format(defaultDateFormat);
+                let dateText = moment(when).format(defaultDateFormat);
+
+                if(daysToDeadline < -1)
+                    deadlineText = dateText + ' (' + Math.abs(daysToDeadline) + ' days ago)';  
+                else
+                    deadlineText = dateText; // + ' (' + daysToDeadline + ' days left)';
+
                 break;
         }
 
@@ -41,7 +53,9 @@ const Deadline = (date) => {
     };
 
     return (
-        <span> {getDeadlineText(date)}</span>
+        <Typography color={isOverdue.current ? "error" : ""}>
+            {getDeadlineText(when)}
+        </Typography>
     );
 }
 

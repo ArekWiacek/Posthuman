@@ -28,7 +28,7 @@ namespace Posthuman.Core.Models.Entities
         public int Level { get; set; }              // Avatar level - it grows when gaining experience
         public int Exp { get; set; }                // Experience points
         public int ExpToNewLevel { get; set; }      // When new level will be reached 
-
+        public int ExpToCurrentLevel { get; set; }
 
         // Owned Projects
         [JsonIgnore]
@@ -45,6 +45,5 @@ namespace Posthuman.Core.Models.Entities
         // Sztuczna inteligencja
         // Cyborg itd...
         public string CybertribeName { get; set; }
-
     }
 }

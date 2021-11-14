@@ -94,6 +94,17 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/Complete")]
+        public async Task<IActionResult> CompleteTodoItem(int id, TodoItemDTO todoItemDTO)
+        {
+            if (id != todoItemDTO.Id)
+                return BadRequest();
+
+            await todoItemsService.CompleteTodoItem(todoItemDTO);
+
+            return NoContent();
+        }
+
         /// DELETE: api/TodoItem/5
         /// <summary>
         ///     Deletes TodoItem with all backend logic

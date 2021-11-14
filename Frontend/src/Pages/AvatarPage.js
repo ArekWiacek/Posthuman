@@ -1,22 +1,24 @@
 import * as React from 'react';
-import {useContext} from 'react'
+import { useContext } from 'react'
 import Grid from '@mui/material/Grid';
 import AvatarView from '../components/Avatar/AvatarView';
+import SelectAvatar from '../components/Avatar/SelectAvatar';
 import { AvatarContext } from '../App';
-import { LogT } from '../Utilities/Utilities';
 
 const AvatarPage = () => {
-    LogT("AvatarPage.Constructor");
-
-    const { activeAvatar, setActiveAvatar } = useContext(AvatarContext);
-    const avatar = activeAvatar;
+    const { activeAvatar } = useContext(AvatarContext);
 
     return (
-        <Grid container spacing={3}>
-            <Grid item xs={12} md={12} lg={12}>
-                <AvatarView avatar={avatar} />
+        <React.Fragment>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={12} lg={4}>
+                    <AvatarView avatar={activeAvatar} />
+                </Grid>
+                <Grid item xs={12} md={12} lg={4}>
+                    <SelectAvatar />
+                </Grid>
             </Grid>
-        </Grid>
+        </React.Fragment>
     );
 }
 

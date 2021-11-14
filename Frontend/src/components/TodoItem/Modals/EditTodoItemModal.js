@@ -2,14 +2,14 @@ import * as React from 'react';
 import ModalWindow from '../../Modal/ModalWindow';
 import EditTodoItemForm from '../Forms/EditTodoItemForm';
 
-const EditTodoItemModal = ({ isOpen, currentTodoItem, todoItems, projects, onSaveEdit, onCancelEdit, onClose }) => {
+const EditTodoItemModal = ({ isOpen, todoItemToEdit, todoItems, projects, onSaveEdit, onCancelEdit, onClose }) => {
     return (
         <ModalWindow 
             isOpen={isOpen}
             onClose={onClose}
             sx={{ width: '400px' }}>
             <EditTodoItemForm 
-                currentTodoItem={currentTodoItem}
+                todoItemToEdit={todoItemToEdit}
                 todoItems={todoItems}
                 projects={projects}
                 onSaveEdit={onSaveEdit}

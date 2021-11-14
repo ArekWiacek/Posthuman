@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { LogW } from '../../../Utilities/Utilities';
 
-const EditTodoItemForm = ({ currentTodoItem, todoItems, projects, onSaveEdit, onCancelEdit }) => {
-    const [todoItem, setTodoItem] = useState({ ...currentTodoItem });
+const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onCancelEdit }) => {
+    const [todoItem, setTodoItem] = useState({ ...todoItemToEdit });
 
     const handleInputChange = e => {
         const { name, value } = e.target;
@@ -30,9 +30,9 @@ const EditTodoItemForm = ({ currentTodoItem, todoItems, projects, onSaveEdit, on
 
         // "Select" form control uses 0 as "not-selected"
         // Backend model uses "null", so needs to be converted: 
-        if (todoItem.projectId == 0) 
+        if (todoItem.projectId === 0) 
             todoItem.projectId = null;
-        if (todoItem.parentId == 0)
+        if (todoItem.parentId === 0)
             todoItem.parentId = null;
 
         onSaveEdit(todoItem.id, todoItem);
@@ -40,7 +40,7 @@ const EditTodoItemForm = ({ currentTodoItem, todoItems, projects, onSaveEdit, on
 
     return (
         <Box component="form" sx={{ 
-            '& .MuiTextField-root': { m: 1, width: '100%' }, 
+            width: '400px', '& .MuiTextField-root': { m: 1, width: '100%' }, 
             display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
@@ -92,10 +92,8 @@ const EditTodoItemForm = ({ currentTodoItem, todoItems, projects, onSaveEdit, on
             </TextField>
 
             <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    p: 1, m: 1
+                sx={{ 
+                    display: 'flex', justifyContent: 'center', p: 1, m: 1
                 }}>
                 <Button
                     variant="contained"

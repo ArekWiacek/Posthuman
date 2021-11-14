@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import { Paper, Grid, Button } from '@mui/material';
+import { Box, Grid, Fab } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 import { AvatarContext } from "../App";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
-import EditTodoItemForm from '../components/TodoItem/Forms/EditTodoItemForm';
-import CreateTodoItemForm from '../components/TodoItem/Forms/CreateTodoItemForm';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
 import CreateTodoItemModal from '../components/TodoItem/Modals/CreateTodoItemModal';
 import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
 
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
+import { LogI, LogW } from '../Utilities/Utilities';
 
 function todoItemFormInitialValues() {
     return {
@@ -33,24 +33,29 @@ const TodoPage = () => {
     const { activeAvatar } = useContext(AvatarContext);
     const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
-    const [currentTodoItem, setCurrentTodoItem] = useState(todoItemFormInitialValues());
-    const [isTodoItemInEditMode, setIsTodoItemInEditMode] = useState(false);
-    const [parentId, setParentId] = useState(0);
+    const [todoItemToEdit, setTodoItemToEdit] = useState(todoItemFormInitialValues());
+    const [todoItemToBeCompleted, setTodoItemToBeCompleted] = useState(todoItemFormInitialValues());
 
-    const [todoItemToBeCompleted, setTodoItemToBeCompleted] = useState(todoItemFormInitialValues())
-    const [todoCompleteConfirmationModalVisible, setTodoCompleteConfirmationModalVisible] = useState(false);
+    const [modalsVisibility, setModalsVisibility] = useState({
+        create: false,
+        edit: false,
+        confirmComplete: false
+    });
 
-    const [createTodoItemModalVisible, setCreateTodoItemModalVisible] = useState(false);
-    const [editTodoItemModalVisible, setEditTodoItemModalVisible] = useState(false);
-    
     // CREATE TODO ITEM
     const handleCreateTodoItem = (todoItemToCreate) => {
         Api.Post(todoItemsEndpointName, todoItemToCreate, (createdTodoItem) => {
-            var newArray = ArrayHelper.InsertObject(todoItems, createdTodoItem);
+            let newArray = [];
+            if (!createdTodoItem.parentId)
+                newArray = ArrayHelper.InsertObject(todoItems, createdTodoItem);
+            else {
+                let parentIndex = ArrayHelper.FindObjectIndexByProperty(todoItems, "id", createdTodoItem.parentId);
+                newArray = ArrayHelper.InsertObjectAtIndex(todoItems, createdTodoItem, parentIndex + 1);
+            }
             setTodoItems(newArray);
         });
 
-        setCreateTodoItemModalVisible(false);
+        setModalVisible('create', false);
     }
 
     // CREATE SUBTASK
@@ -75,130 +80,142 @@ const TodoPage = () => {
     const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
         Api.Put(todoItemsEndpointName, editedTodoItemId, editedTodoItem, () => {
             setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, editedTodoItem, "id", editedTodoItemId));
-            setIsTodoItemInEditMode(false);
-            setCurrentTodoItem(todoItemFormInitialValues());
+            setTodoItemToEdit(todoItemFormInitialValues());
         });
 
         closeEditTodoItemModal();
     }
 
+    
+    // Make todo item visible / invisible, and propagate it to all it's children
+    const handleTodoItemVisibleOnOff = todoItem => {
+        // TODO in upcoming version
+        // let isVisible = !todoItem.isVisible;
+        // let todoItemsTree = [];
+
+        // let clickedTodoItemCopy = ArrayHelper.CopyObject(todoItem);
+        // todoItemsTree = ArrayHelper.GetAllChildren(todoItems, clickedTodoItemCopy);
+
+        // let stateCopy = ArrayHelper.CopyArray(todoItems);
+
+        // todoItemsTree.map(item => {
+        //     item.isVisible = isVisible;
+        //     stateCopy = ArrayHelper.ReplaceObjectInArray(stateCopy, item, 'id', item.id);
+        // });
+
+        // setTodoItems(stateCopy);
+
+        let updatedTodoItem = {...todoItem, isVisible: !todoItem.isVisible};
+        Api.Put(todoItemsEndpointName, updatedTodoItem.id, updatedTodoItem, () => {
+            // TODO - change to optimistic update 
+            refreshTodoItemsCollection();
+        });
+    };
+
     // EDIT TODO ITEM CLICKED - turn on edit mode 
     const handleTodoItemEdit = (todoItemToEdit) => {
-        setIsTodoItemInEditMode(true);
-        setCurrentTodoItem(todoItemToEdit);
+        setTodoItemToEdit(todoItemToEdit);
         openEditTodoItemModal();
-    }
-
-    // EDITING CANCELLED
-    const handleTodoItemCancelEdit = () => {
-        setIsTodoItemInEditMode(false);
-        setCurrentTodoItem(todoItemFormInitialValues());
     }
 
     // Complete task window opened
     const handleTodoItemCompleted = (todoItemToBeCompleted) => {
         const todoItem = { ...todoItemToBeCompleted };
         setTodoItemToBeCompleted(todoItem);
-        setTodoCompleteConfirmationModalVisible(true);
-    }
-    
-    // Complete task window discarded
-    const handleTodoItemCompleteDiscarded = () => {
-        setTodoCompleteConfirmationModalVisible(false);
+        setModalVisible('confirmComplete', true);
     }
 
-    // Complete task window confirmation
+    // Complete task canceled
+    const handleTodoItemCompleteDiscarded = () => {
+        setModalVisible('confirmComplete', false);
+    }
+
+    // Complete task confirmed
     const handleTodoItemCompleteConfirmed = () => {
         var completedTodoItem = ArrayHelper.UpdateObjectProperty(todoItemToBeCompleted, "isCompleted", true);
         Api.Put(todoItemsEndpointName, completedTodoItem.id, completedTodoItem, () => {
             setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, completedTodoItem, "id", completedTodoItem.id));
+            
+            // TODO - remove
+            refreshTodoItemsCollection();
         });
 
-        setTodoCompleteConfirmationModalVisible(false);
+        setModalVisible('confirmComplete', false);
     }
 
-    const openCreateTodoItemModal = () => setCreateTodoItemModalVisible(true);
-    const closeCreateTodoItemModal = () => setCreateTodoItemModalVisible(false);
-
-    const openEditTodoItemModal = () => setEditTodoItemModalVisible(true);
-    const closeEditTodoItemModal = () => setEditTodoItemModalVisible(false);
+    const setModalVisible = (modal, isVisible) => setModalsVisibility({ ...modalsVisibility, [modal]: isVisible });
+    const openCreateTodoItemModal = () => setModalVisible('create', true);
+    const closeCreateTodoItemModal = () => setModalVisible('create', false);
+    const openEditTodoItemModal = () => setModalVisible('edit', true);
+    const closeEditTodoItemModal = () => setModalVisible('edit', false);
 
     useEffect(() => {
         Api.Get("Projects", projects => setProjects(projects));
     }, [activeAvatar]);
 
     useEffect(() => {
-        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => { 
-            console.log(todoItems);
+        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
             setTodoItems(todoItems);
         });
     }, [activeAvatar]);
 
+    // Temporary lame method for refreshing whole todo items collection when changes occured
+    const refreshTodoItemsCollection = () => {
+        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
+            setTodoItems(todoItems);
+        });
+    };
+
     return (
-      <Grid container spacing={3}>
-            {/* LIST VIEW */}
-            <Grid item xs={12}>
-                <TodoItemList
-                    todoItems={todoItems}
-                    onTodoItemDelete={handleTodoItemDelete}
-                    onTodoItemEdit={handleTodoItemEdit}
-                    onTodoItemDone={handleTodoItemCompleted}
-                    onAddSubtask={handleSubtaskCreate}
-                />
+        <React.Fragment>
+            <Grid container spacing={3}>
+                {/* LIST VIEW */}
+                <Grid item xs={12}>
+                    <TodoItemList
+                        todoItems={todoItems}
+                        onTodoItemDelete={handleTodoItemDelete}
+                        onTodoItemEdit={handleTodoItemEdit}
+                        onTodoItemDone={handleTodoItemCompleted}
+                        onAddSubtask={handleSubtaskCreate}
+                        onTodoItemVisibleOnOff={handleTodoItemVisibleOnOff}
+                    />
+                </Grid>
             </Grid>
 
-            {/* CREATE / EDIT */}
-            <Grid item xs={3}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                    {
-                        isTodoItemInEditMode ? (
-                            <EditTodoItemForm
-                                onSaveEdit={handleTodoItemSaveChanges}
-                                onCancelEdit={handleTodoItemCancelEdit}
-                                currentTodoItem={currentTodoItem}
-                                projects={projects}
-                                todoItems={todoItems} />
-                        ) : (
-                            <CreateTodoItemForm
-                                onCreateTodoItem={handleCreateTodoItem}
-                                projects={projects}
-                                todoItems={todoItems}
-                                parentTaskId={parentId} />)
-                    }
-                </Paper>
-            </Grid>
-
-            <Button onClick={openCreateTodoItemModal}>Otfjeraj</Button>
-
-            {/* TodoItem done confirmation modal */}
-            <ConfirmTodoItemDoneModal
-                isOpen={todoCompleteConfirmationModalVisible}
-                onFinished={handleTodoItemCompleteConfirmed}
-                onCanceled={handleTodoItemCompleteDiscarded}
-                todoItem={todoItemToBeCompleted}
-                xpGained={25} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', p: 2 }}>
+                <Fab color="primary" aria-label="add" onClick={openCreateTodoItemModal}>
+                    <AddIcon />
+                </Fab>
+            </Box>
 
             {/* Create TodoItem modal  */}
-            <CreateTodoItemModal 
-                isOpen={createTodoItemModalVisible}
+            <CreateTodoItemModal
+                isOpen={modalsVisibility.create}
                 todoItems={todoItems}
                 projects={projects}
-                parentTaskId={parentId}
                 onClose={closeCreateTodoItemModal}
                 onCreateTodoItem={handleCreateTodoItem}
             />
 
             {/* Edit TodoItem modal */}
             <EditTodoItemModal
-                isOpen={editTodoItemModalVisible}
-                currentTodoItem={currentTodoItem}
+                isOpen={modalsVisibility.edit}
+                todoItemToEdit={todoItemToEdit}
                 todoItems={todoItems}
                 projects={projects}
                 onClose={closeEditTodoItemModal}
                 onCancelEdit={closeEditTodoItemModal}
                 onSaveEdit={handleTodoItemSaveChanges}
             />
-        </Grid>
+
+            {/* TodoItem done confirmation modal */}
+            <ConfirmTodoItemDoneModal
+                isOpen={modalsVisibility.confirmComplete}
+                onFinished={handleTodoItemCompleteConfirmed}
+                onCanceled={handleTodoItemCompleteDiscarded}
+                todoItem={todoItemToBeCompleted}
+                xpGained={25} />
+        </React.Fragment>
     );
 }
 

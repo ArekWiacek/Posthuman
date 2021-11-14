@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { TextField, IconButton, TableRow, TableCell } from '@mui/material';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { AvatarContext } from "../../../App";
 
 const CreateTodoItemInline = ({ parentTodoItem, onCreate, onCancel }) => {
-    const { activeAvatar } = useContext(AvatarContext);
     const [title, setTitle] = useState('');
     const paddingLeftPx = (parentTodoItem.nestingLevel + 1) * 2;
 
@@ -15,7 +13,7 @@ const CreateTodoItemInline = ({ parentTodoItem, onCreate, onCancel }) => {
     const handleCancelClicked = () => onCancel();
 
     const createSubtask = (parent) => {
-        if (!title || !activeAvatar || !activeAvatar.id) 
+        if (!title) 
             return;
 
         const newSubtask = {
@@ -23,9 +21,10 @@ const CreateTodoItemInline = ({ parentTodoItem, onCreate, onCancel }) => {
             parentId: parent.id,
             
             deadline: parent.deadline,
-            avatarId: activeAvatar.id,
+            avatarId: parent.avatarId,
             projectId: parent.projectId,
-            nestingLevel: parent.nestingLevel + 1
+            nestingLevel: parent.nestingLevel + 1,
+            isVisible: parent.isVisible
         };
 
         onCreate(newSubtask);

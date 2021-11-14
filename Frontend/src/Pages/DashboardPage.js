@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 
-import CreateTodoItemForm from '../components/TodoItem/Forms/CreateTodoItemForm';
-import EditTodoItemForm from '../components/TodoItem/Forms/EditTodoItemForm';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 
 import CreateProject from '../components/Project/CreateProject';
 import EditProject from '../components/Project/EditProject';
 import ProjectsList from '../components/Project/ProjectsList';
-
-import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 import { AvatarContext } from "../App";
 import { LogT, LogI, LogE } from '../Utilities/Utilities';
@@ -37,8 +33,6 @@ function createEmptyProject() {
 }
 
 const DashboardPage = () => {
-  LogT("DashboardPage.Constructor");
-
   const { activeAvatar } = React.useContext(AvatarContext);
 
   const [projects, setProjects] = React.useState([
@@ -228,27 +222,6 @@ const DashboardPage = () => {
                   <CreateProject onCreateProject={handleProjectCreated} />)
             }
           </Paper>
-        </Grid>
-
-        {/* TODO ITEM CREATE / EDIT */}
-        {/* <Grid item xs={12} md={4} lg={3}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {
-              isTaskInEditMode ?
-                (<EditTodoItem
-                  onSaveChanges={handleTodoItemSaveChanges}
-                  onCancelEdit={handleTodoItemCancelEdit}
-                  currentTodoItem={currentTodoItem}
-                  key={currentTodoItem.id}
-                  projects={projects} />) : (
-                  <CreateTodoItem onCreateTodoItem={handleTodoItemCreated} projects={projects} />)
-            }
-          </Paper>
-        </Grid> */}
-
-        {/* SELECT AVATAR */}
-        <Grid item xs={12} md={4} lg={3}>
-            <SelectAvatar />
         </Grid>
 
         {/* PROJECTS LIST */}

@@ -26,7 +26,7 @@ const CreateProject = ({ onCreateProject }) => {
             return;
         }
 
-        if (activeAvatar == null || activeAvatar.id == 0) {
+        if (activeAvatar === null || activeAvatar.id === 0) {
             LogW("Cannot create Project - active avatar unknown");
             return;
         }

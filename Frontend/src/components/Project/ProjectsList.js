@@ -3,15 +3,12 @@ import { Button, Table, TableRow, TableCell, TableHead, TableContainer, TableBod
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit'
 
-import moment from 'moment';
-// import Moment from 'react-moment';
-
 const ProjectsList = ({ projects, onProjectEdited, onProjectDeleted }) => {
     const handleProjectDeleted = projectId => onProjectDeleted(projectId);
     const handleProjectEdit = (project) => onProjectEdited(project);
 
     const calculateProjectProgress = (project) => {
-        if (project.totalSubtasks == 0)
+        if (project.totalSubtasks === 0)
             return 0;
 
         var projectProgress = (project.completedSubtasks / project.totalSubtasks) * 100;

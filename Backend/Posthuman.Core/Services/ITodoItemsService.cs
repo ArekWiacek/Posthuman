@@ -16,5 +16,7 @@ namespace Posthuman.Core.Services
         Task<TodoItemDTO> CreateTodoItem(TodoItemDTO todoItemDTO);
         Task UpdateTodoItem(TodoItemDTO todoItemDTO);
         Task DeleteTodoItem(int id);
+
+        Task CompleteTodoItem(TodoItemDTO todoITemDTO);
     }
 }
