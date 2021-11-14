@@ -18,7 +18,7 @@ const AvatarView = ({ avatar }) => {
             <CardMedia
                 component="img"
                 height="140"
-                image="cyborg_brain.jpg"
+                image="/Assets/Images/cyborg_brain.jpg"
                 alt="Cyborg brain" />
             <CardContent>
                 <Typography gutterBottom variant="h4" component="div">

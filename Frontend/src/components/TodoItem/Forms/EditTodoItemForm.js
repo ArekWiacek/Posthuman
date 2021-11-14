@@ -92,19 +92,18 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
             </TextField>
 
             <Box
-                sx={{ 
-                    display: 'flex', justifyContent: 'center', p: 1, m: 1
-                }}>
+                sx={{ display: 'flex', justifyContent: 'center', m: 1, width: '100%' }}>
                 <Button
                     variant="contained"
                     startIcon={<CancelIcon />}
                     onClick={handleCancelEdit}
-                    sx={{ mr: 2}}>
+                    sx={{ mr: 2, width: '100%' }}>
                     Cancel
                 </Button>
                 <Button
                     variant="contained"
                     startIcon={<AddTaskIcon />}
+                    sx={{ width: '100%' }}
                     type="submit">
                     Save
                 </Button>

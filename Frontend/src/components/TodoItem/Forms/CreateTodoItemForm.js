@@ -96,7 +96,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
             </TextField>
 
             <Button
-                sx={{ m: 1, width: '30ch' }}
+                sx={{ m: 1, width: '100%' }}
                 variant="contained" type="submit"
                 startIcon={<AddTaskIcon />}>
                 Create

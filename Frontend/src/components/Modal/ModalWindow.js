@@ -10,10 +10,10 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    p: 4,
-    backgroundImage: 'url("eyecandy1.svg")',    
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right top'
+    p: 4, 
+    //backgroundImage: 'url("/Assets/Graphics/Eyecandies/eyecandy1.svg")',    
+    backgroundRepeat: 'no-repeat'
+    // backgroundPosition: 'right top'
 };
 
 // Custom modal window encapsulating application sci-fi style adding eyecandies 
@@ -24,6 +24,8 @@ const ModalWindow = (props) => {
             props.onClose();
     }
 
+    const eyecandyUrl = 'url("/Assets/Graphics/Eyecandies/' + props.eyecandy + '.svg")';
+
     return (
         <Modal
             open={props.isOpen}
@@ -33,7 +35,7 @@ const ModalWindow = (props) => {
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{ timeout: 500 }}>
-            <Box sx={style}>
+            <Box sx={{...style, backgroundImage: eyecandyUrl, ...props.background }}>
                 {props.children}
             </Box>
         </Modal>
