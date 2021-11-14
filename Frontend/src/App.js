@@ -1,10 +1,9 @@
 import * as React from 'react';
-import './App.css';
-import { useState, createContext, useMemo } from 'react';
+import { useState, useEffect, createContext, useMemo } from 'react';
 import LayoutWrapper from "./components/Layout/LayoutWrapper";
-
 import { LogT, LogI, LogW } from './Utilities/Utilities';
 import { ApiGet } from './Utilities/ApiRepository';
+import './App.css';
 
 export const AvatarContext = createContext({
   activeAvatar: {},
@@ -24,7 +23,7 @@ const App = () => {
     [activeAvatar]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     LogT("App.useEffect");
     LogI("App.ApiCall.Avatars.GetActiveAvatar");
 
