@@ -11,7 +11,7 @@ const Api = {
             .get(ApiUrl + entityName)
             .then(response => successCallback(response.data))
             .catch(error => {
-                LogE("Error occured when calling GET method for " + entityName, error)
+                LogE("Error occured when calling GET method for " + entityName, error);
                 if (errorCallback)
                     errorCallback(error);
             });
@@ -22,7 +22,7 @@ const Api = {
             .put(ApiUrl + entityName + "/" + entityId, entityData)
             .then(response => successCallback(response.data))
             .catch(error => {
-                LogE("Error occured when calling PUT method for " + entityName, error)
+                LogE("Error occured when calling PUT method for " + entityName, error);
                 if (errorCallback)
                     errorCallback(error);
             });
@@ -33,7 +33,7 @@ const Api = {
             .post(ApiUrl + entityName, entityData)
             .then(response => successCallback(response.data))
             .catch(error => {
-                LogE("Error occured when calling POST method for " + entityName, error)
+                LogE("Error occured when calling POST method for " + entityName, error);
                 if (errorCallback)
                     errorCallback(error);
             });
@@ -44,7 +44,7 @@ const Api = {
             .delete(ApiUrl + entityName + "/" + entityId)
             .then(response => successCallback(response.data))
             .catch(error => {
-                LogE("Error occured when calling DELETE method for " + entityName, error)
+                LogE("Error occured when calling DELETE method for " + entityName, error);
                 if (errorCallback)
                     errorCallback(error);
             });

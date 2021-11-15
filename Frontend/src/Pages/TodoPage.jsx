@@ -12,6 +12,7 @@ import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
 import { LogI, LogW } from '../Utilities/Utilities';
+import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 
 moment.updateLocale("pl", {
     week: {
@@ -38,20 +39,26 @@ const TodoPage = () => {
     const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
     const [todoItemToEdit, setTodoItemToEdit] = useState(todoItemFormInitialValues());
+    const [todoItemToDelete, setTodoItemToDelete] = useState(todoItemFormInitialValues());
     const [todoItemToBeCompleted, setTodoItemToBeCompleted] = useState(todoItemFormInitialValues());
 
     const [modalsVisibility, setModalsVisibility] = useState({
         create: false,
         edit: false,
-        confirmComplete: false
+        confirmComplete: false,
+        delete: false
     });
 
     // CREATE TODO ITEM
     const handleCreateTodoItem = (todoItemToCreate) => {
         Api.Post(todoItemsEndpointName, todoItemToCreate, (createdTodoItem) => {
             let newArray = [];
-            if (!createdTodoItem.parentId)
-                newArray = ArrayHelper.InsertObject(todoItems, createdTodoItem);
+            if (!createdTodoItem.parentId) {
+                if (todoItems && todoItems.length > 0)
+                    newArray = ArrayHelper.InsertObject(todoItems, createdTodoItem);
+                else
+                    newArray.push(createdTodoItem);
+            }
             else {
                 let parentIndex = ArrayHelper.FindObjectIndexByProperty(todoItems, "id", createdTodoItem.parentId);
                 newArray = ArrayHelper.InsertObjectAtIndex(todoItems, createdTodoItem, parentIndex + 1);
@@ -73,11 +80,21 @@ const TodoPage = () => {
         });
     }
 
-    // DELETE TODO ITEM (with subtasks)
+    // Open delete confirmation modal
     const handleTodoItemDelete = (todoItemToDeleteId) => {
-        Api.Delete(todoItemsEndpointName, todoItemToDeleteId, () => {
-            setTodoItems(ArrayHelper.RemoveObjectFromArray(todoItems, "id", todoItemToDeleteId));
+        let itemToDelete = ArrayHelper.FindObjectByProperty(todoItems, "id", todoItemToDeleteId);
+        setTodoItemToDelete({ ...itemToDelete });
+        setModalVisible('delete', true);
+    }
+
+    // DELETE TODO ITEM (with subtasks)
+    const handleTodoItemDeleteConfirmed = (todoItemToDelete) => {
+        Api.Delete(todoItemsEndpointName, todoItemToDelete.id, () => {
+            // TODO - remove by hand
+            refreshTodoItemsCollection();
+            //setTodoItems(deleteWithSubtasks(todoItemToDelete));
         });
+        setModalVisible('delete', false);
     }
 
     // UPDATE TODO ITEM (after edition)
@@ -90,7 +107,7 @@ const TodoPage = () => {
         closeEditTodoItemModal();
     }
 
-    
+
     // Make todo item visible / invisible, and propagate it to all it's children
     const handleTodoItemVisibleOnOff = todoItem => {
         // TODO in upcoming version
@@ -109,7 +126,7 @@ const TodoPage = () => {
 
         // setTodoItems(stateCopy);
 
-        let updatedTodoItem = {...todoItem, isVisible: !todoItem.isVisible};
+        let updatedTodoItem = { ...todoItem, isVisible: !todoItem.isVisible };
         Api.Put(todoItemsEndpointName, updatedTodoItem.id, updatedTodoItem, () => {
             // TODO - change to optimistic update 
             refreshTodoItemsCollection();
@@ -139,7 +156,7 @@ const TodoPage = () => {
         var completedTodoItem = ArrayHelper.UpdateObjectProperty(todoItemToBeCompleted, "isCompleted", true);
         Api.Put(todoItemsEndpointName, completedTodoItem.id, completedTodoItem, () => {
             setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, completedTodoItem, "id", completedTodoItem.id));
-            
+
             // TODO - remove
             refreshTodoItemsCollection();
         });
@@ -152,6 +169,7 @@ const TodoPage = () => {
     const closeCreateTodoItemModal = () => setModalVisible('create', false);
     const openEditTodoItemModal = () => setModalVisible('edit', true);
     const closeEditTodoItemModal = () => setModalVisible('edit', false);
+    const closeDeleteTodoItemModal = () => setModalVisible('delete', false);
 
     useEffect(() => {
         Api.Get("Projects", projects => setProjects(projects));
@@ -210,6 +228,14 @@ const TodoPage = () => {
                 onClose={closeEditTodoItemModal}
                 onCancelEdit={closeEditTodoItemModal}
                 onSaveEdit={handleTodoItemSaveChanges}
+            />
+
+            <DeleteTodoItemModal
+                isOpen={modalsVisibility.delete}
+                todoItemToDelete={todoItemToDelete}
+                onClose={closeDeleteTodoItemModal}
+                onDelete={handleTodoItemDeleteConfirmed}
+                onCancelDelete={closeDeleteTodoItemModal}
             />
 
             {/* TodoItem done confirmation modal */}

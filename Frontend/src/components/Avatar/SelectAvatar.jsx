@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { TextField, MenuItem } from '@mui/material';
 import { AvatarContext } from '../../App';
-import { ApiGet, ApiPut } from '../../Utilities/ApiRepository';
+import Api from '../../Utilities/ApiHelper';
 
 // This component allows to select current user from dropdown (stub until authentication is implemented)
 const SelectAvatar = () => {
@@ -14,7 +14,7 @@ const SelectAvatar = () => {
     const handleAvatarChange = (event) => {
         var selectedId = event.target.value;
 
-        ApiPut("Avatars/SetActiveAvatar", selectedId, null, data => {
+        Api.Put("Avatars/SetActiveAvatar", selectedId, null, data => {
             // Avatar set as "Active" in backend - now do the same change in frontend state
             var selectedAvatar = avatars.find(av => {
                 return av.id === selectedId;
@@ -25,7 +25,7 @@ const SelectAvatar = () => {
     };
 
     React.useEffect(() => {
-        ApiGet("Avatars", data => setAvatars(data));
+        Api.Get("Avatars", data => setAvatars(data));
     }, []);
 
     return (

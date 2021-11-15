@@ -10,7 +10,7 @@ import EditTodoItem from '../components/TodoItem/EditTodoItem';
 import CreateTodoItem from '../components/TodoItem/CreateTodoItem';
 import TodoItemRow from './../components/TodoItem/TodoItemRow';
 
-import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
+import Api from '../Utilities/ApiHelper';
 
 function todoItemFormInitialValues() {
     return {
@@ -33,7 +33,7 @@ const TodoPage2 = () => {
     const [parentId, setParentId] = React.useState(0);
 
     const handleTodoItemCreated = (newTodoItem) => {
-        ApiPost("TodoItems", newTodoItem, (data) => {
+        Api.Post("TodoItems", newTodoItem, (data) => {
             const todoItemListWithNewTodoItem = [...todoItems, data];
             setTodoItems(todoItemListWithNewTodoItem);
         });
@@ -45,7 +45,7 @@ const TodoPage2 = () => {
     }
 
     const handleTodoItemDeleted = (todoItemId) => {
-        ApiDelete("TodoItems", todoItemId, (data) => {
+        Api.Delete("TodoItems", todoItemId, (data) => {
             const todoItemsList = todoItems.filter((todoItem) => todoItem.id !== todoItemId);
             setTodoItems(todoItemsList);
         });
@@ -54,7 +54,7 @@ const TodoPage2 = () => {
     const handleTodoItemDone = (completedTodoItem) => {
         completedTodoItem.isCompleted = true;
 
-        ApiPut("TodoItems", completedTodoItem.id, completedTodoItem, (data) => {
+        Api.Put("TodoItems", completedTodoItem.id, completedTodoItem, (data) => {
             const updatedTodoItemList = todoItems.map((todoItem) =>
                     todoItem.id === completedTodoItem ? completedTodoItem : todoItem
             );
@@ -71,7 +71,7 @@ const TodoPage2 = () => {
     const handleAddSubtask = task => setParentId(task.id);
 
     const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
-        ApiPut("TodoItems", editedTodoItemId, editedTodoItem, (data) => {
+        Api.Put("TodoItems", editedTodoItemId, editedTodoItem, (data) => {
             const updatedTodoItemList = todoItems.map((todoItem) =>
                 todoItem.id === editedTodoItemId ? editedTodoItem : todoItem
             );
@@ -83,11 +83,11 @@ const TodoPage2 = () => {
     }
 
     React.useEffect(() => {
-        ApiGet("Projects", projects => setProjects(projects));
+        Api.Get("Projects", projects => setProjects(projects));
     }, [activeAvatar]);
 
     React.useEffect(() => {
-        ApiGet("TodoItems", todoItems => setTodoItems(todoItems));
+        Api.Get("TodoItems", todoItems => setTodoItems(todoItems));
     }, [activeAvatar]);
 
     const useStyles = makeStyles(theme => ({

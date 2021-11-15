@@ -4,7 +4,7 @@ import { Box, Paper, TableContainer, Table, TableHead,
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid';
 
-import { ApiGet } from '../Utilities/ApiRepository';
+import Api from '../Utilities/ApiHelper';
 
 const HistoryPage = () => {
     const [eventItems, setEventItems] = React.useState([
@@ -70,7 +70,7 @@ const HistoryPage = () => {
     };
 
     React.useEffect(() => {
-        ApiGet("EventItems", data => setEventItems(data));
+        Api.Get("EventItems", data => setEventItems(data));
     }, []);
 
     return (

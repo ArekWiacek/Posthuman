@@ -4,18 +4,25 @@ import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import moment from 'moment';
-import { LogW } from '../../../Utilities/Utilities';
+import { LogI, LogW } from '../../../Utilities/Utilities';
+import * as ArrayHelper from '../../../Utilities/ArrayHelper';
 
 const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
     const [formState, setFormState] = useState({
         title: '', description: '', deadline: null,
         parentId: parentTaskId ? parentTaskId : '',
-        projectId: parentProjectId ? parentProjectId: ''
+        projectId: parentProjectId ? parentProjectId : ''
     });
 
     useEffect(() => {
         setFormState({ ...formState, parentId: parentTaskId });
     }, [parentTaskId]);
+
+    useEffect(() => {
+        LogI(`USE EFFECT on create todo item form. todo items count: ${todoItems ? todoItems.length : 0}`);
+        let unfinishedTodoItems = ArrayHelper.FindObjects(todoItems, 'isCompleted', false);
+        LogI(`USE EFFECT on create todo item form. unfinished todo items count: ${unfinishedTodoItems ? unfinishedTodoItems.length : 0}`);
+    }, [todoItems])
 
     const handleInputChange = e => {
         const { name, value } = e.target;
@@ -44,12 +51,14 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
         };
 
         onCreateTodoItem(todoItem);
-        setFormState({...formState, title: '', description: ''});
+        setFormState({ ...formState, title: '', description: '' });
     };
 
     return (
-        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
-            '& .MuiTextField-root': { m: 1, width: '100%' } }}
+        <Box component="form" sx={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            '& .MuiTextField-root': { m: 1, width: '100%' }
+        }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
             <Typography variant="h5">Create task</Typography>
@@ -68,7 +77,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
                 renderInput={(params) => <TextField {...params} />} />
 
             <TextField
-                label="Project" name="projectId" select 
+                label="Project" name="projectId" select
                 disabled={!projects || projects.length === 0} disabled
                 value={formState.projectId} onChange={handleInputChange}>
 
@@ -78,21 +87,25 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
                     <MenuItem key={project.id} value={project.id}>
                         {project.title}
                     </MenuItem>
-                ))} 
+                ))}
             </TextField>
 
             <TextField
-                label="Parent task" name="parentId" select 
+                label="Parent task" name="parentId" select
                 disabled={!todoItems || todoItems.length === 0}
                 value={formState.parentId} onChange={handleInputChange}>
 
                 <MenuItem key={0} value={0}>Select parent task</MenuItem>
 
-                {todoItems.map((todoItem) => (
-                    <MenuItem key={todoItem.id} value={todoItem.id}>
-                        {todoItem.title}
-                    </MenuItem>
-                ))}
+                {todoItems.map((todoItem) => {
+                    if (!todoItem.isCompleted) {
+                        return (
+                            <MenuItem key={todoItem.id} value={todoItem.id}>
+                                {todoItem.title}
+                            </MenuItem>
+                        )
+                    }
+                })}
             </TextField>
 
             <Button
@@ -106,10 +119,10 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
 }
 
 CreateTodoItemForm.defaultProps = {
-    todoItems: [], 
+    todoItems: [],
     projects: [],
     parentTaskId: '',
-    projectId: '' 
+    projectId: ''
 };
 
 export default CreateTodoItemForm;

@@ -10,7 +10,7 @@ import ProjectsList from '../components/Project/ProjectsList';
 import { AvatarContext } from "../App";
 import { CreateDummyProject, CreateDummyProjects } from '../Utilities/DummyObjects';
 
-import { ApiGet, ApiPost, ApiPut, ApiDelete } from '../Utilities/ApiRepository';
+import Api from '../Utilities/ApiHelper';
 
 const ProjectsPage = () => {
   const { activeAvatar } = React.useContext(AvatarContext);
@@ -19,21 +19,21 @@ const ProjectsPage = () => {
   const [currentProject, setCurrentProject] = React.useState(CreateDummyProject());
 
   const handleProjectCreated = (newProject) => {
-    ApiPost("Projects", newProject, data => {
+    Api.Post("Projects", newProject, data => {
       const projectsListWithNewProject = [...projects, data];
       setProjects(projectsListWithNewProject);
     });
   }
 
   const handleProjectDeleted = (projectId) => {
-    ApiDelete("Projects", projectId, () => {
+    Api.Delete("Projects", projectId, () => {
       const projectsList = projects.filter((project) => project.id !== projectId);
       setProjects(projectsList);
     });
   }
 
   const handleProjectSaveChanges = (editedProjectId, editedProject) => {
-    ApiPut("Projects", editedProjectId, editedProject, () => {
+    Api.Put("Projects", editedProjectId, editedProject, () => {
       const updatedProjectsList = projects.map((project) =>
         project.id === editedProjectId ? editedProject : project
       );
@@ -55,7 +55,7 @@ const ProjectsPage = () => {
   }
 
   React.useEffect(() => {
-    ApiGet("Projects", data => setProjects(data));
+    Api.Get("Projects", data => setProjects(data));
   }, [activeAvatar])
 
   return (

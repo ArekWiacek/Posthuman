@@ -76,8 +76,8 @@ namespace Posthuman.Services
         public async Task<TodoItemDTO> CreateTodoItem(TodoItemDTO newTodoItemDTO)
         {
             var newTodoItem = mapper.Map<TodoItem>(newTodoItemDTO);
-            newTodoItem.IsCompleted = false;            
-            newTodoItem.CreationDate = DateTime.Now;    
+            newTodoItem.IsCompleted = false;
+            newTodoItem.CreationDate = DateTime.Now;
 
             if (newTodoItem == null)
                 throw new Exception();
@@ -130,7 +130,7 @@ namespace Posthuman.Services
                 DateTime.Now,
                 EntityType.TodoItem,
                 newTodoItem.Id);
-            
+
             await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
 
             await UpdateAvatarGainedExp(ownerAvatar, todoItemCreatedEvent, null);
@@ -142,10 +142,10 @@ namespace Posthuman.Services
 
         public async Task DeleteTodoItem(int id)
         {
-            var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
+            var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(id);
 
             if (todoItem == null)
-                return; 
+                return;
 
             if (todoItem.ProjectId != null)
             {
@@ -211,7 +211,7 @@ namespace Posthuman.Services
                     todoItem.Description = todoItemDTO.Description;
                     todoItem.Deadline = todoItemDTO.Deadline;
 
-                    if(todoItem.IsVisible != todoItemDTO.IsVisible)
+                    if (todoItem.IsVisible != todoItemDTO.IsVisible)
                     {
                         await UpdateTodoItemVisibility(todoItem, todoItemDTO.IsVisible);
                     }
@@ -294,11 +294,16 @@ namespace Posthuman.Services
             await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
         }
 
-        private async Task<IEnumerable<TodoItem>> FlattenSubtasksListAsync(IEnumerable<TodoItem> tasks)
+        /// <summary>
+        /// Converts todo items from nested object structure (.Subtasks) into one-level-deep flat list
+        /// </summary>
+        private async Task<IEnumerable<TodoItem>> FlattenSubtasksListAsync(IEnumerable<TodoItem> todoItems)
         {
             var newList = new List<TodoItem>();
 
-            foreach (var task in tasks)
+            var tasksSorted = SortTodoItems(todoItems);
+
+            foreach (var task in tasksSorted)
             {
                 newList.Add(task);
 
@@ -310,6 +315,22 @@ namespace Posthuman.Services
             }
 
             return newList;
+        }
+
+        private IOrderedEnumerable<TodoItem> SortTodoItems(IEnumerable<TodoItem> todoItems)
+        {
+            // Sort todo items
+            //
+            // First unfinished,
+            // Then visible,
+            // Then those with deadline provided
+            // Then by nearest deadline
+
+            return todoItems
+                .OrderBy(t => t.IsCompleted)
+                .ThenByDescending(t => t.IsVisible)
+                .ThenBy(t => t.Deadline.HasValue)
+                .ThenBy(t => t.Deadline);
         }
 
         // TODO - move following methods ito different place (avatar service?)
