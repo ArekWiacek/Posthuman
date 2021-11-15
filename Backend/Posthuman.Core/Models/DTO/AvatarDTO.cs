@@ -2,18 +2,11 @@
 {
     public class AvatarDTO
     {
-        public AvatarDTO(
-            int id, 
-            string name, 
-            string bio, 
-            int level, 
-            int exp)
+        public AvatarDTO()
         {
-            this.Id = id;
-            this.Name = name;
-            this.Bio = bio;
-            this.Level = level;
-            this.Exp = exp;
+            Name = "";
+            Bio = "";
+            CybertribeName = "";
         }
 
         public int Id { get; set; }

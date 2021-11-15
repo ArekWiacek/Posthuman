@@ -1,10 +1,9 @@
-
-using Microsoft.AspNetCore.Mvc;
-using Posthuman.Core.Services;
-using Posthuman.Core.Models.DTO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Posthuman.Core.Services;
+using Posthuman.Core.Models.DTO;
 
 namespace PosthumanWebApi.Controllers
 {

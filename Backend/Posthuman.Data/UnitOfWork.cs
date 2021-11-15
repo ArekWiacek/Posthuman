@@ -18,15 +18,17 @@ namespace Posthuman.Data
         public UnitOfWork(PosthumanContext context)
         {
             this.context = context;
+            todoItemsRepository     = todoItemsRepository   ?? new TodoItemsRepository(context);
+            projectsRepository      = projectsRepository    ?? new ProjectsRepository(context);
+            eventItemsRepository    = eventItemsRepository  ?? new EventItemsRepository(context);
+            todoItemsRepository     = todoItemsRepository   ?? new TodoItemsRepository(context);
+            avatarsRepository       = avatarsRepository     ?? new AvatarsRepository(context);
         }
 
-        public ITodoItemsRepository TodoItems => todoItemsRepository = todoItemsRepository ?? new TodoItemsRepository(context);
-
-        public IProjectsRepository Projects => projectsRepository = projectsRepository ?? new ProjectsRepository(context);
-
-        public IEventItemsRepository EventItems => eventItemsRepository = eventItemsRepository ?? new EventItemsRepository(context);
-
-        public IAvatarsRepository Avatars => avatarsRepository = avatarsRepository ?? new AvatarsRepository(context);
+        public ITodoItemsRepository TodoItems   => todoItemsRepository  = todoItemsRepository   ??      new TodoItemsRepository(context);
+        public IProjectsRepository Projects     => projectsRepository   = projectsRepository    ??      new ProjectsRepository(context);
+        public IEventItemsRepository EventItems => eventItemsRepository = eventItemsRepository  ??      new EventItemsRepository(context);
+        public IAvatarsRepository Avatars       => avatarsRepository    = avatarsRepository     ??      new AvatarsRepository(context);
 
         public async Task<int> CommitAsync()
         {

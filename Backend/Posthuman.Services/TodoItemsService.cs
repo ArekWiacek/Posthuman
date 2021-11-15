@@ -141,7 +141,7 @@ namespace Posthuman.Services
             var allTodoItems = await
                 unitOfWork
                 .TodoItems
-                .GetAllByAvatarId(avatar.Id);
+                .GetAllByAvatarIdAsync(avatar.Id);
 
             var allTodoItemsMapped =
                 mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
@@ -156,7 +156,7 @@ namespace Posthuman.Services
             var todoItems = await
                 unitOfWork
                 .TodoItems
-                .GetAllByAvatarId(avatar.Id);
+                .GetAllByAvatarIdAsync(avatar.Id);
 
             var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel()).ToList();
             var flattenedTasksList = await FlattenSubtasksListAsync(topLevelTasks);
@@ -362,7 +362,7 @@ namespace Posthuman.Services
 
         private async Task UpdateTodoItemVisibility(TodoItem todoItem, bool isVisible)
         {
-            var allTodoItems = await unitOfWork.TodoItems.GetAllByAvatarId(todoItem.AvatarId);
+            var allTodoItems = await unitOfWork.TodoItems.GetAllByAvatarIdAsync(todoItem.AvatarId);
 
             todoItem.IsVisible = isVisible;
 

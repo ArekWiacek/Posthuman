@@ -95,7 +95,7 @@ namespace Posthuman.Services
             var allProjects = await 
                 unitOfWork
                 .Projects
-                .GetAllByAvatarId(activeAvatar.Id);
+                .GetAllByAvatarIdAsync(activeAvatar.Id);
 
             var allMapped =
                 mapper.Map<IEnumerable<Project>, IEnumerable<ProjectDTO>>(allProjects);

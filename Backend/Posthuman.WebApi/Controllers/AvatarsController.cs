@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Services;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PosthumanWebApi.Controllers
 {
@@ -35,13 +35,25 @@ namespace PosthumanWebApi.Controllers
         public async Task<ActionResult<AvatarDTO>> GetAvatar(int id)
         {
             var avatar = await avatarsService.GetAvatarById(id);
+            if (avatar == null)
+                return NotFound();
 
             return avatar;
         }
 
-        [HttpPut("{id}")]
+        // GET: api/Avatar/GetActiveAvatar
+        [HttpGet("GetActiveAvatar")]
+        public async Task<ActionResult<TodoItemDTO>> GetActiveAvatar()
+        {
+            var avatar = await avatarsService.GetActiveAvatar();
+            if (avatar == null)
+                return NotFound();
+
+            return Ok(avatar);
+        }
+
         // PUT: api/Avatars/5
-        // Currently handles only selecting active avatar
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAvatar(int id, AvatarDTO updatedAvatarDTO)
         {
             if (id != updatedAvatarDTO.Id)
@@ -52,23 +64,12 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
-        // GET: api/Avatar/GetActiveAvatar
-        [HttpGet("GetActiveAvatar")]
-        public async Task<ActionResult<TodoItemDTO>> GetActiveAvatar()
-        {
-            var avatar = await avatarsService.GetActiveAvatar();
-
-            return Ok(avatar);
-        }
-
-        // GET: api/Avatar/GetActiveAvatar/5
+        // PUT: api/Avatar/SetActiveAvatar/5
         [HttpPut("SetActiveAvatar/{id}")]
         public async Task<IActionResult> SetActiveAvatar(int id)
         {
             await avatarsService.SetActiveAvatar(id);
-
             var avatar = await avatarsService.GetActiveAvatar();
-
             return Ok(avatar);
         }
     }
