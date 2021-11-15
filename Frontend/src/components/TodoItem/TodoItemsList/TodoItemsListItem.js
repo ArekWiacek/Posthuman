@@ -1,30 +1,33 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { TableRow, TableCell, Typography } from '@mui/material';
 import Deadline from '../../Common/Deadline';
 import TodoItemListItemActionButtons from './TodoItemsListItemActionButtons';
+import { LogI } from '../../../Utilities/Utilities';
 
 const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+    const [showActionButtons, setShowActionButtons] = useState(false);
+
     const handleDeleteClicked = todoItem => onDeleteClicked(todoItem.id);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
     const handleAddSubtaskClicked = todoItem => onAddSubtaskClicked(todoItem);
     const handleVisibleOnOffClicked = todoItem => onVisibleOnOffClicked(todoItem);
 
-    const createProgressText = (todoItem) => {
+    const createProgressText = todoItem => {
         var progressText = "";
 
         if (todoItem.hasSubtasks) {
             var progressPercentage = Math.round((todoItem.finishedSubtasksCount / todoItem.subtasksCount) * 100);
             progressText = todoItem.finishedSubtasksCount + " / " + todoItem.subtasksCount + " (" + progressPercentage + "%)";
         }
-        else {
+        else 
             todoItem.isCompleted ? progressText = "Done!" : progressText = "Not completed";
-        }
 
         return progressText;
     };
 
-    function getFontSizeForTodoItemTitle(nestingLevel) {
+    const getFontSizeForTodoItemTitle = nestingLevel => {
         var titleSizes = { 0: '1.2rem', 1: '1.1rem', 2: '1rem' };
         if (nestingLevel < 2) {
             return titleSizes[nestingLevel];
@@ -33,8 +36,18 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
         }
     };
 
+    const getDeadlineComponent = todoItem => {
+        if (!todoItem.isCompleted)
+            return <Deadline when={todoItem.deadline} />;
+        else
+            return '';
+    };
+
     return (
-        <TableRow sx={{ opacity: todoItem.isVisible ? '100%' : '30%' }}>
+        <TableRow hover sx={{ opacity: todoItem.isVisible ? '100%' : '30%' }}
+            onMouseEnter={() => setShowActionButtons(true)}
+            onMouseLeave={() => setShowActionButtons(false)}>
+
             <TableCell component="th" scope="row" >
                 <Typography
                     component="span"
@@ -48,10 +61,10 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
             </TableCell>
 
             <TableCell align="left" sx={{ width: '250px' }}>
-                <Deadline when={todoItem.deadline} />
+                {getDeadlineComponent(todoItem)}
             </TableCell>
 
-            <TableCell align="right" sx={{ width: '150px' }}>
+            <TableCell align="right" sx={{ width: '150px', color: todoItem.isCompleted ? 'success.main' : '' }}>
                 {createProgressText(todoItem)}
             </TableCell>
 
@@ -62,7 +75,8 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                     onEditClicked={handleEditClicked}
                     onDoneClicked={handleDoneClicked}
                     onAddSubtaskClicked={handleAddSubtaskClicked} 
-                    onVisibleOnOffClicked={handleVisibleOnOffClicked} />
+                    onVisibleOnOffClicked={handleVisibleOnOffClicked}
+                    isVisible={showActionButtons && !todoItem.isCompleted} />
             </TableCell>
         </TableRow>
     );
