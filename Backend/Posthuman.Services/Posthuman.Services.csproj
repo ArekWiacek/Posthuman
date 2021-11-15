@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
-    <ProjectReference Include="..\Posthuman.Data\Posthuman.Data.csproj" />
   </ItemGroup>
 
 </Project>
