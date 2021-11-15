@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Posthuman.Services
 {
@@ -23,22 +23,61 @@ namespace Posthuman.Services
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-
             expManager = new ExperienceManager();
         }
 
         public async Task<TodoItemDTO> GetTodoItemById(int id)
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
-
             return mapper.Map<TodoItemDTO>(todoItem);
+        }
+
+        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems()
+        {
+            var allTodoItems = await
+                unitOfWork.TodoItems.GetAllAsync();
+
+            return mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
+        }
+
+        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar()
+        {
+            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+
+            var allTodoItems = await
+                unitOfWork
+                .TodoItems
+                .GetAllByAvatarIdAsync(avatar.Id);
+
+            var allTodoItemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
+
+            return allTodoItemsMapped.ToList();
+        }
+
+        public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical()
+        {
+            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+
+            var todoItems = await
+                unitOfWork
+                .TodoItems
+                .GetAllByAvatarIdAsync(avatar.Id);
+
+            var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel()).ToList();
+            var flattenedTasksList = await FlattenSubtasksListAsync(topLevelTasks);
+
+            var itemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(flattenedTasksList);
+
+            return itemsMapped.ToList();
         }
 
         public async Task<TodoItemDTO> CreateTodoItem(TodoItemDTO newTodoItemDTO)
         {
             var newTodoItem = mapper.Map<TodoItem>(newTodoItemDTO);
-            newTodoItem.IsCompleted = false;            // This always false when creating
-            newTodoItem.CreationDate = DateTime.Now;    // This is set by application
+            newTodoItem.IsCompleted = false;            
+            newTodoItem.CreationDate = DateTime.Now;    
 
             if (newTodoItem == null)
                 throw new Exception();
@@ -105,66 +144,20 @@ namespace Posthuman.Services
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
 
-            //var todoItemWithSubtasks = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItem.AvatarId, todoItem.Id);
-
             if (todoItem == null)
-                return; // NotFound()
-
+                return; 
 
             if (todoItem.ProjectId != null)
             {
                 var parentProject = await unitOfWork.Projects.GetByIdAsync(todoItem.ProjectId.Value);
 
                 if (parentProject != null)
-                {
                     parentProject.TotalSubtasks--;
-                }
             }
 
             await DeleteTodoItemWithSubtasks(todoItem);
 
             await unitOfWork.CommitAsync();
-        }
-
-        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems()
-        {
-            var allTodoItems = await
-                unitOfWork.TodoItems.GetAllAsync();
-
-            return mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
-        }
-
-        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar()
-        {
-            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
-            var allTodoItems = await
-                unitOfWork
-                .TodoItems
-                .GetAllByAvatarIdAsync(avatar.Id);
-
-            var allTodoItemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
-
-            return allTodoItemsMapped.ToList();
-        }
-
-        public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical()
-        {
-            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
-            var todoItems = await
-                unitOfWork
-                .TodoItems
-                .GetAllByAvatarIdAsync(avatar.Id);
-
-            var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel()).ToList();
-            var flattenedTasksList = await FlattenSubtasksListAsync(topLevelTasks);
-
-            var itemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(flattenedTasksList);
-
-            return itemsMapped.ToList();
         }
 
         public async Task CompleteTodoItem(TodoItemDTO todoItemDTO)
@@ -206,6 +199,8 @@ namespace Posthuman.Services
 
         public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
         {
+            // TODO - Separate this logic from editing and update api controller to call this method directly
+
             if (todoItemDTO != null && todoItemDTO.Id != 0)
             {
                 var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
@@ -234,7 +229,6 @@ namespace Posthuman.Services
                         if (todoItemDTO.ProjectId.HasValue)
                         {
                             var newParentProject = await unitOfWork.Projects.GetByIdAsync(todoItemDTO.ProjectId.Value);
-
                             if (newParentProject != null)
                                 newParentProject.TotalSubtasks++;
                         }
@@ -244,9 +238,7 @@ namespace Posthuman.Services
 
                     var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
                     if (ownerAvatar == null)
-                    {
                         throw new Exception($"Task owner could not be found");
-                    }
 
                     // Assign parent todo item
                     if (todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
@@ -255,12 +247,12 @@ namespace Posthuman.Services
                         todoItem.Parent = parentTask;
                     }
 
-                    // TodoItem was just completed
+                    // TodoItem was either completed
                     if (todoItem.IsCompleted == false && todoItemDTO.IsCompleted == true)
                     {
                         await CompleteTodoItem(todoItemDTO);
                     }
-                    // or it was modified
+                    // Or it was modified
                     else
                     {
                         var todoItemModifiedEvent = new EventItem(
@@ -271,7 +263,6 @@ namespace Posthuman.Services
                             todoItem.Id);
 
                         await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
-
                     }
 
                     await unitOfWork.CommitAsync();
@@ -321,6 +312,7 @@ namespace Posthuman.Services
             return newList;
         }
 
+        // TODO - move following methods ito different place (avatar service?)
         private async Task UpdateAvatarGainedLevel(Avatar avatar)
         {
             avatar.Level++;

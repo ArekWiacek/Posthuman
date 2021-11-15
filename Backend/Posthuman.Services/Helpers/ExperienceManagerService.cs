@@ -1,11 +1,18 @@
-﻿using Posthuman.Core.Models.Entities;
-using Posthuman.Core.Models.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.Enums;
 
 namespace Posthuman.Services
 {
-    public class ExperienceManager
+    /// <summary>
+    /// This class is responsible for calculating user development / progress.
+    /// It provides methods to calculate experience points gained after different actions
+    /// It provides info if user has enough XP to reach new level
+    /// It holds part of game logic - for example how much xp user can get for doing stuff and so on
+    /// It's also responsibe for a randomization mechanics, so game has degree of uncertanity and randomness
+    /// </summary>
+    public partial class ExperienceManager
     {
         private readonly Random random = new Random();
 
@@ -43,11 +50,23 @@ namespace Posthuman.Services
                     break;
             }
 
-            // 80 - 130 %
+            // Randomize multiplier so final XP is multiplied by 80 - 130 %
             float randomMultiplier = ((float)random.Next(80, 130)) / 100;
             totalXpGained = Convert.ToInt32(totalXpGained * randomMultiplier);
 
             return totalXpGained;
+        }
+
+        /// <summary>
+        /// Returns ExperienceRange for given level - at what ammount of XP given level starts, 
+        /// and when it ends (if user will reach or exceed it, then he reaches new level)
+        /// Example: 
+        ///     You reach Level 2 when you have at least 100 XP, and Level 2 ends at 250 XP (then level 3 starts)
+        ///     So calling GetExperienceRangeForLevel(int level) will return range of 100 and 250
+        /// </summary>
+        public ExperienceRange GetExperienceRangeForLevel(int level)
+        {
+            return ExperienceRangeForLevel[level];
         }
 
         /// <summary>
@@ -101,23 +120,7 @@ namespace Posthuman.Services
             { SubeventType.TodoItemProjectRemoved, -1 }
         };
 
-        public ExperienceRange GetExperienceRangeForLevel(int level)
-        {
-            return ExperienceRangeForLevel[level];
-        }
-
-        public struct ExperienceRange
-        {
-            public ExperienceRange(int startXp, int endXp)
-            {
-                StartXp = startXp;
-                EndXp = endXp;
-            }
-
-            public int StartXp { get; set; }
-            public int EndXp { get; set; }
-        }
-
+        // Exp range for different levels 
         private Dictionary<int, ExperienceRange> ExperienceRangeForLevel = new Dictionary<int, ExperienceRange>()
         {
             { 1, new ExperienceRange(0, 100) },             // 100 
