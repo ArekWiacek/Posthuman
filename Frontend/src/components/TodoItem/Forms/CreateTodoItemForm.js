@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import moment from 'moment';
 import { LogW } from '../../../Utilities/Utilities';
 
 const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
@@ -47,15 +48,14 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
     };
 
     return (
-        <Box component="form" sx={{ 
-            width: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center',
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center',
             '& .MuiTextField-root': { m: 1, width: '100%' } }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
             <Typography variant="h5">Create task</Typography>
 
             <TextField
-                label="Title" name="title" variant="outlined" required
+                label="Title" name="title" variant="outlined" required autoFocus
                 value={formState.title} onChange={handleInputChange} />
 
             <TextField
@@ -64,7 +64,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
 
             <DesktopDatePicker
                 label="Deadline" name="deadline" inputFormat="DD.MM.YYYY" mask="__.__.____"
-                value={formState.deadline} onChange={handleDeadlineChange}
+                value={formState.deadline} onChange={handleDeadlineChange} minDate={moment()}
                 renderInput={(params) => <TextField {...params} />} />
 
             <TextField

@@ -9,7 +9,7 @@ const Api = {
     Get: (entityName, successCallback, errorCallback) => {
         axios
             .get(ApiUrl + entityName)
-            .then(response => { successCallback(response.data); })
+            .then(response => successCallback(response.data))
             .catch(error => {
                 LogE("Error occured when calling GET method for " + entityName, error)
                 if (errorCallback)
@@ -20,7 +20,7 @@ const Api = {
     Put: (entityName, entityId, entityData, successCallback, errorCallback) => {
         axios
             .put(ApiUrl + entityName + "/" + entityId, entityData)
-            .then(response => { successCallback(response.data); })
+            .then(response => successCallback(response.data))
             .catch(error => {
                 LogE("Error occured when calling PUT method for " + entityName, error)
                 if (errorCallback)
@@ -31,7 +31,7 @@ const Api = {
     Post: (entityName, entityData, successCallback, errorCallback) => {
         axios
             .post(ApiUrl + entityName, entityData)
-            .then(response => { successCallback(response.data); })
+            .then(response => successCallback(response.data))
             .catch(error => {
                 LogE("Error occured when calling POST method for " + entityName, error)
                 if (errorCallback)
@@ -42,7 +42,7 @@ const Api = {
     Delete: (entityName, entityId, successCallback, errorCallback) => {
         axios
             .delete(ApiUrl + entityName + "/" + entityId)
-            .then(response => { successCallback(response.data); })
+            .then(response => successCallback(response.data))
             .catch(error => {
                 LogE("Error occured when calling DELETE method for " + entityName, error)
                 if (errorCallback)

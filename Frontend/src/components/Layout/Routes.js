@@ -38,19 +38,19 @@ const Routes = [
     sidebarTitle: 'Todo',
     sidebarIcon: () => { return <CheckIcon />; },
     destinationPage: () => { return <TodoPage />; }
-  },
-  {
-    path: '/projects',
-    sidebarTitle: 'Projects',
-    sidebarIcon: () => { return <AccountTreeIcon />; },
-    destinationPage: () => { return <ProjectsPage />; }
-  },
-  {
-    path: '/history',
-    sidebarTitle: 'History',
-    sidebarIcon: () => { return <EventNoteIcon />; },
-    destinationPage: () => { return <HistoryPage />; }
   }
+  // {
+  //   path: '/projects',
+  //   sidebarTitle: 'Projects',
+  //   sidebarIcon: () => { return <AccountTreeIcon />; },
+  //   destinationPage: () => { return <ProjectsPage />; }
+  // },
+  // {
+  //   path: '/history',
+  //   sidebarTitle: 'History',
+  //   sidebarIcon: () => { return <EventNoteIcon />; },
+  //   destinationPage: () => { return <HistoryPage />; }
+  // }
 ];
 
 export default Routes;

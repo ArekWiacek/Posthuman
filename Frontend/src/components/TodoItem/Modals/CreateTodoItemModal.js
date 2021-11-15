@@ -7,7 +7,7 @@ const CreateTodoItemModal = ({ isOpen, todoItems, projects, parentTaskId, parent
         <ModalWindow 
             isOpen={isOpen}
             onClose={onClose}
-            sx={{ width: '400px' }}
+            sx={{ width: '500px' }}
             eyecandy='eyecandy1'
             background={{ backgroundPosition: 'right top' }}>
             <CreateTodoItemForm 

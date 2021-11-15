@@ -81,6 +81,7 @@ namespace Posthuman.Services
                 }
             }
 
+            // TODO - remove commit from here; now it's added so event item can save created todo item ID
             await unitOfWork.TodoItems.AddAsync(newTodoItem);
             await unitOfWork.CommitAsync();
 
@@ -90,12 +91,10 @@ namespace Posthuman.Services
                 DateTime.Now,
                 EntityType.TodoItem,
                 newTodoItem.Id);
-
-            var experienceForEvent = expManager.CalculateExperienceForEvent(todoItemCreatedEvent, null);
-            ownerAvatar.Exp += experienceForEvent;
-            todoItemCreatedEvent.ExpGained = experienceForEvent;
-
+            
             await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
+
+            await UpdateAvatarGainedExp(ownerAvatar, todoItemCreatedEvent, null);
 
             await unitOfWork.CommitAsync();
 
@@ -302,8 +301,6 @@ namespace Posthuman.Services
                 todoItem.Id);
 
             await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
-
-            await UpdateAvatarExp(todoItemDeletedEvent);
         }
 
         private async Task<IEnumerable<TodoItem>> FlattenSubtasksListAsync(IEnumerable<TodoItem> tasks)
@@ -322,14 +319,6 @@ namespace Posthuman.Services
             }
 
             return newList;
-        }
-
-        private async Task UpdateAvatarExp(EventItem eventItem)
-        {
-            // Update Avatar's Exp points based on what happened
-            var avatar = await unitOfWork.Avatars.GetByIdAsync(eventItem.AvatarId);
-            if (avatar != null)
-                avatar.Exp += eventItem.ExpGained;
         }
 
         private async Task UpdateAvatarGainedLevel(Avatar avatar)

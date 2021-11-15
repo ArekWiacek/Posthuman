@@ -14,10 +14,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     });
 
     const setDisplayOption = (option, value) => setDisplayOptions({ ...displayOptions, [option]: value });
-    
-    //const [isDensePadding, setIsDensePadding] = useState(true);
-    //const [showFinished, setShowFinished] = useState(false);
-    //const [showHidden, setShowHidden] = useState(true);
+
     const [parentId, setParentId] = useState(0);
 
     const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
@@ -66,7 +63,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
                                     {renderCreateSubtaskInlineComponent(todoItem)}
                                 </React.Fragment>
-                            )
+                            );
                         }
                     })}
                 </TableBody>
