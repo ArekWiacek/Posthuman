@@ -4,15 +4,21 @@ namespace Posthuman.Core.Models.DTO
 {
     public class ProjectDTO
     {
+        public ProjectDTO()
+        {
+            Title = "";
+            Description = "";
+        }
+
         public int Id { get; set; }
 
         public string Title { get; set; }
         public string Description { get; set; }
         public bool IsFinished { get; set; }
 
-        public DateTime CreationDate { get; set; }          // Date when I created project              (automatical)
-        public DateTime? StartDate { get; set; }            // Planned date "when to start", if not set then today
-        public DateTime? FinishDate { get; set; }           // Date when I completed last to-do item (calculated)
+        public DateTime CreationDate { get; set; }          
+        public DateTime? StartDate { get; set; }            
+        public DateTime? FinishDate { get; set; }          
 
         public int AvatarId { get; set; }
 

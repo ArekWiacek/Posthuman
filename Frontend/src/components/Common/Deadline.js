@@ -6,7 +6,7 @@ import moment from 'moment';
 const Deadline = ({ when }) => {
     const noDeadlineDefaultText = '-';
     const defaultDateFormat = 'DD.MM.YYYY';
-    const isOverdue = useRef(false);
+    const textColor = useRef('');
 
     const calculateDaysToDeadline = (deadlineDate) => {
         let now = moment().endOf('day');
@@ -23,8 +23,10 @@ const Deadline = ({ when }) => {
         let daysToDeadline = calculateDaysToDeadline(when);
 
         if(daysToDeadline < 0) 
-            isOverdue.current = true;
-
+            textColor.current = 'error.main';
+        else if(daysToDeadline == 0)
+            textColor.current = 'warning.main';
+            
         switch (daysToDeadline) {
             case -1:
                 deadlineText = 'Yesterday';
@@ -44,7 +46,7 @@ const Deadline = ({ when }) => {
                 if(daysToDeadline < -1)
                     deadlineText = dateText + ' (' + Math.abs(daysToDeadline) + ' days ago)';  
                 else
-                    deadlineText = dateText; // + ' (' + daysToDeadline + ' days left)';
+                    deadlineText = dateText; 
 
                 break;
         }
@@ -53,7 +55,7 @@ const Deadline = ({ when }) => {
     };
 
     return (
-        <Typography color={isOverdue.current ? "error" : ""}>
+        <Typography color={textColor.current}>
             {getDeadlineText(when)}
         </Typography>
     );

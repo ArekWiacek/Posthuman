@@ -8,8 +8,7 @@ const style = {
     transform: 'translate(-50%, -50%)',
     bgcolor: 'background.paper',
     border: '2px solid #000',
-    boxShadow: 24,
-    p: 4, 
+    boxShadow: 24, p: 4, 
     backgroundImage: 'url("/Assets/Eyecandies/eyecandy1.svg")',    
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right top'

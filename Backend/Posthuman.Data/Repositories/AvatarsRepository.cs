@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Posthuman.Core.Models.Entities;
-using Posthuman.Core.Repositories;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Repositories;
 
 namespace Posthuman.Data.Repositories
 {
@@ -15,7 +15,7 @@ namespace Posthuman.Data.Repositories
 
         private PosthumanContext AvatarsDbContext
         {
-            get { return Context as PosthumanContext; }
+            get { return Context; }
         }
 
         public async Task<Avatar> GetActiveAvatarAsync()

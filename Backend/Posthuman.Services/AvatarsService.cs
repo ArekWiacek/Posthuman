@@ -1,11 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using AutoMapper;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Posthuman.Services
 {
@@ -13,28 +13,11 @@ namespace Posthuman.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+
         public AvatarsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-        }
-
-        public async Task DeactivateAllAvatars()
-        {
-            var activeAvatars = unitOfWork
-                .Avatars
-                .Find(a => a.IsActive);
-
-            foreach(var activeAvatar in activeAvatars)
-            {
-                activeAvatar.IsActive = false;
-            }    
-
-            // var activeAvatarsDeselected =
-            //     activeAvatars
-            //        .Select(a => a.IsSelected = false);
-
-            await unitOfWork.CommitAsync();
         }
 
         public async Task<AvatarDTO> GetActiveAvatar()
@@ -52,22 +35,7 @@ namespace Posthuman.Services
 
             return mapped;
         }
-
-        public async Task SetActiveAvatar(int id)
-        {
-            var avatarToActivate = await unitOfWork.Avatars.GetByIdAsync(id);
-
-            if (avatarToActivate != null && !avatarToActivate.IsActive)
-            {
-                await DeactivateAllAvatars();
-
-                avatarToActivate.IsActive = true;
-
-                await unitOfWork.CommitAsync();
-            }
-        }
-
-
+        
         public async Task<IEnumerable<AvatarDTO>> GetAllAvatars()
         {
             var allAvatars = await unitOfWork.Avatars.GetAllAsync();
@@ -87,12 +55,38 @@ namespace Posthuman.Services
             return null;
         }
 
+        public async Task DeactivateAllAvatars()
+        {
+            var activeAvatars = unitOfWork
+                .Avatars
+                .Find(a => a.IsActive);
+
+            foreach (var activeAvatar in activeAvatars)
+                activeAvatar.IsActive = false;
+
+            await unitOfWork.CommitAsync();
+        }
+
+        public async Task SetActiveAvatar(int id)
+        {
+            var avatarToActivate = await unitOfWork.Avatars.GetByIdAsync(id);
+
+            if (avatarToActivate != null && !avatarToActivate.IsActive)
+            {
+                await DeactivateAllAvatars();
+
+                avatarToActivate.IsActive = true;
+
+                await unitOfWork.CommitAsync();
+            }
+        }
+
         public async Task UpdateAvatar(AvatarDTO avatarDTO)
         {
             var avatar = await unitOfWork.Avatars.GetByIdAsync(avatarDTO.Id);
 
             if (avatar == null)
-                return;// NotFound();
+                return;
 
             if(avatar.IsActive != avatarDTO.IsActive)
             {

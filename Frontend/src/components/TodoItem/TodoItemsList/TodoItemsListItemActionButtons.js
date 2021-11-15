@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -7,7 +8,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ActionButton from '../../Common/ActionButton';
 
-const TodoItemListItemActionButtons = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+const TodoItemListItemActionButtons = ({ isVisible, todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
     const handleDeleteClicked = todoItem => onDeleteClicked(todoItem);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
@@ -57,7 +58,7 @@ const TodoItemListItemActionButtons = ({ todoItem, onDeleteClicked, onEditClicke
     }];
 
     return (
-        <React.Fragment>
+        <Box sx={{ visibility: isVisible ? '' : 'hidden' }}>
             {
                 actionButtons.map((actionButton) => (
                     <ActionButton
@@ -69,7 +70,7 @@ const TodoItemListItemActionButtons = ({ todoItem, onDeleteClicked, onEditClicke
                         icon={actionButton.icon} />
                     ))
             }
-        </React.Fragment>
+        </Box>
     );
 }
 

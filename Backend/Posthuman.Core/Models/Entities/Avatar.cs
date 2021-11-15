@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace Posthuman.Core.Models.Entities
 {
     /// <summary>
-    /// This class represents game player character (hero)
+    /// This class represents game player character (= hero, user profile)
     /// </summary>
     [Table("Avatars")]
     public class Avatar

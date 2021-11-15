@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Posthuman.Services
 {
@@ -20,6 +20,33 @@ namespace Posthuman.Services
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+        }
+
+        public async Task<ProjectDTO> GetProjectById(int id)
+        {
+            var project = await unitOfWork.Projects.GetByIdAsync(id);
+
+            if (project != null)
+                return mapper.Map<ProjectDTO>(project);
+
+            return null;
+        }
+
+        public async Task<ProjectDTO> GetProjectWithSubtasks(int projectId)
+        {
+            var projectWithSubtasks = await unitOfWork.Projects.GetByIdAsync(projectId);
+
+            return mapper.Map<ProjectDTO>(projectWithSubtasks);
+        }
+
+        public async Task<IEnumerable<ProjectDTO>> GetAllProjects()
+        {
+            var allProjects = await unitOfWork.Projects.GetAllAsync();
+
+            var allMapped =
+                mapper.Map<IEnumerable<Project>, IEnumerable<ProjectDTO>>(allProjects);
+
+            return allMapped.ToList();
         }
 
         public async Task<ProjectDTO> CreateProject(ProjectDTO newProjectDTO)
@@ -41,7 +68,7 @@ namespace Posthuman.Services
 
             await unitOfWork.Projects.AddAsync(newProject);
 
-            // Todo - how to have project id before save
+            // TODO - how to have project id before save
             await unitOfWork.CommitAsync();
             
             var projectCreatedEvent = new EventItem(
@@ -57,7 +84,7 @@ namespace Posthuman.Services
 
             await unitOfWork.CommitAsync();
 
-            return mapper.Map<ProjectDTO>(newProject); // ProjectToDTO(newProject);
+            return mapper.Map<ProjectDTO>(newProject);
         }
 
         public async Task DeleteProject(int id)
@@ -85,7 +112,6 @@ namespace Posthuman.Services
                 ownerAvatar.Exp += projectDeletedEvent.ExpGained;
 
             await unitOfWork.CommitAsync();
-
         }
 
         public async Task<IEnumerable<ProjectDTO>> GetAllProjectsForActiveAvatar()
@@ -95,49 +121,12 @@ namespace Posthuman.Services
             var allProjects = await 
                 unitOfWork
                 .Projects
-                .GetAllByAvatarId(activeAvatar.Id);
+                .GetAllByAvatarIdAsync(activeAvatar.Id);
 
             var allMapped =
                 mapper.Map<IEnumerable<Project>, IEnumerable<ProjectDTO>>(allProjects);
 
             return allMapped.ToList();
-
-            //return allProjects
-            //    .Select(project => ProjectToDTO(project))
-            //    .ToList();
-        }
-
-        public async Task<IEnumerable<ProjectDTO>> GetAllProjects()
-        {
-            var allProjects = await unitOfWork.Projects.GetAllAsync();
-
-            var allMapped = 
-                mapper.Map<IEnumerable<Project>, IEnumerable<ProjectDTO>>(allProjects);
-
-            return allMapped.ToList();
-
-            //return allProjects
-            //    .Select(project => ProjectToDTO(project))
-            //    .ToList();
-        }
-
-        public async Task<ProjectDTO> GetProjectById(int id)
-        {
-            var project = await unitOfWork.Projects.GetByIdAsync(id);
-
-            if (project != null)
-                return mapper.Map<ProjectDTO>(project); 
-
-            return null;
-        }
-
-        public async Task<ProjectDTO> GetProjectWithSubtasks(int projectId)
-        {
-            var projectWithSubtasks = await unitOfWork.Projects.GetByIdAsync(projectId);
-
-            // todo: include subtasks
-            return mapper.Map<ProjectDTO>(projectWithSubtasks); 
-
         }
 
         public async Task UpdateProject(ProjectDTO projectDTO)
@@ -146,7 +135,7 @@ namespace Posthuman.Services
             var ownerAvatar = await unitOfWork.Avatars.GetByIdAsync(projectDTO.AvatarId);
 
             if (project == null)
-                return;// NotFound();
+                return;
 
             project.Title = projectDTO.Title;
             project.Description = projectDTO.Description;

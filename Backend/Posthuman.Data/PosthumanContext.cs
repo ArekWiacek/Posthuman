@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Data.Configurations;
-using System;
 
 namespace Posthuman.Data
 {
@@ -11,8 +11,8 @@ namespace Posthuman.Data
         public PosthumanContext(DbContextOptions<PosthumanContext> options) 
             : base(options)
         { 
-            // this.Database.Log = (lg) => WriteLine(s);
         }
+
         public DbSet<Avatar> Avatars { get; set; } = default!;
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
         public DbSet<Project> Projects { get; set; } = default!;
@@ -24,7 +24,6 @@ namespace Posthuman.Data
         {
             modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
-
 
             modelBuilder.Entity<Avatar>().ToTable("Avatars");
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");

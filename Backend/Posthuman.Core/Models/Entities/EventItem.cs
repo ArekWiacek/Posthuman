@@ -1,7 +1,7 @@
-﻿using Posthuman.Core.Models.Enums;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Posthuman.Core.Models.Enums;
 
 namespace Posthuman.Core.Models.Entities
 {
@@ -19,14 +19,12 @@ namespace Posthuman.Core.Models.Entities
             EntityType? relatedEntityType = null,
             int? relatedEntityId = null)
         {
-            this.AvatarId = avatarId;
-            this.Type = type;
-            this.Occured = occured;
+            AvatarId = avatarId;
+            Type = type;
+            Occured = occured;
 
-            this.RelatedEntityType = relatedEntityType;
-            this.RelatedEntityId = relatedEntityId;
-
-            //this.ExpGained = ExpReward[type];
+            RelatedEntityType = relatedEntityType;
+            RelatedEntityId = relatedEntityId;
         }
 
         [Key]

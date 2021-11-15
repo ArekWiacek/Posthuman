@@ -1,10 +1,10 @@
+using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
@@ -14,8 +14,6 @@ using Posthuman.Data;
 using Posthuman.Data.Repositories;
 using Posthuman.Services;
 using PosthumanWebApi.Controllers;
-using System;
-using System.Reflection;
 
 namespace Posthuman.WebApi
 {
@@ -37,21 +35,17 @@ namespace Posthuman.WebApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Todo - remove from here, now it stays for debugging purposes
+            // Todo - remove from here, now it stays for debugging purposes.
+            // On production should be inside if(env.IsDevelopment())
             app.UseDeveloperExceptionPage();
-
-            //if (env.IsDevelopment())
-            //{
-                app.UseDeveloperExceptionPage();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
                     c.SwaggerEndpoint(
                         "/swagger/v1/swagger.json",
                         "PosthumanWebApi v1"));
-            //}
 
-            app.UseCors(builder => {
+            app.UseCors(builder =>
+            {
                 builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             });
 
@@ -81,10 +75,9 @@ namespace Posthuman.WebApi
         private void BuildServices(IServiceCollection services)
         {
             services
-                .AddDbContext<PosthumanContext>(
-                    options => options
+                .AddDbContext<PosthumanContext>(options => options
                     .UseSqlServer(BuildConnectionString(),
-                    x => x.MigrationsAssembly("Posthuman.Data")));
+                        x => x.MigrationsAssembly("Posthuman.Data")));
 
             services.AddCors();
             services.AddControllers();
@@ -104,6 +97,7 @@ namespace Posthuman.WebApi
 
         private void BuildAutoMapper(IServiceCollection services)
         {
+            // TODO: WTF is this
             var assembly1 = typeof(TodoItemDTO).Assembly;
             var assembly2 = typeof(ProjectsController).Assembly;
             services.AddAutoMapper(new Assembly[] { assembly1, assembly2 });
@@ -113,9 +107,10 @@ namespace Posthuman.WebApi
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo() { 
-                    Title = "PosthumanWebApi", 
-                    Version = "v1" 
+                c.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "PosthumanWebApi",
+                    Version = "v1"
                 });
             });
         }

@@ -1,11 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using AutoMapper;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
-using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Posthuman.Services
 {

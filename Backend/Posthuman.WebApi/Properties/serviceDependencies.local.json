@@ -1,17 +1,17 @@
 {
   "dependencies": {
+    "secrets1": {
+      "type": "secrets.user"
+    },
     "mssql1": {
       "secretStore": "LocalSecretsFile",
       "type": "mssql.onprem",
-      "connectionId": "ConnectionStrings:PosthumanDatabaseConnectionString"
-    },
-    "secrets1": {
-      "type": "secrets.user"
+      "connectionId": "ConnectionStrings:PosthumanDatabaseProduction"
     },
     "mssql2": {
       "secretStore": "LocalSecretsFile",
       "type": "mssql.onprem",
-      "connectionId": "ConnectionStrings:PosthumanDatabase2ConnectionString"
+      "connectionId": "ConnectionStrings:PosthumanDatabaseDevelopment"
     }
   }
 }

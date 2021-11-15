@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.Services", "Posth
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.WebApi", "Posthuman.WebApi\Posthuman.WebApi.csproj", "{6E8D75F9-D908-49CF-B2BB-7131C420954B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posthuman.Shared", "Posthuman.Shared\Posthuman.Shared.csproj", "{F7EFCB0D-FAED-439A-906E-0AAD62C6AD8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6E8D75F9-D908-49CF-B2BB-7131C420954B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E8D75F9-D908-49CF-B2BB-7131C420954B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E8D75F9-D908-49CF-B2BB-7131C420954B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7EFCB0D-FAED-439A-906E-0AAD62C6AD8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7EFCB0D-FAED-439A-906E-0AAD62C6AD8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7EFCB0D-FAED-439A-906E-0AAD62C6AD8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7EFCB0D-FAED-439A-906E-0AAD62C6AD8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

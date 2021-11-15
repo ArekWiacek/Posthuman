@@ -9,9 +9,9 @@ namespace Posthuman.Data.Configurations
         public void Configure(EntityTypeBuilder<Avatar> builder)
         {
             builder
-                .HasKey(p => p.Id);
+                .HasKey(a => a.Id);
 
-            builder.ToTable("Projects");
+            builder.ToTable("Avatars");
         }
     }
 }
