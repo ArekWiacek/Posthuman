@@ -2,18 +2,22 @@ import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Box, Grid, Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-
+import moment from 'moment';
 import { AvatarContext } from "../App";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
-
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
 import CreateTodoItemModal from '../components/TodoItem/Modals/CreateTodoItemModal';
 import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
-
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
 import { LogI, LogW } from '../Utilities/Utilities';
+
+moment.updateLocale("pl", {
+    week: {
+        dow: 1
+    }
+});
 
 function todoItemFormInitialValues() {
     return {

@@ -6,12 +6,11 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    //width: 600,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    p: 4,
-    backgroundImage: 'url("eyecandy1.svg")',    
+    p: 4, 
+    backgroundImage: 'url("/Assets/Eyecandies/eyecandy1.svg")',    
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right top'
 };
@@ -22,7 +21,7 @@ const ModalWindow = (props) => {
     const handleCloseModal = () => {
         if(props.onClose)
             props.onClose();
-    }
+    };
 
     return (
         <Modal
@@ -33,7 +32,7 @@ const ModalWindow = (props) => {
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{ timeout: 500 }}>
-            <Box sx={style}>
+            <Box sx={{...style, ...props.sx }}>
                 {props.children}
             </Box>
         </Modal>

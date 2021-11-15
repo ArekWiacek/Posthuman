@@ -4,6 +4,7 @@ import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import CancelIcon from '@mui/icons-material/Cancel';
+import moment from 'moment';
 import { LogW } from '../../../Utilities/Utilities';
 
 const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onCancelEdit }) => {
@@ -39,15 +40,14 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
     }
 
     return (
-        <Box component="form" sx={{ 
-            width: '400px', '& .MuiTextField-root': { m: 1, width: '100%' }, 
+        <Box component="form" sx={{ '& .MuiTextField-root': { m: 1, width: '100%' }, 
             display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
 
             <Typography variant="h5">Edit task</Typography>
 
             <TextField
-                label="Title" name="title" variant="outlined" required
+                label="Title" name="title" variant="outlined" required autoFocus
                 value={todoItem.title} onChange={handleInputChange} />
 
             <TextField
@@ -55,10 +55,8 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
                 value={todoItem.description} onChange={handleInputChange} />
 
             <DesktopDatePicker
-                label="Deadline" name="deadline" 
-                inputFormat="DD.MM.YYYY" mask="__.__.____"
-                value={todoItem.deadline} 
-                onChange={handleDeadlineChange}
+                label="Deadline" name="deadline" inputFormat="DD.MM.YYYY" mask="__.__.____"
+                value={todoItem.deadline} onChange={handleDeadlineChange} minDate={moment()}
                 renderInput={(params) => <TextField {...params} />} />
 
             <TextField
@@ -92,19 +90,18 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
             </TextField>
 
             <Box
-                sx={{ 
-                    display: 'flex', justifyContent: 'center', p: 1, m: 1
-                }}>
+                sx={{ display: 'flex', justifyContent: 'center', m: 1, width: '100%' }}>
                 <Button
                     variant="contained"
                     startIcon={<CancelIcon />}
                     onClick={handleCancelEdit}
-                    sx={{ mr: 2}}>
+                    sx={{ mr: 2, width: '100%' }}>
                     Cancel
                 </Button>
                 <Button
                     variant="contained"
                     startIcon={<AddTaskIcon />}
+                    sx={{ width: '100%' }}
                     type="submit">
                     Save
                 </Button>

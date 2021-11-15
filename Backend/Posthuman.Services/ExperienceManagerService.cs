@@ -43,7 +43,7 @@ namespace Posthuman.Services
                     break;
             }
 
-            // 90 - 120 %
+            // 80 - 130 %
             float randomMultiplier = ((float)random.Next(80, 130)) / 100;
             totalXpGained = Convert.ToInt32(totalXpGained * randomMultiplier);
 
@@ -62,7 +62,7 @@ namespace Posthuman.Services
         private int ThrowDices(int howManyThrows, int diceWallCount = 6)
         {
             int result = 0;
-            for (var throwedDices = 0; throwedDices <= howManyThrows; throwedDices++)
+            for (var throwedDices = 0; throwedDices < howManyThrows; throwedDices++)
             {
                 result += random.Next(1, diceWallCount);
             }

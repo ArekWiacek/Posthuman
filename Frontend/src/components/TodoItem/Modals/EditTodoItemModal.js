@@ -7,7 +7,9 @@ const EditTodoItemModal = ({ isOpen, todoItemToEdit, todoItems, projects, onSave
         <ModalWindow 
             isOpen={isOpen}
             onClose={onClose}
-            sx={{ width: '400px' }}>
+            sx={{ width: '500px', }}
+            background={{ backgroundPosition: 'right top' }}
+            eyecandy='eyecandy1'>
             <EditTodoItemForm 
                 todoItemToEdit={todoItemToEdit}
                 todoItems={todoItems}

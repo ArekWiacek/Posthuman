@@ -4,7 +4,7 @@ import Wizard from '../../Wizard/Wizard';
 
 const ConfirmTodoItemDoneModal = ({ isOpen, onFinished, onCanceled, todoItem, xpGained }) => {
     return (
-        <ModalWindow isOpen={isOpen}>
+        <ModalWindow isOpen={isOpen} sx={{width: 600}}>
             <Wizard 
                 todoItem={todoItem} 
                 xpGained={xpGained}
