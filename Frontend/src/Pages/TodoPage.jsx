@@ -13,6 +13,8 @@ import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
 import { LogI, LogW } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
+import AvatarView from '../components/Avatar/AvatarView';
+import SelectAvatar from '../components/Avatar/SelectAvatar';
 
 moment.updateLocale("pl", {
     week: {
@@ -100,13 +102,14 @@ const TodoPage = () => {
     // UPDATE TODO ITEM (after edition)
     const handleTodoItemSaveChanges = (editedTodoItemId, editedTodoItem) => {
         Api.Put(todoItemsEndpointName, editedTodoItemId, editedTodoItem, () => {
-            setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, editedTodoItem, "id", editedTodoItemId));
-            setTodoItemToEdit(todoItemFormInitialValues());
+            // Todo - handle updating by hand (moving in hierarchy is not working)
+            refreshTodoItemsCollection();
+            // setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, editedTodoItem, "id", editedTodoItemId));
+            // setTodoItemToEdit(todoItemFormInitialValues());
         });
 
         closeEditTodoItemModal();
     }
-
 
     // Make todo item visible / invisible, and propagate it to all it's children
     const handleTodoItemVisibleOnOff = todoItem => {
@@ -137,19 +140,19 @@ const TodoPage = () => {
     const handleTodoItemEdit = (todoItemToEdit) => {
         setTodoItemToEdit(todoItemToEdit);
         openEditTodoItemModal();
-    }
+    };
 
     // Complete task window opened
     const handleTodoItemCompleted = (todoItemToBeCompleted) => {
         const todoItem = { ...todoItemToBeCompleted };
         setTodoItemToBeCompleted(todoItem);
         setModalVisible('confirmComplete', true);
-    }
+    };
 
     // Complete task canceled
     const handleTodoItemCompleteDiscarded = () => {
         setModalVisible('confirmComplete', false);
-    }
+    };
 
     // Complete task confirmed
     const handleTodoItemCompleteConfirmed = () => {
@@ -162,7 +165,7 @@ const TodoPage = () => {
         });
 
         setModalVisible('confirmComplete', false);
-    }
+    };
 
     const setModalVisible = (modal, isVisible) => setModalsVisibility({ ...modalsVisibility, [modal]: isVisible });
     const openCreateTodoItemModal = () => setModalVisible('create', true);
@@ -171,6 +174,7 @@ const TodoPage = () => {
     const closeEditTodoItemModal = () => setModalVisible('edit', false);
     const closeDeleteTodoItemModal = () => setModalVisible('delete', false);
 
+    
     useEffect(() => {
         Api.Get("Projects", projects => setProjects(projects));
     }, [activeAvatar]);
@@ -181,6 +185,7 @@ const TodoPage = () => {
         });
     }, [activeAvatar]);
 
+    
     // Temporary lame method for refreshing whole todo items collection when changes occured
     const refreshTodoItemsCollection = () => {
         Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
@@ -200,15 +205,16 @@ const TodoPage = () => {
                         onTodoItemDone={handleTodoItemCompleted}
                         onAddSubtask={handleSubtaskCreate}
                         onTodoItemVisibleOnOff={handleTodoItemVisibleOnOff}
+                        onOpenCreateTodoModal={openCreateTodoItemModal}
                     />
                 </Grid>
+                {/* <Grid item xs={4}>
+                    <AvatarView avatar={activeAvatar} />
+                    <SelectAvatar isMini />
+                </Grid> */}
             </Grid>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', p: 2 }}>
-                <Fab color="primary" aria-label="add" onClick={openCreateTodoItemModal}>
-                    <AddIcon />
-                </Fab>
-            </Box>
+            
 
             {/* Create TodoItem modal  */}
             <CreateTodoItemModal

@@ -15,7 +15,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 const mdTheme = createTheme({
   palette: {
-      mode: 'dark',
+      //mode: 'dark',
   },
 });
 

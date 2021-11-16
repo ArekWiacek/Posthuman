@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { TableRow, TableCell, Typography } from '@mui/material';
+import { TableRow, TableCell, Typography, Button, Anchor, } from '@mui/material';
 import Deadline from '../../Common/Deadline';
 import TodoItemListItemActionButtons from './TodoItemsListItemActionButtons';
+import TodoItemsListItemMenu from './TodoItemsListItemMenu';
 import { LogI } from '../../../Utilities/Utilities';
 
 const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
@@ -60,15 +61,16 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                 </Typography>
             </TableCell>
 
-            <TableCell align="left" sx={{ width: '250px' }}>
+            <TableCell align="left" sx={{ width: '120px' }}>
                 {getDeadlineComponent(todoItem)}
             </TableCell>
 
-            <TableCell align="right" sx={{ width: '150px', color: todoItem.isCompleted ? 'success.main' : '' }}>
+            <TableCell align="right" sx={{ width: '140px', color: todoItem.isCompleted ? 'success.main' : '' }}>
                 {createProgressText(todoItem)}
             </TableCell>
 
             <TableCell align="right" sx={{ width: '250px' }}>
+                {/* <TodoItemsListItemMenu /> */}
                 <TodoItemListItemActionButtons 
                     todoItem={todoItem}
                     onDeleteClicked={handleDeleteClicked} 

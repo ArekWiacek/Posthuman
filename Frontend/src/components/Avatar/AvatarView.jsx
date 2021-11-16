@@ -14,7 +14,7 @@ const AvatarView = ({ avatar }) => {
     };
 
     return (
-        <Card sx={{ maxWidth: 400 }}>
+        <Card sx={{ maxWidth: 400, height: '600px' }}>
             <CardMedia
                 component="img"
                 height="140"

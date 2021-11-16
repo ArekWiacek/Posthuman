@@ -7,9 +7,10 @@ import { AvatarContext } from '../../App';
 import Api from '../../Utilities/ApiHelper';
 
 // This component allows to select current user from dropdown (stub until authentication is implemented)
-const SelectAvatar = () => {
+const SelectAvatar = ({ isMini }) => {
     const { activeAvatar, setActiveAvatar } = React.useContext(AvatarContext);
     const [avatars, setAvatars] = React.useState([]);
+
 
     const handleAvatarChange = (event) => {
         var selectedId = event.target.value;
@@ -28,26 +29,40 @@ const SelectAvatar = () => {
         Api.Get("Avatars", data => setAvatars(data));
     }, []);
 
-    return (
-        <Card sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <CardContent>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                    Selected Avatar
-                </Typography>
-                <Typography sx={{ mb: 3 }} variant="h5" component="div">
-                    {activeAvatar ? activeAvatar.name : "[Not set]"}
-                </Typography>
-                <TextField id="select-avatar" select fullWidth label="Avatar" 
-                    value={activeAvatar.id} onChange={handleAvatarChange}>
-                    {avatars.map((avatar) => (
-                        <MenuItem key={avatar.id} value={avatar.id}>
-                            {avatar.name}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </CardContent>
-        </Card>
-    );
+    const getAvatarSelector = () => {
+        return (
+            <TextField id="select-avatar" select fullWidth label="Avatar"
+                value={activeAvatar.id} onChange={handleAvatarChange}>
+                {avatars.map((avatar) => (
+                    <MenuItem key={avatar.id} value={avatar.id}>
+                        {avatar.name}
+                    </MenuItem>
+                ))}
+            </TextField>
+        );
+    };
+
+    return (getAvatarSelector());
+
+        // <Card sx={{ p: isMini ? 0 : 2, display: 'flex', flexDirection: 'column' }}>
+        //     <CardContent>
+        //         <Typography sx={{ mb: 1.5 }} color="text.secondary">
+        //             Selected Avatar
+        //         </Typography>
+        //         <Typography sx={{ mb: 3 }} variant="h5" component="div">
+        //             {activeAvatar ? activeAvatar.name : "[Not set]"}
+        //         </Typography>
+        //         <TextField id="select-avatar" select fullWidth label="Avatar"
+        //             value={activeAvatar.id} onChange={handleAvatarChange}>
+        //             {avatars.map((avatar) => (
+        //                 <MenuItem key={avatar.id} value={avatar.id}>
+        //                     {avatar.name}
+        //                 </MenuItem>
+        //             ))}
+        //         </TextField>
+        //     </CardContent>
+        // </Card>
+    //);
 }
 
 export default SelectAvatar;

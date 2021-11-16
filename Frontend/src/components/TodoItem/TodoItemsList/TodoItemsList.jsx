@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { Table, TableContainer, TableBody, Paper } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Table, TableContainer, TableBody, Paper, Box, Fab } from '@mui/material';
 import TodoItemsListHeader from './TodoItemsListHeader';
 import TodoItemsListItem from './TodoItemsListItem';
-import TodoItemsListFooter from './TodoItemsListFooter';
+import TodoItemsListOptions from './TodoItemsListOptions';
 import CreateTodoItemInline from '../Forms/CreateTodoItemInline';
+import AddIcon from '@mui/icons-material/Add';
 
-const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask, onTodoItemVisibleOnOff }) => {
+const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask, onTodoItemVisibleOnOff, onOpenCreateTodoModal }) => {
     const [displayOptions, setDisplayOptions] = useState({
         isDensePadding: true,
         showFinished: false,
         showHidden: true
     });
 
-    const setDisplayOption = (option, value) => setDisplayOptions({ ...displayOptions, [option]: value });
 
     const [parentId, setParentId] = useState(0);
 
@@ -25,57 +25,91 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
     const handleTodoItemVisibleOnOff = todoItem => onTodoItemVisibleOnOff(todoItem);
 
+    
+    const setDisplayOption = (option, value) => {
+        setDisplayOptions({ ...displayOptions, [option]: value });
+
+        localStorage.setItem(option, value);
+    };
+
     const handleDensePaddingChecked = isChecked => setDisplayOption('isDensePadding', isChecked);
     const handleShowFinishedChecked = isChecked => setDisplayOption('showFinished', isChecked);
     const handleShowHiddenChecked = isChecked => setDisplayOption('showHidden', isChecked);
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id === parentId) {
-            return <CreateTodoItemInline parentTodoItem={todoItem} 
+            return <CreateTodoItemInline parentTodoItem={todoItem}
                 onCreate={handleCreateSubtask} onCancel={handleCancelSubtask} />;
         }
     };
 
+    const isTodoItemVisible = todoItem => {
+        // Don't show finished and task is completed - skip
+        if (!displayOptions.showFinished && todoItem.isCompleted)
+            return false;
+
+        // Don't show hidden and task is hidden - skip
+        else if (!displayOptions.showHidden && !todoItem.isVisible)
+            return false;
+
+        return true;
+    }
+
+    useEffect(() => {
+        const isDensePadding = localStorage.getItem('isDensePadding') === "true";
+        const showFinished = localStorage.getItem('showFinished') === "true";
+        const showHidden = localStorage.getItem('showHidden') === "true";
+
+        setDisplayOptions({ ...displayOptions, ['isDensePadding']: isDensePadding, 
+            ['showFinished']: showFinished, ['showHidden']: showHidden });
+    }, []);
+
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} size={displayOptions.isDensePadding ? "small" : ""} aria-label="TodoItems list">
-                <TodoItemsListHeader />
+        <>
+            <TableContainer component={Paper} sx={{ maxHeight: '500px' }}>
+                <Table
+                    sx={{ minWidth: 700 }} size={displayOptions.isDensePadding ? "small" : ""}
+                    stickyHeader aria-label="TodoItems list">
 
-                <TableBody>
-                    {todoItems.map((todoItem) => {
-                        // Don't show finished and task is completed - skip
-                        if (!displayOptions.showFinished && todoItem.isCompleted) {
-                        }
-                        // Don't show hidden and task is hidden - skip
-                        else if (!displayOptions.showHidden && !todoItem.isVisible) {
-                        }
-                        else {
-                            return (
-                                <React.Fragment key={'todoItem_' + todoItem.id}>
-                                    <TodoItemsListItem
-                                        todoItem={todoItem}
-                                        onAddSubtaskClicked={handleAddSubtask}
-                                        onDeleteClicked={handleTodoItemDelete}
-                                        onDoneClicked={handleTodoItemDone}
-                                        onEditClicked={handleTodoItemEdit}
-                                        onVisibleOnOffClicked={handleTodoItemVisibleOnOff}
-                                    />
+                    <TodoItemsListHeader />
 
-                                    {renderCreateSubtaskInlineComponent(todoItem)}
-                                </React.Fragment>
-                            );
-                        }
-                    })}
-                </TableBody>
-            </Table>
-            <TodoItemsListFooter
-                isDensePadding={displayOptions.isDensePadding}
-                onDensePaddingChecked={handleDensePaddingChecked}
-                showFinished={displayOptions.showFinished}
-                onShowFinishedChecked={handleShowFinishedChecked}
-                showHidden={displayOptions.showHidden}
-                onShowHiddenChecked={handleShowHiddenChecked} />
-        </TableContainer>
+                    <TableBody>
+                        {todoItems.map((todoItem) => {
+                            if (isTodoItemVisible(todoItem)) {
+                                return (
+                                    <React.Fragment key={'todoItem_' + todoItem.id}>
+                                        <TodoItemsListItem
+                                            todoItem={todoItem}
+                                            onAddSubtaskClicked={handleAddSubtask}
+                                            onDeleteClicked={handleTodoItemDelete}
+                                            onDoneClicked={handleTodoItemDone}
+                                            onEditClicked={handleTodoItemEdit}
+                                            onVisibleOnOffClicked={handleTodoItemVisibleOnOff}
+                                        />
+
+                                        {renderCreateSubtaskInlineComponent(todoItem)}
+                                    </React.Fragment>
+                                );
+                            }
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: '', p: 2 }}>
+                <TodoItemsListOptions
+                    isDensePadding={displayOptions.isDensePadding}
+                    onDensePaddingChecked={handleDensePaddingChecked}
+                    showFinished={displayOptions.showFinished}
+                    onShowFinishedChecked={handleShowFinishedChecked}
+                    showHidden={displayOptions.showHidden}
+                    onShowHiddenChecked={handleShowHiddenChecked} />
+
+                <Fab color="primary" aria-label="add" onClick={onOpenCreateTodoModal}>
+                    <AddIcon />
+                </Fab>
+            </Box>
+        </>
     );
 }
 
