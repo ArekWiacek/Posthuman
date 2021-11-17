@@ -2,12 +2,14 @@ import * as React from 'react';
 import { useState } from 'react';
 import { TableRow, TableCell, Typography, Button, Anchor, } from '@mui/material';
 import Deadline from '../../Common/Deadline';
-import TodoItemListItemActionButtons from './TodoItemsListItemActionButtons';
-import TodoItemsListItemMenu from './TodoItemsListItemMenu';
+import TodoItemActions from '../Actions/TodoItemActions';
 import { LogI } from '../../../Utilities/Utilities';
+import useWindowDimensions from '../../../Hooks/useWindowDimensions';
 
-const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
-    const [showActionButtons, setShowActionButtons] = useState(false);
+const TodoItemListItem = ({ todoItem, showSmallMenu, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+    const [isHover, setIsHover] = useState(false);
+
+    const { height, width, isXs, isSm, isMd, isLg, isXl } = useWindowDimensions();
 
     const handleDeleteClicked = todoItem => onDeleteClicked(todoItem.id);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
@@ -46,10 +48,10 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
 
     return (
         <TableRow hover sx={{ opacity: todoItem.isVisible ? '100%' : '30%' }}
-            onMouseEnter={() => setShowActionButtons(true)}
-            onMouseLeave={() => setShowActionButtons(false)}>
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}>
 
-            <TableCell component="th" scope="row" >
+            <TableCell component="th" scope="row" sx={{ width: '100%' }}>
                 <Typography
                     component="span"
                     sx={{
@@ -58,27 +60,40 @@ const TodoItemListItem = ({ todoItem, onDeleteClicked, onEditClicked, onDoneClic
                         fontSize: getFontSizeForTodoItemTitle(todoItem.nestingLevel)
                     }}>
                     {todoItem.title}
+                    
+                    {/* Dimensions - h: {height}, w: {width}, 
+                    isXs: {isXs() ? 'yes' : 'no'}, 
+                    isSm: {isSm() ? 'yes' : 'no'},
+                    isMd: {isMd() ? 'yes' : 'no'},
+                    isLg: {isLg() ? 'yes' : 'no'},
+                    isXl: {isXl() ? 'yes' : 'no'} */}
                 </Typography>
             </TableCell>
 
-            <TableCell align="left" sx={{ width: '120px' }}>
+            <TableCell align="left" sx={{ 
+                display: { xs: 'none', md: 'table-cell' },
+                minWidth: '120px'
+            }}>
                 {getDeadlineComponent(todoItem)}
             </TableCell>
 
-            <TableCell align="right" sx={{ width: '140px', color: todoItem.isCompleted ? 'success.main' : '' }}>
+            <TableCell align="right" sx={{ 
+                display: { xs: 'none', lg: 'table-cell' }, 
+                minWidth: '140px', 
+                color: todoItem.isCompleted ? 'success.main' : '' }}>
                 {createProgressText(todoItem)}
             </TableCell>
 
-            <TableCell align="right" sx={{ width: '250px' }}>
-                {/* <TodoItemsListItemMenu /> */}
-                <TodoItemListItemActionButtons 
+            <TableCell align="right">
+                <TodoItemActions 
+                    isHover={isHover}
+                    showSmallMenu={isMd() || showSmallMenu}
                     todoItem={todoItem}
                     onDeleteClicked={handleDeleteClicked} 
                     onEditClicked={handleEditClicked}
                     onDoneClicked={handleDoneClicked}
                     onAddSubtaskClicked={handleAddSubtaskClicked} 
-                    onVisibleOnOffClicked={handleVisibleOnOffClicked}
-                    isVisible={showActionButtons && !todoItem.isCompleted} />
+                    onVisibleOnOffClicked={handleVisibleOnOffClicked} />
             </TableCell>
         </TableRow>
     );

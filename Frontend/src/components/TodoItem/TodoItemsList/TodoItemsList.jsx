@@ -11,9 +11,10 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const [displayOptions, setDisplayOptions] = useState({
         isDensePadding: true,
         showFinished: false,
-        showHidden: true
+        showHidden: true,
+        showSmallMenu: false, 
+        isDarkMode: false
     });
-
 
     const [parentId, setParentId] = useState(0);
 
@@ -35,6 +36,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleDensePaddingChecked = isChecked => setDisplayOption('isDensePadding', isChecked);
     const handleShowFinishedChecked = isChecked => setDisplayOption('showFinished', isChecked);
     const handleShowHiddenChecked = isChecked => setDisplayOption('showHidden', isChecked);
+    const handleShowSmallMenuChecked = isChecked => setDisplayOption('showSmallMenu', isChecked);
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id === parentId) {
@@ -59,17 +61,21 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
         const isDensePadding = localStorage.getItem('isDensePadding') === "true";
         const showFinished = localStorage.getItem('showFinished') === "true";
         const showHidden = localStorage.getItem('showHidden') === "true";
+        const showSmallMenu = localStorage.getItem('smallMenu') === "true";
 
-        setDisplayOptions({ ...displayOptions, ['isDensePadding']: isDensePadding, 
-            ['showFinished']: showFinished, ['showHidden']: showHidden });
+        setDisplayOptions({ 
+            ...displayOptions, 
+            ['isDensePadding']: isDensePadding, 
+            ['showFinished']: showFinished, 
+            ['showHidden']: showHidden,
+            ['showSmallMenu']: showSmallMenu 
+        });
     }, []);
 
     return (
         <>
             <TableContainer component={Paper} sx={{ maxHeight: '500px' }}>
-                <Table
-                    sx={{ minWidth: 700 }} size={displayOptions.isDensePadding ? "small" : ""}
-                    stickyHeader aria-label="TodoItems list">
+                <Table sx={{ }} size={displayOptions.isDensePadding ? "small" : ""} stickyHeader>
 
                     <TodoItemsListHeader />
 
@@ -85,6 +91,8 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                                             onDoneClicked={handleTodoItemDone}
                                             onEditClicked={handleTodoItemEdit}
                                             onVisibleOnOffClicked={handleTodoItemVisibleOnOff}
+                                            
+                                            showSmallMenu={displayOptions.showSmallMenu}
                                         />
 
                                         {renderCreateSubtaskInlineComponent(todoItem)}
@@ -103,7 +111,9 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                     showFinished={displayOptions.showFinished}
                     onShowFinishedChecked={handleShowFinishedChecked}
                     showHidden={displayOptions.showHidden}
-                    onShowHiddenChecked={handleShowHiddenChecked} />
+                    onShowHiddenChecked={handleShowHiddenChecked} 
+                    showSmallMenu={displayOptions.showSmallMenu}
+                    onSmallMenuChecked={handleShowSmallMenuChecked} />
 
                 <Fab color="primary" aria-label="add" onClick={onOpenCreateTodoModal}>
                     <AddIcon />
