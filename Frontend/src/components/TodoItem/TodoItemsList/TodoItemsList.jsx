@@ -1,21 +1,22 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableContainer, TableBody, Paper, Box, Fab } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import TodoItemsListHeader from './TodoItemsListHeader';
 import TodoItemsListItem from './TodoItemsListItem';
 import TodoItemsListOptions from './TodoItemsListOptions';
 import CreateTodoItemInline from '../Forms/CreateTodoItemInline';
-import AddIcon from '@mui/icons-material/Add';
+import { LogT, LogI } from '../../../Utilities/Utilities';
+
+const defaultDisplayOptions = {
+    showHiddenTasks: false,
+    showFinishedTasks: false,
+    bigItems: false,                // big / small table rows
+    displayMode: 'hierarchical',    // hierarchical vs flat
+    collapsedMenu: false,           // buttons spreaded or collapsed to menu 
+    isDarkMode: false
+};
 
 const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask, onTodoItemVisibleOnOff, onOpenCreateTodoModal }) => {
-    const [displayOptions, setDisplayOptions] = useState({
-        isDensePadding: true,
-        showFinished: false,
-        showHidden: true,
-        showSmallMenu: false, 
-        isDarkMode: false
-    });
-
     const [parentId, setParentId] = useState(0);
 
     const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
@@ -26,56 +27,48 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
     const handleTodoItemVisibleOnOff = todoItem => onTodoItemVisibleOnOff(todoItem);
 
-    
-    const setDisplayOption = (option, value) => {
-        setDisplayOptions({ ...displayOptions, [option]: value });
+    const [displayOptions, setDisplayOptions] = useState(() => {
+        const optionsJson = localStorage.getItem('todoItemsListDisplayOptions');
+        const options = JSON.parse(optionsJson);
+        return options || defaultDisplayOptions;
+    });
 
-        localStorage.setItem(option, value);
+    const handleDisplayOptionsChanged = (option, value) => {
+        var newOptions = { ...displayOptions, [option]: value };
+        setDisplayOptions(newOptions);
     };
-
-    const handleDensePaddingChecked = isChecked => setDisplayOption('isDensePadding', isChecked);
-    const handleShowFinishedChecked = isChecked => setDisplayOption('showFinished', isChecked);
-    const handleShowHiddenChecked = isChecked => setDisplayOption('showHidden', isChecked);
-    const handleShowSmallMenuChecked = isChecked => setDisplayOption('showSmallMenu', isChecked);
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id === parentId) {
-            return <CreateTodoItemInline parentTodoItem={todoItem}
-                onCreate={handleCreateSubtask} onCancel={handleCancelSubtask} />;
+            return <CreateTodoItemInline 
+                parentTodoItem={todoItem}
+                onCreate={handleCreateSubtask} 
+                onCancel={handleCancelSubtask} />;
         }
     };
 
     const isTodoItemVisible = todoItem => {
         // Don't show finished and task is completed - skip
-        if (!displayOptions.showFinished && todoItem.isCompleted)
+        if (!displayOptions.showFinishedTasks && todoItem.isCompleted)
             return false;
 
         // Don't show hidden and task is hidden - skip
-        else if (!displayOptions.showHidden && !todoItem.isVisible)
+        else if (!displayOptions.showHiddenTasks && !todoItem.isVisible)
             return false;
 
         return true;
-    }
+    };
 
+    // Save display options to local storage when options changed
     useEffect(() => {
-        const isDensePadding = localStorage.getItem('isDensePadding') === "true";
-        const showFinished = localStorage.getItem('showFinished') === "true";
-        const showHidden = localStorage.getItem('showHidden') === "true";
-        const showSmallMenu = localStorage.getItem('smallMenu') === "true";
-
-        setDisplayOptions({ 
-            ...displayOptions, 
-            ['isDensePadding']: isDensePadding, 
-            ['showFinished']: showFinished, 
-            ['showHidden']: showHidden,
-            ['showSmallMenu']: showSmallMenu 
-        });
-    }, []);
+        var optionsJson = JSON.stringify(displayOptions);
+        localStorage.setItem('todoItemsListDisplayOptions', optionsJson);
+    }, [displayOptions]);
 
     return (
-        <>
+        <React.Fragment>
             <TableContainer component={Paper} sx={{ maxHeight: '500px' }}>
-                <Table sx={{ }} size={displayOptions.isDensePadding ? "small" : ""} stickyHeader>
+                <Table sx={{ }} size={displayOptions.bigItems ? "" : "small"} stickyHeader>
 
                     <TodoItemsListHeader />
 
@@ -92,7 +85,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                                             onEditClicked={handleTodoItemEdit}
                                             onVisibleOnOffClicked={handleTodoItemVisibleOnOff}
                                             
-                                            showSmallMenu={displayOptions.showSmallMenu}
+                                            collapseActionButtons={displayOptions.collapsedMenu}
                                         />
 
                                         {renderCreateSubtaskInlineComponent(todoItem)}
@@ -105,21 +98,15 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
             </TableContainer>
 
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: '', p: 2 }}>
-                <TodoItemsListOptions
-                    isDensePadding={displayOptions.isDensePadding}
-                    onDensePaddingChecked={handleDensePaddingChecked}
-                    showFinished={displayOptions.showFinished}
-                    onShowFinishedChecked={handleShowFinishedChecked}
-                    showHidden={displayOptions.showHidden}
-                    onShowHiddenChecked={handleShowHiddenChecked} 
-                    showSmallMenu={displayOptions.showSmallMenu}
-                    onSmallMenuChecked={handleShowSmallMenuChecked} />
+                <TodoItemsListOptions 
+                    listDisplayOptions={displayOptions}
+                    onDisplayOptionsChanged={handleDisplayOptionsChanged} />
 
                 <Fab color="primary" aria-label="add" onClick={onOpenCreateTodoModal}>
                     <AddIcon />
                 </Fab>
             </Box>
-        </>
+        </React.Fragment>
     );
 }
 

@@ -6,7 +6,7 @@ import TodoItemActions from '../Actions/TodoItemActions';
 import { LogI } from '../../../Utilities/Utilities';
 import useWindowDimensions from '../../../Hooks/useWindowDimensions';
 
-const TodoItemListItem = ({ todoItem, showSmallMenu, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+const TodoItemListItem = ({ todoItem, collapseActionButtons, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
     const [isHover, setIsHover] = useState(false);
 
     const { height, width, isXs, isSm, isMd, isLg, isXl } = useWindowDimensions();
@@ -87,7 +87,7 @@ const TodoItemListItem = ({ todoItem, showSmallMenu, onDeleteClicked, onEditClic
             <TableCell align="right">
                 <TodoItemActions 
                     isHover={isHover}
-                    showSmallMenu={isMd() || showSmallMenu}
+                    showCollapsed={isMd() || collapseActionButtons}
                     todoItem={todoItem}
                     onDeleteClicked={handleDeleteClicked} 
                     onEditClicked={handleEditClicked}

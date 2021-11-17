@@ -1,10 +1,6 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState, useMemo, createContext } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Container from '@mui/material/Container';
+import { CssBaseline, Box, Toolbar, Container } from '@mui/material';
 
 import CustomRouter from './CustomRouter';
 import CustomAppBar from './CustomAppBar';
@@ -13,51 +9,79 @@ import CustomDrawer from './CustomDrawer';
 import AdapterMoment from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
-const mdTheme = createTheme({
-  palette: {
-      //mode: 'dark',
-  },
+export const ColorModeContext = createContext({
+    toggleColorMode: () => { }
 });
 
 const LayoutWrapper = () => {
-  const [open, setOpen] = useState(false);
-  const toggleDrawer = () => setOpen(!open);
+    const [open, setOpen] = useState(false);
+    const toggleDrawer = () => setOpen(!open);
 
-  return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
+    const [mode, setMode] = useState(() => {
+        var displayOptions = localStorage.getItem('todoItemsListDisplayOptions');
+        var options = JSON.parse(displayOptions);
+        var colorTheme = options.isDarkMode ? 'dark' : 'light';
+        return colorTheme;
+    });
 
-        <CustomAppBar
-          title="Posthuman"
-          open={open}
-          onToggleDrawerClicked={toggleDrawer} />
+    const colorMode = useMemo(
+        () => ({
+            toggleColorMode: () => {
+                setMode((prevMode) => {
+                    return prevMode === 'light' ? 'dark' : 'light';
+                });
+            },
+        }),
+        []
+    );
 
-        <CustomDrawer
-          open={open}
-          onToggleDrawerClicked={toggleDrawer} />
+    // Re-create theme evey time "mode" changes
+    const theme = useMemo(
+        () => createTheme({
+            palette: {
+                mode
+            }
+        }),
+        [mode]
+    );
 
-        <Box component="main" sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto"
-        }}>
+    return (
+        <ColorModeContext.Provider value={colorMode}>
+            <ThemeProvider theme={theme}>
+                <Box sx={{ display: "flex" }}>
+                    <CssBaseline />
 
-          <Toolbar />
+                    <CustomAppBar
+                        title="Posthuman"
+                        open={open}
+                        onToggleDrawerClicked={toggleDrawer} />
 
-          <Container maxWidth="false" sx={{ mt: 4, mb: 4 }}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <CustomRouter />
-            </LocalizationProvider>
-          </Container>
-        </Box>
-      </Box>
-    </ThemeProvider>
-  );
+                    <CustomDrawer
+                        open={open}
+                        onToggleDrawerClicked={toggleDrawer} />
+
+                    <Box component="main" sx={{
+                        backgroundColor: (theme) =>
+                            theme.palette.mode === "light"
+                                ? theme.palette.grey[100]
+                                : theme.palette.grey[900],
+                        flexGrow: 1,
+                        height: "100vh",
+                        overflow: "auto"
+                    }}>
+
+                        <Toolbar />
+
+                        <Container maxWidth="false" sx={{ mt: 4, mb: 4 }}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <CustomRouter />
+                            </LocalizationProvider>
+                        </Container>
+                    </Box>
+                </Box>
+            </ThemeProvider>
+        </ColorModeContext.Provider>
+    );
 }
 
 export default LayoutWrapper;

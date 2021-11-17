@@ -15,7 +15,6 @@ const TodoItemsListHeader = () => {
             md: 'table-cell'
         } 
     },
-
     { 
         displayText: "Progress", 
         align: "right",
@@ -38,8 +37,7 @@ const TodoItemsListHeader = () => {
                         align={column.align} 
                         key={column.displayText}
                         sx={{ fontSize: '1.2rem', padding: 2,
-                        display: column.display }}
-                    >
+                        display: column.display }} >
                         {column.displayText}
                     </TableCell>
                 ))}

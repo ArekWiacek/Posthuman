@@ -1,55 +1,58 @@
-import * as React from 'react';
-import {
-    Box, FormControlLabel, FormControl, FormGroup, Checkbox, Switch, FormLabel,
-    ToggleButtonGroup, ToggleButton
-} from '@mui/material';
+import React, { useContext } from 'react';
+import { Box, FormControlLabel, FormControl, FormGroup, Checkbox, Switch, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ListIcon from '@mui/icons-material/List';
 import { LogI } from '../../../Utilities/Utilities';
+import { ColorModeContext } from '../../Layout/LayoutWrapper';
 
-const TodoItemsListOptions = ({ isDensePadding, showFinished, showHidden, isSmallMenu,
-    onDensePaddingChecked, onShowFinishedChecked, onShowHiddenChecked, onSmallMenuChecked }) => {
-    var displayMode = "hierarchical";
+const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) => {
+    const theme = useTheme();
+    const colorMode = useContext(ColorModeContext);
 
-    const handleChangeDenseChecked = e => {
-        localStorage.setItem('isDensePadding', isDensePadding);
-        onDensePaddingChecked(!isDensePadding)
+    const handleToggleColorMode = e => {
+        let isDarkModeValue = e.target.checked;
+        colorMode.toggleColorMode();
+        onDisplayOptionsChanged('isDarkMode', isDarkModeValue);
     };
 
-    const handleShowFinishedChecked = e => onShowFinishedChecked(e.target.checked);
-    const handleShowHiddenChecked = e => onShowHiddenChecked(e.target.checked);
-    const handleIsSmallMenuChecked = e => onSmallMenuChecked(e.target.checked);
+    const handleOptionChange = e => {
+        let optionName = e.target.name;
+        let optionValue = e.target.checked;
 
-    const handleDisplayModeSelected = e => { LogI(e); };
+        LogI(`Option change handler, optionName: ${optionName}, value: ${optionValue}`);
+
+        onDisplayOptionsChanged(optionName, optionValue);
+    };
+
+    const handleDisplayModeChange = (e, value) => {
+        onDisplayOptionsChanged("displayMode", value);
+    };
 
     return (
         <Box sx={{ paddingTop: 1, paddingBottom: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <FormControl
-                sx={{ m: 1, flexDirection: 'column' }}
-                component="fieldset" variant="standard">
-                {/* <FormLabel component="legend">Display</FormLabel> */}
+            <FormControl sx={{ m: 1, flexDirection: 'column' }} component="fieldset" variant="standard">
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox checked={showHidden} onChange={handleShowHiddenChecked} name="hidden" />}
-                        label="Hidden tasks" />
+                        control={<Checkbox checked={listDisplayOptions.showHiddenTasks} onChange={handleOptionChange} name="showHiddenTasks" />}
+                        label="Show hidden tasks" />
                     <FormControlLabel
-                        control={<Checkbox checked={showFinished} onChange={handleShowFinishedChecked} name="finished" />}
-                        label="Finished tasks" />
+                        control={<Checkbox checked={listDisplayOptions.showFinishedTasks} onChange={handleOptionChange} name="showFinishedTasks" />}
+                        label="Show finished tasks" />
                     <FormControlLabel
-                        control={<Checkbox checked={!isDensePadding} onChange={handleChangeDenseChecked} name="dense" />}
-                        label="Big items" />
+                        control={<Checkbox checked={listDisplayOptions.bigItems} onChange={handleOptionChange} name="bigItems" />}
+                        label="Make list bigger" />
                 </FormGroup>
             </FormControl>
 
             <Box sx={{ flexDirection: 'column' }}>
                 <ToggleButtonGroup
-                    value={displayMode}
+                    value={listDisplayOptions.displayMode}
                     sx={{ m: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}
-                    onChange={handleDisplayModeSelected}
-                    exclusive disabled>
+                    onChange={(e, option) => handleDisplayModeChange(e, option)} exclusive>
                     <ToggleButton value="hierarchical" key="hierarchical">
                         <AccountTreeIcon />
-                    </ToggleButton>,
+                    </ToggleButton>
                     <ToggleButton value="flat" key="flat">
                         <ListIcon />
                     </ToggleButton>
@@ -57,8 +60,14 @@ const TodoItemsListOptions = ({ isDensePadding, showFinished, showHidden, isSmal
 
                 <FormGroup sx={{ m: 1 }}>
                     <FormControlLabel
-                        control={<Switch checked={isSmallMenu} onChange={handleIsSmallMenuChecked} name="small-menu" />}
-                        label="Small menu" />
+                        control={<Switch checked={listDisplayOptions.collapsedMenu} onChange={handleOptionChange} name="collapsedMenu" />}
+                        label="Collapse menu" />
+                </FormGroup>
+
+                <FormGroup sx={{ m: 1 }}>
+                    <FormControlLabel
+                        control={<Switch checked={theme.palette.mode === 'dark'} onChange={handleToggleColorMode} name="isDarkMode" />}
+                        label="Dark mode" />
                 </FormGroup>
             </Box>
         </Box>

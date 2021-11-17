@@ -33,7 +33,9 @@ const TodoItemActionsMenu = ({ todoItem, actions }) => {
           actions.map((action) => {
             if (!action.isDisabled) {
               return (
-                <MenuItem onClick={() => action.onClick(todoItem)}>
+                <MenuItem
+                  key={action.id} 
+                  onClick={() => action.onClick(todoItem)}>
                   <ListItemIcon>
                     {action.icon}
                   </ListItemIcon>
