@@ -114,7 +114,7 @@ namespace Posthuman.Services
             }
 
             // New TodoItem has parent Project selected - so update subtasks counter 
-            if (newTodoItem.ProjectId != null && newTodoItem.ProjectId.Value != 0)
+            if (newTodoItem != null && newTodoItem.ProjectId.HasValue)
             {
                 var parentProject = await
                     unitOfWork
@@ -126,6 +126,7 @@ namespace Posthuman.Services
                     parentProject.TotalSubtasks += 1;
                 }
             }
+
 
             // TODO - remove commit from here; now it's added so event item can save created todo item ID
             await unitOfWork.TodoItems.AddAsync(newTodoItem);
@@ -140,9 +141,14 @@ namespace Posthuman.Services
 
             await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
 
-            await UpdateAvatarGainedExp(ownerAvatar, todoItemCreatedEvent, null);
+
+            var notifications = new List<NotificationMessage>();
+            NotificationMessage notification = NotificationsService.CreateNotification(ownerAvatar, todoItemCreatedEvent);
+            notifications.Add(notification);
 
             await unitOfWork.CommitAsync();
+
+            await SendAllNotifications(notifications);
 
             return mapper.Map<TodoItemDTO>(newTodoItem);
         }
@@ -213,11 +219,7 @@ namespace Posthuman.Services
 
                     await unitOfWork.CommitAsync();
 
-                    notifications.Reverse();
-                    foreach (var n in notifications)
-                    {
-                        await NotificationsContext.Clients.All.ReceiveNotification(n);
-                    }
+                    await SendAllNotifications(notifications);
                 }
             }
         }
@@ -272,25 +274,22 @@ namespace Posthuman.Services
                         todoItem.Parent = parentTask;
                     }
 
-                    // TodoItem was either completed
-                    if (todoItem.IsCompleted == false && todoItemDTO.IsCompleted == true)
-                    {
-                        await CompleteTodoItem(todoItemDTO);
-                    }
-                    // Or it was modified
-                    else
-                    {
-                        var todoItemModifiedEvent = new EventItem(
+                    var todoItemModifiedEvent = new EventItem(
                             ownerAvatar.Id,
                             EventType.TodoItemModified,
                             DateTime.Now,
                             EntityType.TodoItem,
                             todoItem.Id);
 
-                        await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
-                    }
+                    await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
+
+                    var notifications = new List<NotificationMessage>();
+                    NotificationMessage notification = NotificationsService.CreateNotification(todoItem.Avatar, todoItemModifiedEvent);
+                    notifications.Add(notification);
 
                     await unitOfWork.CommitAsync();
+
+                    await SendAllNotifications(notifications);
                 }
             }
         }
@@ -407,6 +406,15 @@ namespace Posthuman.Services
                 {
                     await UpdateTodoItemVisibility(subtask, isVisible);
                 }
+            }
+        }
+
+        private async Task SendAllNotifications(List<NotificationMessage> notifications)
+        {
+            notifications.Reverse();
+            foreach (var notification in notifications)
+            {
+                await NotificationsContext.Clients.All.ReceiveNotification(notification);
             }
         }
     }

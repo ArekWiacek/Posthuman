@@ -198,7 +198,7 @@ const TodoPage = () => {
         <React.Fragment>
             <Grid container spacing={3}>
                 {/* LIST VIEW */}
-                <Grid item xs={12} md={9} lg={9}>
+                <Grid item xs={12} md={8} lg={9}>
                     <TodoItemList
                         todoItems={todoItems}
                         onTodoItemDelete={handleTodoItemDelete}
@@ -208,7 +208,7 @@ const TodoPage = () => {
                         onTodoItemVisibleOnOff={handleTodoItemVisibleOnOff}
                         onOpenCreateTodoModal={openCreateTodoItemModal} />
                 </Grid>
-                <Grid item xs={12} md={3} lg={3}>
+                <Grid item xs={12} md={4} lg={3}>
                     <AvatarView avatar={activeAvatar} viewMode='minimal'/> 
                     <NotificationsPanel />
                     {/* />

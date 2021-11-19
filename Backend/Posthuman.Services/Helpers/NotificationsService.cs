@@ -25,6 +25,17 @@ namespace Posthuman.Services.Helpers
             
             switch (eventItem.Type)
             {
+                case EventType.TodoItemCreated:
+                    notification.Title = "Task created";
+                    notification.Text = $"{avatar.Name} created new task: '{eventItem.RelatedEntityId}'";
+                    break;
+
+                case EventType.TodoItemDeleted:
+                    notification.Title = "Task deleted";
+                    notification.Text = $"{avatar.Name} deleted task: '{eventItem.RelatedEntityId}'";
+                    break;
+
+
                 case EventType.TodoItemCompleted:
                     notification.Title = "Task completed";
                     notification.Subtitle = $"+ {eventItem.ExpGained} XP";
