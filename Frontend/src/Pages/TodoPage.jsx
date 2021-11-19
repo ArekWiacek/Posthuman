@@ -15,6 +15,7 @@ import { LogI, LogW } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 import AvatarView from '../components/Avatar/AvatarView';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
+import Notifications from '../components/Notifications/Notifications';
 
 moment.updateLocale("pl", {
     week: {
@@ -197,7 +198,7 @@ const TodoPage = () => {
         <React.Fragment>
             <Grid container spacing={3}>
                 {/* LIST VIEW */}
-                <Grid item xs={12}>
+                <Grid item xs={12} md={9} lg={9}>
                     <TodoItemList
                         todoItems={todoItems}
                         onTodoItemDelete={handleTodoItemDelete}
@@ -205,52 +206,51 @@ const TodoPage = () => {
                         onTodoItemDone={handleTodoItemCompleted}
                         onAddSubtask={handleSubtaskCreate}
                         onTodoItemVisibleOnOff={handleTodoItemVisibleOnOff}
-                        onOpenCreateTodoModal={openCreateTodoItemModal}
-                    />
+                        onOpenCreateTodoModal={openCreateTodoItemModal} />
                 </Grid>
-                {/* <Grid item xs={4}>
-                    <AvatarView avatar={activeAvatar} />
-                    <SelectAvatar isMini />
-                </Grid> */}
+                <Grid item xs={12} md={3} lg={3}>
+                    <AvatarView avatar={activeAvatar} viewMode='minimal'/> 
+                    <Notifications />
+                    {/* />
+                    <SelectAvatar isMini /> */}
+                </Grid>
             </Grid>
 
-            
+            {/* TODOITEM MODALS  */}
+            <React.Fragment>
+                <CreateTodoItemModal
+                    isOpen={modalsVisibility.create}
+                    todoItems={todoItems}
+                    projects={projects}
+                    onClose={closeCreateTodoItemModal}
+                    onCreateTodoItem={handleCreateTodoItem}
+                />
 
-            {/* Create TodoItem modal  */}
-            <CreateTodoItemModal
-                isOpen={modalsVisibility.create}
-                todoItems={todoItems}
-                projects={projects}
-                onClose={closeCreateTodoItemModal}
-                onCreateTodoItem={handleCreateTodoItem}
-            />
+                <EditTodoItemModal
+                    isOpen={modalsVisibility.edit}
+                    todoItemToEdit={todoItemToEdit}
+                    todoItems={todoItems}
+                    projects={projects}
+                    onClose={closeEditTodoItemModal}
+                    onCancelEdit={closeEditTodoItemModal}
+                    onSaveEdit={handleTodoItemSaveChanges}
+                />
 
-            {/* Edit TodoItem modal */}
-            <EditTodoItemModal
-                isOpen={modalsVisibility.edit}
-                todoItemToEdit={todoItemToEdit}
-                todoItems={todoItems}
-                projects={projects}
-                onClose={closeEditTodoItemModal}
-                onCancelEdit={closeEditTodoItemModal}
-                onSaveEdit={handleTodoItemSaveChanges}
-            />
+                <DeleteTodoItemModal
+                    isOpen={modalsVisibility.delete}
+                    todoItemToDelete={todoItemToDelete}
+                    onClose={closeDeleteTodoItemModal}
+                    onDelete={handleTodoItemDeleteConfirmed}
+                    onCancelDelete={closeDeleteTodoItemModal}
+                />
 
-            <DeleteTodoItemModal
-                isOpen={modalsVisibility.delete}
-                todoItemToDelete={todoItemToDelete}
-                onClose={closeDeleteTodoItemModal}
-                onDelete={handleTodoItemDeleteConfirmed}
-                onCancelDelete={closeDeleteTodoItemModal}
-            />
-
-            {/* TodoItem done confirmation modal */}
-            <ConfirmTodoItemDoneModal
-                isOpen={modalsVisibility.confirmComplete}
-                onFinished={handleTodoItemCompleteConfirmed}
-                onCanceled={handleTodoItemCompleteDiscarded}
-                todoItem={todoItemToBeCompleted}
-                xpGained={25} />
+                <ConfirmTodoItemDoneModal
+                    isOpen={modalsVisibility.confirmComplete}
+                    onFinished={handleTodoItemCompleteConfirmed}
+                    onCanceled={handleTodoItemCompleteDiscarded}
+                    todoItem={todoItemToBeCompleted}
+                    xpGained={25} />
+            </React.Fragment>
         </React.Fragment>
     );
 }

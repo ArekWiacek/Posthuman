@@ -67,7 +67,7 @@ const LayoutWrapper = () => {
                                 : theme.palette.grey[900],
                         flexGrow: 1,
                         height: "100vh",
-                        overflow: "auto"
+                        overflow: "hidden"
                     }}>
 
                         <Toolbar />

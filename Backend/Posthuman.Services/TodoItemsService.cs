@@ -8,6 +8,8 @@ using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
+using Posthuman.RealTimeCommunication.Notifications;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Posthuman.Services
 {
@@ -16,14 +18,19 @@ namespace Posthuman.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ExperienceManager expManager;
+        public IHubContext<NotificationsHub, INotificationsClient> NotificationsContext { get; }
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper,
+            IHubContext<NotificationsHub, INotificationsClient> notificationsContext)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             expManager = new ExperienceManager();
+            this.NotificationsContext = notificationsContext;
+
+            //GlobalHost.
         }
 
         public async Task<TodoItemDTO> GetTodoItemById(int id)
@@ -193,6 +200,17 @@ namespace Posthuman.Services
                     todoItemCompletedEvent.ExpGained = experienceGained;
 
                     await unitOfWork.CommitAsync();
+
+                    await NotificationsContext.Clients.All.ReceiveNotification(
+                        new NotificationMessage
+                        {
+                            Title = "Task finished",
+                            Subtitle = $"You gained +{experienceGained} xp",
+                            Text = $"Avatar of ID: {todoItemDTO.AvatarId} finished task '{todoItemDTO.Title}'.",
+                            SecondText = $"Keep going",
+                            AvatarName = todoItemDTO.AvatarId.ToString(),
+                            ShowInModal = false
+                        });
                 }
             }
         }

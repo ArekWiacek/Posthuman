@@ -22,6 +22,7 @@
 	  <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
 	  <ProjectReference Include="..\Posthuman.Data\Posthuman.Data.csproj" />
 	  <ProjectReference Include="..\Posthuman.Services\Posthuman.Services.csproj" />
+	  <ProjectReference Include="..\RealTimeCommunication\Posthuman.RealTimeCommunication.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

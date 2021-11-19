@@ -34,30 +34,18 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
             <FormControl sx={{ m: 1, flexDirection: 'column' }} component="fieldset" variant="standard">
                 <FormGroup>
                     <FormControlLabel
-                        control={<Checkbox checked={listDisplayOptions.showHiddenTasks} onChange={handleOptionChange} name="showHiddenTasks" />}
+                        control={<Switch checked={listDisplayOptions.showHiddenTasks} onChange={handleOptionChange} name="showHiddenTasks" />}
                         label="Show hidden tasks" />
                     <FormControlLabel
-                        control={<Checkbox checked={listDisplayOptions.showFinishedTasks} onChange={handleOptionChange} name="showFinishedTasks" />}
+                        control={<Switch checked={listDisplayOptions.showFinishedTasks} onChange={handleOptionChange} name="showFinishedTasks" />}
                         label="Show finished tasks" />
                     <FormControlLabel
-                        control={<Checkbox checked={listDisplayOptions.bigItems} onChange={handleOptionChange} name="bigItems" />}
+                        control={<Switch checked={listDisplayOptions.bigItems} onChange={handleOptionChange} name="bigItems" />}
                         label="Make list bigger" />
                 </FormGroup>
             </FormControl>
 
             <Box sx={{ flexDirection: 'column' }}>
-                <ToggleButtonGroup
-                    value={listDisplayOptions.displayMode}
-                    sx={{ m: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}
-                    onChange={(e, option) => handleDisplayModeChange(e, option)} exclusive>
-                    <ToggleButton value="hierarchical" key="hierarchical">
-                        <AccountTreeIcon />
-                    </ToggleButton>
-                    <ToggleButton value="flat" key="flat">
-                        <ListIcon />
-                    </ToggleButton>
-                </ToggleButtonGroup>
-
                 <FormGroup sx={{ m: 1 }}>
                     <FormControlLabel
                         control={<Switch checked={listDisplayOptions.collapsedMenu} onChange={handleOptionChange} name="collapsedMenu" />}
@@ -69,6 +57,20 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
                         control={<Switch checked={theme.palette.mode === 'dark'} onChange={handleToggleColorMode} name="isDarkMode" />}
                         label="Dark mode" />
                 </FormGroup>
+            </Box>
+
+            <Box>
+                <ToggleButtonGroup
+                    value={listDisplayOptions.displayMode}
+                    sx={{ m: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}
+                    onChange={(e, option) => handleDisplayModeChange(e, option)} exclusive>
+                    <ToggleButton value="hierarchical" key="hierarchical">
+                        <AccountTreeIcon />
+                    </ToggleButton>
+                    <ToggleButton value="flat" key="flat">
+                        <ListIcon />
+                    </ToggleButton>
+                </ToggleButtonGroup>
             </Box>
         </Box>
     );

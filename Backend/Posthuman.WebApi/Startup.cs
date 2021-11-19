@@ -14,6 +14,7 @@ using Posthuman.Data;
 using Posthuman.Data.Repositories;
 using Posthuman.Services;
 using PosthumanWebApi.Controllers;
+using Posthuman.RealTimeCommunication.Notifications;
 
 namespace Posthuman.WebApi
 {
@@ -44,10 +45,12 @@ namespace Posthuman.WebApi
                         "/swagger/v1/swagger.json",
                         "PosthumanWebApi v1"));
 
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-            });
+            //app.UseCors(builder =>
+            //{
+            //    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            //});
+
+            app.UseCors("ClientPermission");
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -56,6 +59,7 @@ namespace Posthuman.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationsHub>("notifications");
             });
         }
 
@@ -79,8 +83,20 @@ namespace Posthuman.WebApi
                     .UseSqlServer(BuildConnectionString(),
                         x => x.MigrationsAssembly("Posthuman.Data")));
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ClientPermission", policy =>
+                {
+                    policy
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
+                });
+            });
+
             services.AddControllers();
+            services.AddSignalR();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

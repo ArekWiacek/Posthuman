@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import {
-    Card, CardContent, CardMedia, Typography, 
-    Divider, Stack, LinearProgress, Box } from '@mui/material';
+    Card, CardContent, CardMedia, Typography,
+    Divider, Stack, LinearProgress, Box
+} from '@mui/material';
 import { AvatarContext } from "../../App";
 
-const AvatarView = ({ avatar }) => {
+const AvatarView = ({ avatar, viewMode }) => {
     const { activeAvatar } = useContext(AvatarContext);
 
     const calculateNewLevelProgress = () => {
@@ -13,8 +14,42 @@ const AvatarView = ({ avatar }) => {
         return Math.round(levelProgress);
     };
 
+    const detailInfo = () => {
+        if(viewMode === 'full')
+        return (
+            <React.Fragment>
+                <Divider />
+
+                <CardContent>
+                    <Typography variant="body2" color="text.secondary">325 XP gained this week</Typography>
+                    <Typography variant="body2" color="text.secondary">120 XP gained last week</Typography>
+                </CardContent>
+
+                <Divider />
+
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        Bio
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {avatar.bio ? avatar.bio : ''}
+                    </Typography>
+                </CardContent>
+
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        Cyborg
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Cyborg is a futuristic fusion of cybernetic and organism-like being,
+                        with both organic and biomechatronic body parts.
+                    </Typography>
+                </CardContent>
+            </React.Fragment>);
+    };
+
     return (
-        <Card sx={{ maxWidth: 400, height: '600px' }}>
+        <Card sx={{ maxWidth: 400, mb: 3  }}>
             <CardMedia
                 component="img"
                 height="140"
@@ -41,33 +76,8 @@ const AvatarView = ({ avatar }) => {
                 </Box>
             </CardContent>
 
-            <Divider />
+            {detailInfo()}
 
-            <CardContent>
-                <Typography variant="body2" color="text.secondary">325 XP gained this week</Typography>
-                <Typography variant="body2" color="text.secondary">120 XP gained last week</Typography>
-            </CardContent>
-
-            <Divider />
-
-            <CardContent>
-                <Typography variant="h5" component="div">
-                    Bio
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    {avatar.bio ? avatar.bio : ''}
-                </Typography>
-            </CardContent>
-
-            <CardContent>
-                <Typography variant="h5" component="div">
-                    Cyborg
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Cyborg is a futuristic fusion of cybernetic and organism-like being,
-                    with both organic and biomechatronic body parts.
-                </Typography>
-            </CardContent>
         </Card>
     );
 }
