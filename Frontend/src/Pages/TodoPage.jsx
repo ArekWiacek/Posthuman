@@ -15,7 +15,7 @@ import { LogI, LogW } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 import AvatarView from '../components/Avatar/AvatarView';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
-import Notifications from '../components/Notifications/Notifications';
+import NotificationsPanel from '../components/Notifications/NotificationsPanel';
 
 moment.updateLocale("pl", {
     week: {
@@ -158,7 +158,7 @@ const TodoPage = () => {
     // Complete task confirmed
     const handleTodoItemCompleteConfirmed = () => {
         var completedTodoItem = ArrayHelper.UpdateObjectProperty(todoItemToBeCompleted, "isCompleted", true);
-        Api.Put(todoItemsEndpointName, completedTodoItem.id, completedTodoItem, () => {
+        Api.Put(todoItemsEndpointName + "/Complete", completedTodoItem.id, completedTodoItem, () => {
             setTodoItems(ArrayHelper.ReplaceObjectInArray(todoItems, completedTodoItem, "id", completedTodoItem.id));
 
             // TODO - remove
@@ -210,7 +210,7 @@ const TodoPage = () => {
                 </Grid>
                 <Grid item xs={12} md={3} lg={3}>
                     <AvatarView avatar={activeAvatar} viewMode='minimal'/> 
-                    <Notifications />
+                    <NotificationsPanel />
                     {/* />
                     <SelectAvatar isMini /> */}
                 </Grid>

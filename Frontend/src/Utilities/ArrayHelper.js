@@ -97,9 +97,16 @@ const RemoveObjectFromArray = (array, property, value) => {
 // Inserts object to array at given index
 // Returns array copy
 const InsertObjectAtIndex = (sourceArray, objectToInsert, index) => {
-    var arrayCopy = CopyArray(sourceArray);
-    arrayCopy.splice(index, 0, objectToInsert);
-    return arrayCopy;
+    if(ArrayHasElements(sourceArray)) {
+        var arrayCopy = CopyArray(sourceArray);
+        arrayCopy.splice(index, 0, objectToInsert);
+        return arrayCopy;
+    }
+    else {
+        var newArray = [];
+        newArray.push(objectToInsert);
+        return newArray;    
+    }
 };
 
 // Inserts object at the end of array

@@ -1,3 +1,89 @@
+# Posthuman 
+
+This app is task planner combined with futuristic gamification system
+
+# Technologies
+
+Backend
+    C#
+    ASP.NET Core 3.1
+    ASP.NET WebApi
+    Entity Framework
+    SignalR
+
+Frontend
+    JavaScript
+    ReactJS
+    MaterialUI
+
+Database    
+    MS SQL
+
+# Design patterns
+
+    Repository
+    Service
+    Unit of work
+    Layered architecture
+
+# Components
+
+Avatar
+    AvatarView
+    SelectAvatar
+
+Blog
+    BlogPost
+
+Common
+    ActionButton
+    Deadline
+
+Layout
+    CustomAppBar
+    CustomDrawer
+    CustomRouter
+    LayoutWrapper
+    NavigationList
+    Routes
+
+Modal
+    ModalWindow
+
+Notifications
+    NotificationItem
+    NotificationsList
+    NotificationsPanel
+
+TodoItem
+    Actions
+        TodoItemActions
+        TodoItemActionsButtons
+        TodoItemActionsMenu
+
+    Forms
+        CreateTodoItemForm
+        CreateTodoItemInline
+        EditTodoItemForm
+
+    Modals
+        ConfirmTodoItemDoneModal
+        CreateTodoItemModal
+        DeleteTodoItemModal
+        EditTodoItemModal
+
+    TodoItemsList
+        TodoItemsList
+        TodoItemsListHeader
+        TodoItemsListItem
+        TodoItemsListOptions
+
+# Pages
+
+BlogPage
+AvatarPage
+Todo Page
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

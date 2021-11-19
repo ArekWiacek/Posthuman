@@ -72,7 +72,7 @@ const TodoItemListItem = ({ todoItem, collapseActionButtons, onDeleteClicked, on
 
             <TableCell align="left" sx={{ 
                 display: { xs: 'none', md: 'table-cell' },
-                minWidth: '120px'
+                minWidth: '130px'
             }}>
                 {getDeadlineComponent(todoItem)}
             </TableCell>

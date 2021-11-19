@@ -5,16 +5,21 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const TodoItemActionsMenu = ({ todoItem, actions }) => {
+const TodoItemActionsMenu = ({ todoItem, actions, onClick }) => {
   const [triggerElementAnchor, setTriggerElementAnchor] = useState(null);
   const isOpen = Boolean(triggerElementAnchor);
 
-  const handleClick = (event) => {
+  const handleClick = event => {
     setTriggerElementAnchor(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = event => {
     setTriggerElementAnchor(null);
+  };
+
+  const handleMenuItemClicked = (action, todoItem) => {
+    setTriggerElementAnchor(null);
+    action.onClick(todoItem);
   };
 
   return (
@@ -28,14 +33,15 @@ const TodoItemActionsMenu = ({ todoItem, actions }) => {
         id="more-actions-menu"
         anchorEl={triggerElementAnchor}
         open={isOpen}
-        onClose={handleClose}>
+        onClose={handleClose}
+        disableRestoreFocus={true}>
         {
           actions.map((action) => {
             if (!action.isDisabled) {
               return (
                 <MenuItem
                   key={action.id} 
-                  onClick={() => action.onClick(todoItem)}>
+                  onClick={ () => handleMenuItemClicked(action, todoItem) }>
                   <ListItemIcon>
                     {action.icon}
                   </ListItemIcon>

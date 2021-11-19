@@ -97,7 +97,7 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/Complete")]
+        [HttpPut("Complete/{id}")]
         public async Task<IActionResult> CompleteTodoItem(int id, TodoItemDTO todoItemDTO)
         {
             if (id != todoItemDTO.Id)

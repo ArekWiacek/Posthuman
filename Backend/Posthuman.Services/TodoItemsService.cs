@@ -10,6 +10,7 @@ using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
 using Posthuman.RealTimeCommunication.Notifications;
 using Microsoft.AspNetCore.SignalR;
+using Posthuman.Services.Helpers;
 
 namespace Posthuman.Services
 {
@@ -18,7 +19,8 @@ namespace Posthuman.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ExperienceManager expManager;
-        public IHubContext<NotificationsHub, INotificationsClient> NotificationsContext { get; }
+
+        private IHubContext<NotificationsHub, INotificationsClient> NotificationsContext { get; }
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
@@ -27,10 +29,8 @@ namespace Posthuman.Services
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            expManager = new ExperienceManager();
             this.NotificationsContext = notificationsContext;
-
-            //GlobalHost.
+            expManager = new ExperienceManager();
         }
 
         public async Task<TodoItemDTO> GetTodoItemById(int id)
@@ -172,7 +172,7 @@ namespace Posthuman.Services
             if (todoItemDTO != null && todoItemDTO.Id != 0)
             {
                 var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
-                var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+                var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
 
                 if (todoItem != null)
                 {
@@ -187,7 +187,7 @@ namespace Posthuman.Services
 
                     // Add event of completion
                     var todoItemCompletedEvent = new EventItem(
-                        ownerAvatar.Id,
+                        avatar.Id,
                         EventType.TodoItemCompleted,
                         DateTime.Now,
                         EntityType.TodoItem,
@@ -196,21 +196,28 @@ namespace Posthuman.Services
                     await unitOfWork.EventItems.AddAsync(todoItemCompletedEvent);
 
                     // Update Avatar Exp points
-                    var experienceGained = await UpdateAvatarGainedExp(ownerAvatar, todoItemCompletedEvent, null);
+                    var experienceGained = await UpdateAvatarGainedExp(avatar, todoItemCompletedEvent, null);
                     todoItemCompletedEvent.ExpGained = experienceGained;
+
+                    var notifications = new List<NotificationMessage>();
+                    NotificationMessage notification = NotificationsService.CreateNotification(todoItem.Avatar, todoItemCompletedEvent);
+                    notifications.Add(notification);
+
+                    if (avatar.Exp >= avatar.ExpToNewLevel)
+                    {
+                        var gainedLevelEventItem = await UpdateAvatarGainedLevel(avatar);
+
+                        notification = NotificationsService.CreateNotification(todoItem.Avatar, gainedLevelEventItem);
+                        notifications.Add(notification);
+                    }
 
                     await unitOfWork.CommitAsync();
 
-                    await NotificationsContext.Clients.All.ReceiveNotification(
-                        new NotificationMessage
-                        {
-                            Title = "Task finished",
-                            Subtitle = $"You gained +{experienceGained} xp",
-                            Text = $"Avatar of ID: {todoItemDTO.AvatarId} finished task '{todoItemDTO.Title}'.",
-                            SecondText = $"Keep going",
-                            AvatarName = todoItemDTO.AvatarId.ToString(),
-                            ShowInModal = false
-                        });
+                    notifications.Reverse();
+                    foreach (var n in notifications)
+                    {
+                        await NotificationsContext.Clients.All.ReceiveNotification(n);
+                    }
                 }
             }
         }
@@ -352,7 +359,7 @@ namespace Posthuman.Services
         }
 
         // TODO - move following methods ito different place (avatar service?)
-        private async Task UpdateAvatarGainedLevel(Avatar avatar)
+        private async Task<EventItem> UpdateAvatarGainedLevel(Avatar avatar)
         {
             avatar.Level++;
 
@@ -368,6 +375,8 @@ namespace Posthuman.Services
                 DateTime.Now);
 
             await unitOfWork.EventItems.AddAsync(avatarLevelGainedEvent);
+
+            return avatarLevelGainedEvent;
         }
 
         private async Task<int> UpdateAvatarGainedExp(Avatar avatar, EventItem eventItem, SubeventType? subeventType)
@@ -382,11 +391,6 @@ namespace Posthuman.Services
 
             var experienceForEvent = expManager.CalculateExperienceForEvent(eventItem, subeventType);
             avatar.Exp += experienceForEvent;
-
-            if (avatar.Exp >= avatar.ExpToNewLevel)
-            {
-                await UpdateAvatarGainedLevel(avatar);
-            }
 
             return experienceForEvent;
         }

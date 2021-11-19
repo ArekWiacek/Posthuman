@@ -67,8 +67,8 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
     return (
         <React.Fragment>
-            <TableContainer component={Paper} sx={{ maxHeight: '500px', overflow: 'hidden' }}>
-                <Table sx={{ minHeight: 450 }} size={displayOptions.bigItems ? "" : "small"} stickyHeader>
+            <TableContainer component={Paper} sx={{ }}>
+                <Table sx={{ }} size={displayOptions.bigItems ? "" : "small"} stickyHeader>
 
                     <TodoItemsListHeader />
 
