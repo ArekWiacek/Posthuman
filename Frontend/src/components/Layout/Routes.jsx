@@ -8,7 +8,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import HomePage from '../../Pages/HomePage';
+import InfoPage from '../../Pages/InfoPage';
 import BlogPage from '../../Pages/BlogPage';
 import DashboardPage from '../../Pages/DashboardPage';
 import AvatarPage from '../../Pages/AvatarPage';
@@ -19,9 +19,9 @@ import HistoryPage from '../../Pages/HistoryPage';
 const Routes = [
     {
         path: '/info',
-        sidebarIcon: 'Info',
+        sidebarTitle: 'Info',
         sidebarIcon: () => <InfoOutlinedIcon />,
-        destinationPage: () => <HomePage />
+        destinationPage: () => <InfoPage />
     },
     {
         path: '/blog',

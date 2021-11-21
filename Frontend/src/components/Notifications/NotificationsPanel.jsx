@@ -5,6 +5,7 @@ import { LogE, LogI } from '../../Utilities/Utilities';
 import NotificationsList from './NotificationsList';
 import * as ArrayHelper from '../../Utilities/ArrayHelper';
 import { Scrollbar } from "react-scrollbars-custom";
+import SignalApi from '../../Utilities/SignalApiHelper';
 
 const NotificationsPanel = () => {
     const [connection, setConnection] = useState(null);
@@ -16,7 +17,7 @@ const NotificationsPanel = () => {
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
             .configureLogging(LogLevel.Debug)
-            .withUrl('https://localhost:7201/notifications', {
+            .withUrl(SignalApi.GetUrl(), {
                 skipNegotiation: true,
                 transport: HttpTransportType.WebSockets
             })

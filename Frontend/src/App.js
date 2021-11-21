@@ -4,6 +4,7 @@ import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/si
 import LayoutWrapper from "./components/Layout/LayoutWrapper";
 import { LogT, LogI, LogW, LogE } from './Utilities/Utilities';
 import Api from './Utilities/ApiHelper';
+import SignalApi from './Utilities/SignalApiHelper';
 import * as ArrayHelper from './Utilities/ArrayHelper';
 
 import './App.css';
@@ -58,7 +59,7 @@ const App = () => {
 
         const newConnection = new HubConnectionBuilder()
             .configureLogging(LogLevel.Debug)
-            .withUrl('https://localhost:7201/notifications', {
+            .withUrl(SignalApi.GetUrl(), {
                 skipNegotiation: true,
                 transport: HttpTransportType.WebSockets
             })

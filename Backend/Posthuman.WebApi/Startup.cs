@@ -63,9 +63,8 @@ namespace Posthuman.WebApi
             });
         }
 
-        private string BuildConnectionString()
+        private string GetConnectionString(string envType)
         {
-            var envType = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             string? dbConnectionString;
 
             if (envType == "Development")
@@ -76,11 +75,28 @@ namespace Posthuman.WebApi
             return dbConnectionString;
         }
 
+        private string GetHostUrl(string envType)
+        {
+            string? hostUrl;
+
+            if (envType == "Development")
+                hostUrl = "http://localhost:3000";
+            else
+                hostUrl = "asd";
+
+            return hostUrl;
+        }
+
         private void BuildServices(IServiceCollection services)
         {
+            var envType = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            if (envType == null)
+                throw new ArgumentNullException("EnvironmentType", "Cannot get environment type.");
+            
             services
                 .AddDbContext<PosthumanContext>(options => options
-                    .UseSqlServer(BuildConnectionString(),
+                    .UseSqlServer(GetConnectionString(envType),
                         x => x.MigrationsAssembly("Posthuman.Data")));
 
             services.AddCors(options =>
@@ -90,7 +106,7 @@ namespace Posthuman.WebApi
                     policy
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .WithOrigins("http://localhost:3000")
+                        .WithOrigins(GetHostUrl(envType))
                         .AllowCredentials();
                 });
             });

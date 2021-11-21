@@ -57,6 +57,10 @@ namespace Posthuman.Services.Helpers
                     notification.Text = $"{avatar.Name} deleted task: '{todoItem.Title}'";
                     break;
 
+                case EventType.TodoItemModified:
+                    notification.Title = "Task modified";
+                    notification.Text = $"{avatar.Name} modified task: '{todoItem.Title}'";
+                    break;
 
                 case EventType.TodoItemCompleted:
                     notification.Title = "Task completed";

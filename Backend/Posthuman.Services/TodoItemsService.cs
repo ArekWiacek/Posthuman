@@ -31,6 +31,7 @@ namespace Posthuman.Services
             expManager = new ExperienceManager();
         }
 
+        #region GET
         public async Task<TodoItemDTO> GetTodoItemById(int id)
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
@@ -77,7 +78,9 @@ namespace Posthuman.Services
 
             return itemsMapped.ToList();
         }
+        #endregion GET
 
+        #region CREATE
         public async Task<TodoItemDTO> CreateTodoItem(TodoItemDTO newTodoItemDTO)
         {
             var newTodoItem = mapper.Map<TodoItem>(newTodoItemDTO);
@@ -145,7 +148,160 @@ namespace Posthuman.Services
 
             return mapper.Map<TodoItemDTO>(newTodoItem);
         }
+        #endregion CREATE
 
+        #region UPDATE
+        public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
+        {
+            if (todoItemDTO != null && todoItemDTO.Id != 0)
+            {
+                var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItemDTO.Id);
+                var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+
+                if (todoItem == null)
+                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {todoItemDTO.Id} could not be found.");
+
+                if (ownerAvatar == null)
+                    throw new ArgumentNullException("Avatar", "Task owner could not be found");
+
+                todoItem.Title = todoItemDTO.Title;
+                todoItem.Description = todoItemDTO.Description;
+
+                // Deadline changed - update for todoItem and all children
+                if (todoItem.Deadline != todoItemDTO.Deadline)
+                    await UpdateTodoItemDeadline(todoItem, todoItemDTO.Deadline, true);
+
+                // Visibility changed - update for todoItem and all children
+                if (todoItem.IsVisible != todoItemDTO.IsVisible)
+                    await UpdateTodoItemVisibility(todoItem, todoItemDTO.IsVisible);
+
+                // Parent Project was changed - update both old and new parent
+                if (todoItem.ProjectId != todoItemDTO.ProjectId)
+                {
+                    if (todoItem.ProjectId.HasValue)
+                    {
+                        var oldParentProject = await unitOfWork.Projects.GetByIdAsync(todoItem.ProjectId.Value);
+                        if (oldParentProject != null)
+                            oldParentProject.TotalSubtasks--;
+                    }
+
+                    if (todoItemDTO.ProjectId.HasValue)
+                    {
+                        var newParentProject = await unitOfWork.Projects.GetByIdAsync(todoItemDTO.ProjectId.Value);
+                        if (newParentProject != null)
+                            newParentProject.TotalSubtasks++;
+                    }
+
+                    todoItem.ProjectId = todoItemDTO.ProjectId;
+                }
+
+                // Assign parent todo item
+                if (todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
+                {
+                    var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
+                    todoItem.Parent = parentTask;
+                }
+
+                var todoItemModifiedEvent = new EventItem(
+                        ownerAvatar.Id,
+                        EventType.TodoItemModified,
+                        DateTime.Now,
+                        EntityType.TodoItem,
+                        todoItem.Id);
+
+                await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
+                await unitOfWork.CommitAsync();
+
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
+                await notificationsService.SendAllNotifications();
+            }
+        }
+
+        public async Task CompleteTodoItem(TodoItemDTO todoItemDTO)
+        {
+            if (todoItemDTO != null && todoItemDTO.Id != 0)
+            {
+                var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
+                var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+
+                if (todoItem == null)
+                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {todoItemDTO.Id} could not be found.");
+
+                if (avatar == null)
+                    throw new ArgumentNullException("Avatar", "Task owner could not be found");
+
+                // Check if can be completed
+                if (todoItem.HasUnfinishedSubtasks())
+                    throw new Exception("Cannot complete TodoItem - complete subtasks first.");
+
+                todoItem.IsCompleted = true;
+                todoItem.CompletionDate = DateTime.Now;
+
+                // Add event of completion
+                var todoItemCompletedEvent = new EventItem(
+                    avatar.Id,
+                    EventType.TodoItemCompleted,
+                    DateTime.Now,
+                    EntityType.TodoItem,
+                    todoItem.Id);
+
+                await unitOfWork.EventItems.AddAsync(todoItemCompletedEvent);
+
+                // Update Avatar Exp points
+                var experienceGained = await UpdateAvatarGainedExp(avatar, todoItemCompletedEvent, null);
+                todoItemCompletedEvent.ExpGained = experienceGained;
+
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemCompletedEvent, todoItem));
+
+                if (avatar.Exp >= avatar.ExpToNewLevel)
+                {
+                    var gainedLevelEventItem = await UpdateAvatarGainedLevel(avatar);
+                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, gainedLevelEventItem));
+                }
+
+                await unitOfWork.CommitAsync();
+
+                await notificationsService.SendAllNotifications();
+
+                var owner = mapper.Map<AvatarDTO>(avatar);
+                await notificationsService.UpdateAvatar(owner);
+            }
+        }
+
+        /// <summary>
+        /// Updates deadline date of given todo item.
+        /// If todo item has children, all children deadline is updated as well
+        ///     If new deadline is later than current, then current is preserved
+        ///     If new deadline is earlier than current, then new is set
+        ///     
+        /// TODO: FIX method logic when has subtasks and / or parent
+        /// </summary>
+        private async Task UpdateTodoItemDeadline(TodoItem todoItem, DateTime? newDeadline, bool isParent)
+        {
+            if (isParent)
+                todoItem.Deadline = newDeadline;
+            else
+            {
+                if (newDeadline < todoItem.Deadline)
+                    todoItem.Deadline = newDeadline;
+            }
+
+            if (todoItem.HasSubtasks())
+                foreach (var subtask in todoItem.Subtasks)
+                    await UpdateTodoItemDeadline(subtask, newDeadline, false);
+        }
+
+        private async Task UpdateTodoItemVisibility(TodoItem todoItem, bool isVisible)
+        {
+            todoItem.IsVisible = isVisible;
+
+            if (todoItem.HasSubtasks())
+                foreach (var subtask in todoItem.Subtasks)
+                    await UpdateTodoItemVisibility(subtask, isVisible);
+        }
+        #endregion UPDATE
+
+        #region DELETE
         public async Task DeleteTodoItem(int id)
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(id);
@@ -166,123 +322,6 @@ namespace Posthuman.Services
             await unitOfWork.CommitAsync();
 
             await notificationsService.SendAllNotifications();
-        }
-
-        public async Task CompleteTodoItem(TodoItemDTO todoItemDTO)
-        {
-            if (todoItemDTO != null && todoItemDTO.Id != 0)
-            {
-                var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
-                var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
-                if (todoItem != null)
-                {
-                    // Check if can be completed
-                    if (todoItem.HasUnfinishedSubtasks())
-                    {
-                        throw new Exception("Cannot complete TodoItem");
-                    }
-
-                    todoItem.IsCompleted = true;
-                    todoItem.CompletionDate = DateTime.Now;
-
-                    // Add event of completion
-                    var todoItemCompletedEvent = new EventItem(
-                        avatar.Id,
-                        EventType.TodoItemCompleted,
-                        DateTime.Now,
-                        EntityType.TodoItem,
-                        todoItem.Id);
-
-                    await unitOfWork.EventItems.AddAsync(todoItemCompletedEvent);
-
-                    // Update Avatar Exp points
-                    var experienceGained = await UpdateAvatarGainedExp(avatar, todoItemCompletedEvent, null);
-                    todoItemCompletedEvent.ExpGained = experienceGained;
-
-                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemCompletedEvent, todoItem));
-
-                    if (avatar.Exp >= avatar.ExpToNewLevel)
-                    {
-                        var gainedLevelEventItem = await UpdateAvatarGainedLevel(avatar);
-                        notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, gainedLevelEventItem));
-                    }
-
-                    await unitOfWork.CommitAsync();
-
-                    await notificationsService.SendAllNotifications();
-
-                    
-                    var owner = mapper.Map<AvatarDTO>(avatar);
-                    await notificationsService.UpdateAvatar(owner);
-                }
-            }
-        }
-
-        public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
-        {
-            // TODO - Separate this logic from editing and update api controller to call this method directly
-
-            if (todoItemDTO != null && todoItemDTO.Id != 0)
-            {
-                var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
-
-                if (todoItem != null)
-                {
-                    todoItem.Title = todoItemDTO.Title;
-                    todoItem.Description = todoItemDTO.Description;
-                    todoItem.Deadline = todoItemDTO.Deadline;
-
-                    if (todoItem.IsVisible != todoItemDTO.IsVisible)
-                    {
-                        await UpdateTodoItemVisibility(todoItem, todoItemDTO.IsVisible);
-                    }
-
-                    // Parent Project was changed - update both old and new parent
-                    if (todoItem.ProjectId != todoItemDTO.ProjectId)
-                    {
-                        if (todoItem.ProjectId.HasValue)
-                        {
-                            var oldParentProject = await unitOfWork.Projects.GetByIdAsync(todoItem.ProjectId.Value);
-                            if (oldParentProject != null)
-                                oldParentProject.TotalSubtasks--;
-                        }
-
-                        if (todoItemDTO.ProjectId.HasValue)
-                        {
-                            var newParentProject = await unitOfWork.Projects.GetByIdAsync(todoItemDTO.ProjectId.Value);
-                            if (newParentProject != null)
-                                newParentProject.TotalSubtasks++;
-                        }
-
-                        todoItem.ProjectId = todoItemDTO.ProjectId;
-                    }
-
-                    var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-                    if (ownerAvatar == null)
-                        throw new Exception($"Task owner could not be found");
-
-                    // Assign parent todo item
-                    if (todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
-                    {
-                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
-                        todoItem.Parent = parentTask;
-                    }
-
-                    var todoItemModifiedEvent = new EventItem(
-                            ownerAvatar.Id,
-                            EventType.TodoItemModified,
-                            DateTime.Now,
-                            EntityType.TodoItem,
-                            todoItem.Id);
-                    
-                    await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
-                    await unitOfWork.CommitAsync();
-
-                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
-                    await notificationsService.SendAllNotifications();
-                }
-            }
         }
 
         private async Task DeleteTodoItemWithSubtasks(TodoItem todoItem)
@@ -310,7 +349,9 @@ namespace Posthuman.Services
 
             notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
         }
+        #endregion DELETE
 
+        #region ADDITIONAL - TO BE MOVED OUT
         /// <summary>
         /// Converts todo items from nested object structure (.Subtasks) into one-level-deep flat list
         /// </summary>
@@ -386,22 +427,6 @@ namespace Posthuman.Services
 
             return experienceForEvent;
         }
-
-        private async Task UpdateTodoItemVisibility(TodoItem todoItem, bool isVisible)
-        {
-            var allTodoItems = await unitOfWork.TodoItems.GetAllByAvatarIdAsync(todoItem.AvatarId);
-
-            todoItem.IsVisible = isVisible;
-
-            if (todoItem.HasSubtasks())
-            {
-                foreach (var subtask in todoItem.Subtasks)
-                {
-                    await UpdateTodoItemVisibility(subtask, isVisible);
-                }
-            }
-        }
-
-        
+        #endregion ADDITIONAL - TO BE MOVED OUT
     }
 }

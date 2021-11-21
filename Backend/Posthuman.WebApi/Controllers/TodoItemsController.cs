@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Posthuman.Core.Services;
 using Posthuman.Core.Models.DTO;
-using Microsoft.AspNetCore.SignalR;
-using Posthuman.RealTimeCommunication.Notifications;
 
 namespace PosthumanWebApi.Controllers
 {
