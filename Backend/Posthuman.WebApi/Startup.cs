@@ -99,16 +99,19 @@ namespace Posthuman.WebApi
             services.AddSignalR();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddTransient<ITodoItemsRepository, TodoItemsRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
             services.AddTransient<IEventItemsRepository, EventItemsRepository>();
             services.AddTransient<IAvatarsRepository, AvatarsRepository>();
+            services.AddTransient<IBlogPostsRepository, BlogPostsRepository>();
 
             services.AddTransient<ITodoItemsService, TodoItemsService>();
             services.AddTransient<IProjectsService, ProjectsService>();
             services.AddTransient<IEventItemsService, EventItemsService>();
             services.AddTransient<IAvatarsService, AvatarsService>();
+            services.AddTransient<IBlogPostsService, BlogPostsService>();
         }
 
         private void BuildAutoMapper(IServiceCollection services)

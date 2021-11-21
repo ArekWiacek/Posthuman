@@ -6,6 +6,9 @@ using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Services;
+using Posthuman.RealTimeCommunication.Notifications;
+using Posthuman.Services.Helpers;
+using System;
 
 namespace Posthuman.Services
 {
@@ -13,11 +16,14 @@ namespace Posthuman.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly INotificationsService notificationsService;
 
-        public AvatarsService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AvatarsService(IUnitOfWork unitOfWork, IMapper mapper,
+            INotificationsService notificationsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.notificationsService = notificationsService;
         }
 
         public async Task<AvatarDTO> GetActiveAvatar()
@@ -29,9 +35,19 @@ namespace Posthuman.Services
             var activeAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
 
             if (activeAvatar == null)
-                return null;
+               throw new ArgumentNullException("avatar");
 
             var mapped = mapper.Map<AvatarDTO>(activeAvatar);
+
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(
+                activeAvatar,
+                $"{activeAvatar.Name}",
+                "",//$"[{activeAvatar.Name}]: systems ready",
+                $"[{activeAvatar.Name}]: XP: {activeAvatar.Exp}   Level: [{activeAvatar.Level}]",
+                "Some more bullshit",
+                "Activated")); ;
+
+            await notificationsService.SendAllNotifications();
 
             return mapped;
         }

@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Box, Grid, Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
 import moment from 'moment';
-import { AvatarContext } from "../App";
+import { AvatarContext, ConnectionContext } from "../App";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
@@ -11,7 +12,7 @@ import CreateTodoItemModal from '../components/TodoItem/Modals/CreateTodoItemMod
 import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
-import { LogI, LogW } from '../Utilities/Utilities';
+import { LogI, LogE, LogW } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 import AvatarView from '../components/Avatar/AvatarView';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
@@ -39,6 +40,7 @@ const TodoPage = () => {
     const todoItemsEndpointName = "TodoItems";
 
     const { activeAvatar } = useContext(AvatarContext);
+
     const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
     const [todoItemToEdit, setTodoItemToEdit] = useState(todoItemFormInitialValues());

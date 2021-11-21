@@ -82,11 +82,15 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
                 
                 <MenuItem key={0} value={0}>Select parent task...</MenuItem>
                 
-                {todoItems.map((todoItem) => (
-                    <MenuItem key={todoItem.id} value={todoItem.id}>
-                        {todoItem.title}
-                    </MenuItem>
-                ))}
+                {todoItems.map((todoItem) =>  {
+                    if (!todoItem.isCompleted && todoItem.isVisible) {
+                        return (
+                            <MenuItem key={todoItem.id} value={todoItem.id} sx={{ pl: (todoItem.nestingLevel + 1) * 2}}>
+                                {todoItem.title}
+                            </MenuItem>
+                        )
+                    }
+                })}
             </TextField>
 
             <Box

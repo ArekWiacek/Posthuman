@@ -4,6 +4,7 @@ import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/si
 import { LogE, LogI } from '../../Utilities/Utilities';
 import NotificationsList from './NotificationsList';
 import * as ArrayHelper from '../../Utilities/ArrayHelper';
+import { Scrollbar } from "react-scrollbars-custom";
 
 const NotificationsPanel = () => {
     const [connection, setConnection] = useState(null);
@@ -41,10 +42,14 @@ const NotificationsPanel = () => {
     }, [connection]);
 
     return (
+     
         <Paper>
             <Typography variant='h5' sx={{ textAlign: 'left', p: 1 }}>Notifications</Typography>
             <Divider />
-            <NotificationsList notifications={notifications} />
+            
+            <Scrollbar id='notificationsScrollbar' style={{ width: '100%', height: 200 }}>
+                <NotificationsList notifications={notifications} />
+            </Scrollbar>
         </Paper>
     );
 };

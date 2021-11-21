@@ -33,55 +33,55 @@ const TodoItemActions = (props) => {
     };
 
     const actions = [{
+        id: `${todoItem.id}_0`,
+        title: 'Done',
+        onClick: handleDoneClicked,
+        icon: <CheckCircleIcon />,
+        isDisabled: todoItem.isCompleted || todoItem.hasUnfinishedSubtasks
+    }, {
         id: getUniqueActionId,
         title: 'Add subtask',
         onClick: handleAddSubtaskClicked,
         icon: <AddIcon />,
         isDisabled: todoItem.isCompleted
     }, {
-        id: 2,
+        id: `${todoItem.id}_2`,
         title: todoItem.isVisible ? 'Visible off' : 'Visible on',
         onClick: handleVisibleOnOffClicked,
         icon: getVisibilityIcon(todoItem.isVisible)
     }, {
-        id: 3,
+        id: `${todoItem.id}_3`,
         title: 'Delete',
         onClick: handleDeleteClicked,
         icon: <DeleteIcon />,
         isDisabled: todoItem.isCompleted
     }, {
-        id: 4,
+        id: `${todoItem.id}_4`,
         title: 'Edit',
         onClick: handleEditClicked,
         icon: <EditIcon fontSize='small' />,
         isDisabled: todoItem.isCompleted
-    }, {
-        id: 5,
-        title: 'Done',
-        onClick: handleDoneClicked,
-        icon: <CheckCircleIcon />,
-        isDisabled: todoItem.isCompleted || todoItem.hasUnfinishedSubtasks
     }];
 
-    const renderActions = (showCollapsed) => {
-        if (showCollapsed === true) {
-            return (
-                <TodoItemActionsMenu
-                    {...props}
-                    actions={actions} />);
-        } else if (showCollapsed === false)
-            return (
-                <TodoItemActionsButtons
-                    {...props}
-                    actions={actions}
-                    isVisible={isHover && !todoItem.isCompleted} />);
-    }
+const renderActions = (showCollapsed) => {
+    if (showCollapsed === true) {
+        return (
+            <TodoItemActionsMenu
+                {...props}
+                actions={actions} />);
+    } else if (showCollapsed === false)
+        return (
+            <TodoItemActionsButtons
+                {...props}
+                actions={actions}
+                isVisible={isHover && !todoItem.isCompleted} />);
+}
 
-    return (
-        <React.Fragment>
-            {renderActions(showCollapsed)}
-        </React.Fragment>
-    );
+return (
+    <React.Fragment>
+        {renderActions(showCollapsed)}
+    </React.Fragment>
+);
 }
 
 export default TodoItemActions;

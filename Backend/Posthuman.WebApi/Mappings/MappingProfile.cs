@@ -19,6 +19,9 @@ namespace Posthuman.WebApi.Mappings
 
             CreateMap<EventItem, EventItemDTO>();
             CreateMap<EventItemDTO, EventItem>();
+
+            CreateMap<BlogPost, BlogPostDTO>();
+            CreateMap<BlogPostDTO, BlogPost>();
         }
     }
 }

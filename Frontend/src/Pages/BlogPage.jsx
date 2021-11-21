@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
 import BlogPost from '../components/Blog/BlogPost';
+import Api from '../Utilities/ApiHelper';
 
 const post1 = {
     id: 1,
@@ -68,16 +69,27 @@ const post2 = {
 };
 
 const BlogPage = () => {
-    // const posts = [post2, post1];
+    const blogPostsEndpointName = "BlogPosts";
+    const [blogPosts, setBlogPosts] = useState([]); 
+
+    
+    useEffect(() => {
+        Api.Get(blogPostsEndpointName, posts => {
+            setBlogPosts(posts);
+        });
+    }, []);
 
     return (
         <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-                <BlogPost post={post2} />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-                <BlogPost post={post1} />
-            </Grid>
+            {
+                blogPosts.map(post => (
+                    <Grid item xs={12} md={6} lg={4} key={post.id}>
+                        <BlogPost post={post}>
+                            
+                        </BlogPost>
+                    </Grid>
+                ))
+            }
         </Grid>
     );
 }

@@ -8,28 +8,26 @@ using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
-using Posthuman.RealTimeCommunication.Notifications;
-using Microsoft.AspNetCore.SignalR;
 using Posthuman.Services.Helpers;
+using Posthuman.RealTimeCommunication.Notifications;
 
 namespace Posthuman.Services
 {
-    public partial class TodoItemsService : ITodoItemsService
+    public class TodoItemsService : ITodoItemsService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly INotificationsService notificationsService;
         private readonly ExperienceManager expManager;
-
-        private IHubContext<NotificationsHub, INotificationsClient> NotificationsContext { get; }
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IHubContext<NotificationsHub, INotificationsClient> notificationsContext)
+            INotificationsService notificationsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.NotificationsContext = notificationsContext;
+            this.notificationsService = notificationsService;
             expManager = new ExperienceManager();
         }
 
@@ -140,15 +138,10 @@ namespace Posthuman.Services
                 newTodoItem.Id);
 
             await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
-
-
-            var notifications = new List<NotificationMessage>();
-            NotificationMessage notification = NotificationsService.CreateNotification(ownerAvatar, todoItemCreatedEvent);
-            notifications.Add(notification);
-
             await unitOfWork.CommitAsync();
 
-            await SendAllNotifications(notifications);
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(ownerAvatar, todoItemCreatedEvent, newTodoItem));
+            await notificationsService.SendAllNotifications();
 
             return mapper.Map<TodoItemDTO>(newTodoItem);
         }
@@ -171,6 +164,8 @@ namespace Posthuman.Services
             await DeleteTodoItemWithSubtasks(todoItem);
 
             await unitOfWork.CommitAsync();
+
+            await notificationsService.SendAllNotifications();
         }
 
         public async Task CompleteTodoItem(TodoItemDTO todoItemDTO)
@@ -205,21 +200,21 @@ namespace Posthuman.Services
                     var experienceGained = await UpdateAvatarGainedExp(avatar, todoItemCompletedEvent, null);
                     todoItemCompletedEvent.ExpGained = experienceGained;
 
-                    var notifications = new List<NotificationMessage>();
-                    NotificationMessage notification = NotificationsService.CreateNotification(todoItem.Avatar, todoItemCompletedEvent);
-                    notifications.Add(notification);
+                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemCompletedEvent, todoItem));
 
                     if (avatar.Exp >= avatar.ExpToNewLevel)
                     {
                         var gainedLevelEventItem = await UpdateAvatarGainedLevel(avatar);
-
-                        notification = NotificationsService.CreateNotification(todoItem.Avatar, gainedLevelEventItem);
-                        notifications.Add(notification);
+                        notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, gainedLevelEventItem));
                     }
 
                     await unitOfWork.CommitAsync();
 
-                    await SendAllNotifications(notifications);
+                    await notificationsService.SendAllNotifications();
+
+                    
+                    var owner = mapper.Map<AvatarDTO>(avatar);
+                    await notificationsService.UpdateAvatar(owner);
                 }
             }
         }
@@ -280,16 +275,12 @@ namespace Posthuman.Services
                             DateTime.Now,
                             EntityType.TodoItem,
                             todoItem.Id);
-
+                    
                     await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
-
-                    var notifications = new List<NotificationMessage>();
-                    NotificationMessage notification = NotificationsService.CreateNotification(todoItem.Avatar, todoItemModifiedEvent);
-                    notifications.Add(notification);
-
                     await unitOfWork.CommitAsync();
 
-                    await SendAllNotifications(notifications);
+                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
+                    await notificationsService.SendAllNotifications();
                 }
             }
         }
@@ -316,6 +307,8 @@ namespace Posthuman.Services
                 todoItem.Id);
 
             await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
+
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
         }
 
         /// <summary>
@@ -409,13 +402,6 @@ namespace Posthuman.Services
             }
         }
 
-        private async Task SendAllNotifications(List<NotificationMessage> notifications)
-        {
-            notifications.Reverse();
-            foreach (var notification in notifications)
-            {
-                await NotificationsContext.Clients.All.ReceiveNotification(notification);
-            }
-        }
+        
     }
 }

@@ -12,4 +12,8 @@
     <Folder Include="Hubs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
+  </ItemGroup>
+
 </Project>

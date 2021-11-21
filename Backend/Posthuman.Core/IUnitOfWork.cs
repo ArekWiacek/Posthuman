@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Posthuman.Core
 {
     /// <summary>
-    /// Unit of work - contains all repositiories and handles updating many data models in single transaction
+    /// Unit of work - contains all repositiories and handles updating multiple data models in single transaction
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
@@ -13,6 +13,7 @@ namespace Posthuman.Core
         IProjectsRepository Projects { get; }
         IEventItemsRepository EventItems { get; }
         IAvatarsRepository Avatars { get; }
+        IBlogPostsRepository BlogPosts { get; }
 
         Task<int> CommitAsync();
     }

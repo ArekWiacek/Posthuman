@@ -84,6 +84,36 @@ BlogPage
 AvatarPage
 Todo Page
 
+# Architecture
+
+Backend
+
+    Posthuman.Core      
+        - Model Layer
+            - Entities
+            - DTOs
+            - Enums
+        - All repositories interfaces
+        - All services interfaces 
+        - IUnitOfWork interface
+
+    Posthuman.Data
+        - Data Access Layer
+        - Deals with Entity Framework 
+            - DataContext
+            - Migrations
+            - Configurations  
+        - Contains repositories implementations
+        - Contains UnitOfWork implementation
+
+    Posthuman.Services
+        - Business Logic Layer
+        
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

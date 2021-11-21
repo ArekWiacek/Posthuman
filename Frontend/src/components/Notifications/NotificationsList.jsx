@@ -4,15 +4,15 @@ import NotificationItem from './NotificationItem';
 
 const NotificationsList = ({ notifications }) => {
     return (
-        <Box sx={{ maxHeight: 250, overflow: 'auto' }}>
-            {
-                notifications.map(notification => (
-                    <NotificationItem
-                        key={Date.now() * Math.random()}
-                        notification={notification} />
+            <Box sx={{}}>
+                {
+                    notifications.map(notification => (
+                        <NotificationItem
+                            key={Date.now() * Math.random()}
+                            notification={notification} />
                     ))
-            }
-        </Box>
+                }
+            </Box>
     )
 };
 

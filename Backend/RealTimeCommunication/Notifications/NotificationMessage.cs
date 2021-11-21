@@ -11,6 +11,7 @@ namespace Posthuman.RealTimeCommunication.Notifications
             Text = "";
             SecondText = "";
             AvatarName = "";
+            Reward = "";
             ShowInModal = false;
         }
 
@@ -25,6 +26,9 @@ namespace Posthuman.RealTimeCommunication.Notifications
         public DateTime Occured { get; set;}
 
         public string AvatarName { get; set; }
+
+        public string Reward { get; set; }
+        
         public bool ShowInModal { get; set; }
     }
 }

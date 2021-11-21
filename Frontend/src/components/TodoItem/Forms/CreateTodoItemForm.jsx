@@ -19,9 +19,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
     }, [parentTaskId]);
 
     useEffect(() => {
-        LogI(`USE EFFECT on create todo item form. todo items count: ${todoItems ? todoItems.length : 0}`);
-        let unfinishedTodoItems = ArrayHelper.FindObjects(todoItems, 'isCompleted', false);
-        LogI(`USE EFFECT on create todo item form. unfinished todo items count: ${unfinishedTodoItems ? unfinishedTodoItems.length : 0}`);
+        // let unfinishedTodoItems = ArrayHelper.FindObjects(todoItems, 'isCompleted', false);
     }, [todoItems])
 
     const handleInputChange = e => {
@@ -98,9 +96,9 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
                 <MenuItem key={0} value={0}>Select parent task</MenuItem>
 
                 {todoItems.map((todoItem) => {
-                    if (!todoItem.isCompleted) {
+                    if (!todoItem.isCompleted && todoItem.isVisible) {
                         return (
-                            <MenuItem key={todoItem.id} value={todoItem.id}>
+                            <MenuItem key={todoItem.id} value={todoItem.id} sx={{ pl: (todoItem.nestingLevel + 1) * 2}}>
                                 {todoItem.title}
                             </MenuItem>
                         )

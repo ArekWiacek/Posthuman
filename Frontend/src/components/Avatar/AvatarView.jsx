@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import {
     Card, CardContent, CardMedia, Typography,
     Divider, Stack, LinearProgress, Box

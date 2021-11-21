@@ -268,3 +268,15 @@
 .exitLeft {
   animation-name: exitLeft;
 }
+
+
+
+#todoListScrollbar .ScrollbarsCustom-Track, #notificationsScrollbar .ScrollbarsCustom-Track {
+    top: 0 !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+}
+
+#todoListScrollbar .ScrollbarsCustom-Thumb, #notificationsScrollbar .ScrollbarsCustom-Thumb {
+    border-radius: 0 !important;
+}

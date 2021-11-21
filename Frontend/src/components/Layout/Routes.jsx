@@ -5,8 +5,10 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import CheckIcon from '@mui/icons-material/Check';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
+import HomePage from '../../Pages/HomePage';
 import BlogPage from '../../Pages/BlogPage';
 import DashboardPage from '../../Pages/DashboardPage';
 import AvatarPage from '../../Pages/AvatarPage';
@@ -15,42 +17,48 @@ import TodoPage from '../../Pages/TodoPage';
 import HistoryPage from '../../Pages/HistoryPage';
 
 const Routes = [
-  {
-    path: '/blog',
-    sidebarTitle: 'Blog',
-    sidebarIcon: () => { return <AnnouncementIcon />; },
-    destinationPage: () => { return <BlogPage />; }
-  },
-  // {
-  //   path: '/dashboard',
-  //   sidebarTitle: 'Dashboard',
-  //   sidebarIcon: () => { return <DashboardIcon />; },
-  //   destinationPage: () => { return <DashboardPage />; }
-  // },
-  {
-    path: '/avatar',
-    sidebarTitle: 'Avatar',
-    sidebarIcon: () => { return <AccessibilityIcon />; },
-    destinationPage: () => { return <AvatarPage />; }
-  },
-  {
-    path: '/todo',
-    sidebarTitle: 'Todo',
-    sidebarIcon: () => { return <CheckIcon />; },
-    destinationPage: () => { return <TodoPage />; }
-  }
-  // {
-  //   path: '/projects',
-  //   sidebarTitle: 'Projects',
-  //   sidebarIcon: () => { return <AccountTreeIcon />; },
-  //   destinationPage: () => { return <ProjectsPage />; }
-  // },
-  // {
-  //   path: '/history',
-  //   sidebarTitle: 'History',
-  //   sidebarIcon: () => { return <EventNoteIcon />; },
-  //   destinationPage: () => { return <HistoryPage />; }
-  // }
+    {
+        path: '/info',
+        sidebarIcon: 'Info',
+        sidebarIcon: () => <InfoOutlinedIcon />,
+        destinationPage: () => <HomePage />
+    },
+    {
+        path: '/blog',
+        sidebarTitle: 'Blog',
+        sidebarIcon: () => <AnnouncementOutlinedIcon />,
+        destinationPage: () => <BlogPage />
+    },
+    // {
+    //   path: '/dashboard',
+    //   sidebarTitle: 'Dashboard',
+    //   sidebarIcon: () => <DashboardIcon />,
+    //   destinationPage: () => <DashboardPage />
+    // },
+    {
+        path: '/avatar',
+        sidebarTitle: 'Avatar',
+        sidebarIcon: () => <AccessibilityIcon />,
+        destinationPage: () => <AvatarPage />
+    },
+    {
+        path: '/todo',
+        sidebarTitle: 'Todo',
+        sidebarIcon: () => <CheckIcon />,
+        destinationPage: () => <TodoPage />
+    }
+    // {
+    //   path: '/projects',
+    //   sidebarTitle: 'Projects',
+    //   sidebarIcon: () => <AccountTreeIcon />,
+    //   destinationPage: () => <ProjectsPage />
+    // },
+    // {
+    //   path: '/history',
+    //   sidebarTitle: 'History',
+    //   sidebarIcon: () => <EventNoteIcon />,
+    //   destinationPage: () => <HistoryPage />
+    // }
 ];
 
 export default Routes;
