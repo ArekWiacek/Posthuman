@@ -6,7 +6,7 @@ using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Services;
-using Posthuman.RealTimeCommunication.Notifications;
+using Posthuman.RealTime.Notifications;
 using Posthuman.Services.Helpers;
 using System;
 

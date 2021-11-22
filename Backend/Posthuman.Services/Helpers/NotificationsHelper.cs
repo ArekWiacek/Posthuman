@@ -1,7 +1,7 @@
 ﻿using System;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
-using Posthuman.RealTimeCommunication.Notifications;
+using Posthuman.RealTime.Notifications;
 
 namespace Posthuman.Services.Helpers
 {

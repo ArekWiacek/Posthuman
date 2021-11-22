@@ -2,12 +2,14 @@ import React, { useState, useMemo, createContext } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Box, Toolbar, Container } from '@mui/material';
 
+import AdapterMoment from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
 import CustomRouter from './CustomRouter';
 import CustomAppBar from './CustomAppBar';
 import CustomDrawer from './CustomDrawer';
 
-import AdapterMoment from '@mui/lab/AdapterMoment';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import useDisplayOptions from '../../Hooks/useDisplayOptions';
 
 export const ColorModeContext = createContext({
     toggleColorMode: () => { }
@@ -16,12 +18,10 @@ export const ColorModeContext = createContext({
 const LayoutWrapper = () => {
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => setOpen(!open);
+    const [displayOptions, setDisplayOptions] = useDisplayOptions();
 
     const [mode, setMode] = useState(() => {
-        var displayOptions = localStorage.getItem('todoItemsListDisplayOptions');
-        var options = JSON.parse(displayOptions);
-        var colorTheme = options.isDarkMode ? 'dark' : 'light';
-        return colorTheme;
+        return displayOptions.isDarkMode ? 'dark' : 'light';
     });
 
     const colorMode = useMemo(

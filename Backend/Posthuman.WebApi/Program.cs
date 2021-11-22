@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Posthuman.WebApi
 {
@@ -7,11 +8,14 @@ namespace Posthuman.WebApi
     {
         public static IHostBuilder CreateHostBuilder(string[] args) =>
          Host.CreateDefaultBuilder(args)
-             .ConfigureWebHostDefaults(webBuilder =>
-             {
-
-                 webBuilder.UseStartup<Startup>();
-             });
+            .ConfigureLogging(logging =>
+            {
+                logging.AddLog4Net(new Log4NetProviderOptions("log4net.config"));
+            })
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 
         public static void Main(string[] args)
         {

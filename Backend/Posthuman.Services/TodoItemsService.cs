@@ -9,7 +9,7 @@ using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
 using Posthuman.Services.Helpers;
-using Posthuman.RealTimeCommunication.Notifications;
+using Posthuman.RealTime.Notifications;
 
 namespace Posthuman.Services
 {
@@ -195,11 +195,21 @@ namespace Posthuman.Services
                     todoItem.ProjectId = todoItemDTO.ProjectId;
                 }
 
-                // Assign parent todo item
-                if (todoItem.ParentId != todoItemDTO.ParentId && todoItemDTO.ParentId.HasValue)
+                // Parent todo item changed
+                if (todoItem.ParentId != todoItemDTO.ParentId)
                 {
-                    var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
-                    todoItem.Parent = parentTask;
+                    // Update parent
+                    if (todoItemDTO.ParentId.HasValue)
+                    {
+                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
+                        todoItem.Parent = parentTask;
+                    }
+                    // Or remove parent
+                    else
+                    {
+                        todoItem.Parent = null;
+                        todoItem.ParentId = null;
+                    }
                 }
 
                 var todoItemModifiedEvent = new EventItem(

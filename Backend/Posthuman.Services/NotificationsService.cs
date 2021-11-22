@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Posthuman.RealTimeCommunication.Notifications;
+using Posthuman.RealTime.Notifications;
 using Microsoft.AspNetCore.SignalR;
 using Posthuman.Core.Models.DTO;
 

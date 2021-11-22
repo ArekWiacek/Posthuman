@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Posthuman.RealTimeCommunication.Notifications
+namespace Posthuman.RealTime.Notifications
 {
     public class NotificationsHub : Hub<INotificationsClient>
     {

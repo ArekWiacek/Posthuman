@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Box, FormControlLabel, FormControl, FormGroup, Checkbox, Switch, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Box, FormControlLabel, FormControl, FormGroup, Switch, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ListIcon from '@mui/icons-material/List';
@@ -19,14 +19,11 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
     const handleOptionChange = e => {
         let optionName = e.target.name;
         let optionValue = e.target.checked;
-
-        LogI(`Option change handler, optionName: ${optionName}, value: ${optionValue}`);
-
         onDisplayOptionsChanged(optionName, optionValue);
     };
 
     const handleDisplayModeChange = (e, value) => {
-        onDisplayOptionsChanged("displayMode", value);
+        onDisplayOptionsChanged('displayMode', value);
     };
 
     return (
@@ -34,28 +31,28 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
             <FormControl sx={{ m: 1, flexDirection: 'column' }} component="fieldset" variant="standard">
                 <FormGroup>
                     <FormControlLabel
-                        control={<Switch checked={listDisplayOptions.showHiddenTasks} onChange={handleOptionChange} name="showHiddenTasks" />}
-                        label="Show hidden tasks" />
+                        control={<Switch checked={listDisplayOptions.showHiddenTasks} onChange={handleOptionChange} name='showHiddenTasks' />}
+                        label='Show hidden tasks' />
                     <FormControlLabel
-                        control={<Switch checked={listDisplayOptions.showFinishedTasks} onChange={handleOptionChange} name="showFinishedTasks" />}
-                        label="Show finished tasks" />
+                        control={<Switch checked={listDisplayOptions.showFinishedTasks} onChange={handleOptionChange} name='showFinishedTasks' />}
+                        label='Show finished tasks' />
                     <FormControlLabel
-                        control={<Switch checked={listDisplayOptions.bigItems} onChange={handleOptionChange} name="bigItems" />}
-                        label="Make list bigger" />
+                        control={<Switch checked={listDisplayOptions.bigItems} onChange={handleOptionChange} name='bigItems' />}
+                        label='Make list bigger' />
                 </FormGroup>
             </FormControl>
 
             <Box sx={{ flexDirection: 'column' }}>
                 <FormGroup sx={{ m: 1 }}>
                     <FormControlLabel
-                        control={<Switch checked={listDisplayOptions.collapsedMenu} onChange={handleOptionChange} name="collapsedMenu" />}
-                        label="Collapse menu" />
+                        control={<Switch checked={listDisplayOptions.collapsedMenu} onChange={handleOptionChange} name='collapsedMenu' />}
+                        label='Collapse menu' />
                 </FormGroup>
 
                 <FormGroup sx={{ m: 1 }}>
                     <FormControlLabel
-                        control={<Switch checked={theme.palette.mode === 'dark'} onChange={handleToggleColorMode} name="isDarkMode" />}
-                        label="Dark mode" />
+                        control={<Switch checked={theme.palette.mode === 'dark'} onChange={handleToggleColorMode} name='isDarkMode' />}
+                        label='Dark mode' />
                 </FormGroup>
             </Box>
 
@@ -64,10 +61,10 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
                     value={listDisplayOptions.displayMode}
                     sx={{ m: 1, display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}
                     onChange={(e, option) => handleDisplayModeChange(e, option)} exclusive>
-                    <ToggleButton value="hierarchical" key="hierarchical">
+                    <ToggleButton value='hierarchical' key='hierarchical'>
                         <AccountTreeIcon />
                     </ToggleButton>
-                    <ToggleButton value="flat" key="flat">
+                    <ToggleButton value='flat' key='flat'>
                         <ListIcon />
                     </ToggleButton>
                 </ToggleButtonGroup>

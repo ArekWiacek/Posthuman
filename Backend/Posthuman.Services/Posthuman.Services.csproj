@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
-    <ProjectReference Include="..\RealTimeCommunication\Posthuman.RealTimeCommunication.csproj" />
+    <ProjectReference Include="..\Posthuman.RealTime\Posthuman.RealTime.csproj" />
   </ItemGroup>
 
 </Project>

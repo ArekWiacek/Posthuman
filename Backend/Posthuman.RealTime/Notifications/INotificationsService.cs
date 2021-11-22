@@ -1,7 +1,7 @@
 ﻿using Posthuman.Core.Models.DTO;
 using System.Threading.Tasks;
 
-namespace Posthuman.RealTimeCommunication.Notifications
+namespace Posthuman.RealTime.Notifications
 {
     public interface INotificationsService
     {

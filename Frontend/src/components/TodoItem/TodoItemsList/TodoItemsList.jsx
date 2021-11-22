@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Table, TableContainer, TableBody, Paper, Box, Fab, Slider } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import TodoItemsListHeader from './TodoItemsListHeader';
@@ -7,18 +7,7 @@ import TodoItemsListOptions from './TodoItemsListOptions';
 import CreateTodoItemInline from '../Forms/CreateTodoItemInline';
 import { LogT, LogI } from '../../../Utilities/Utilities';
 import { Scrollbar } from "react-scrollbars-custom";
-import { ImportantDevices } from '@mui/icons-material';
-import { alpha, styled } from '@mui/material/styles';
-
-
-const defaultDisplayOptions = {
-    showHiddenTasks: false,
-    showFinishedTasks: false,
-    bigItems: false,                // big / small table rows
-    displayMode: 'hierarchical',    // hierarchical vs flat
-    collapsedMenu: false,           // buttons spreaded or collapsed to menu 
-    isDarkMode: false
-};
+import useDisplayOptions from '../../../Hooks/useDisplayOptions';
 
 const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItemDone, onAddSubtask, onTodoItemVisibleOnOff, onOpenCreateTodoModal }) => {
     const [parentId, setParentId] = useState(0);
@@ -31,16 +20,8 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const handleCreateSubtask = newSubtask => onAddSubtask(newSubtask);
     const handleTodoItemVisibleOnOff = todoItem => onTodoItemVisibleOnOff(todoItem);
 
-    const [displayOptions, setDisplayOptions] = useState(() => {
-        const optionsJson = localStorage.getItem('todoItemsListDisplayOptions');
-        const options = JSON.parse(optionsJson);
-        return options || defaultDisplayOptions;
-    });
-
-    const handleDisplayOptionsChanged = (option, value) => {
-        var newOptions = { ...displayOptions, [option]: value };
-        setDisplayOptions(newOptions);
-    };
+    const [displayOptions, setDisplayOptions] = useDisplayOptions();
+    const handleDisplayOptionsChanged = (option, value) => setDisplayOptions({ ...displayOptions, [option]: value });
 
     const renderCreateSubtaskInlineComponent = (todoItem) => {
         if (todoItem.id === parentId) {
@@ -62,12 +43,6 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
 
         return true;
     };
-
-    // Save display options to local storage when options changed
-    useEffect(() => {
-        var optionsJson = JSON.stringify(displayOptions);
-        localStorage.setItem('todoItemsListDisplayOptions', optionsJson);
-    }, [displayOptions]);
 
     return (
         <React.Fragment>

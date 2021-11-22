@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Posthuman.RealTimeCommunication.Notifications
+namespace Posthuman.RealTime.Notifications
 {
     public class NotificationMessage
     {
