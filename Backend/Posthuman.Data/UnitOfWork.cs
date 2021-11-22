@@ -14,6 +14,7 @@ namespace Posthuman.Data
         private ProjectsRepository projectsRepository;
         private EventItemsRepository eventItemsRepository;
         private AvatarsRepository avatarsRepository;
+        private BlogPostsRepository blogPostsRepository;
 
         public UnitOfWork(PosthumanContext context)
         {
@@ -23,13 +24,15 @@ namespace Posthuman.Data
             eventItemsRepository    = eventItemsRepository  ?? new EventItemsRepository(context);
             todoItemsRepository     = todoItemsRepository   ?? new TodoItemsRepository(context);
             avatarsRepository       = avatarsRepository     ?? new AvatarsRepository(context);
+            blogPostsRepository     = blogPostsRepository   ?? new BlogPostsRepository(context);
         }
 
         public ITodoItemsRepository TodoItems   => todoItemsRepository  = todoItemsRepository   ??      new TodoItemsRepository(context);
         public IProjectsRepository Projects     => projectsRepository   = projectsRepository    ??      new ProjectsRepository(context);
         public IEventItemsRepository EventItems => eventItemsRepository = eventItemsRepository  ??      new EventItemsRepository(context);
         public IAvatarsRepository Avatars       => avatarsRepository    = avatarsRepository     ??      new AvatarsRepository(context);
-
+        public IBlogPostsRepository BlogPosts   => blogPostsRepository  = blogPostsRepository   ??      new BlogPostsRepository(context);
+        
         public async Task<int> CommitAsync()
         {
             return await context.SaveChangesAsync();

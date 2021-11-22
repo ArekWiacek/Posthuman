@@ -1,0 +1,126 @@
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Box, TextField, Button, MenuItem, Typography } from '@mui/material';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import moment from 'moment';
+import { LogI, LogW } from '../../../Utilities/Utilities';
+import * as ArrayHelper from '../../../Utilities/ArrayHelper';
+
+const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskId, parentProjectId }) => {
+    const [formState, setFormState] = useState({
+        title: '', description: '', deadline: null,
+        parentId: parentTaskId ? parentTaskId : '',
+        projectId: parentProjectId ? parentProjectId : ''
+    });
+
+    useEffect(() => {
+        setFormState({ ...formState, parentId: parentTaskId });
+    }, [parentTaskId]);
+
+    useEffect(() => {
+        // let unfinishedTodoItems = ArrayHelper.FindObjects(todoItems, 'isCompleted', false);
+    }, [todoItems])
+
+    const handleInputChange = e => {
+        const { name, value } = e.target;
+        setFormState({ ...formState, [name]: value });
+    };
+
+    const handleDeadlineChange = newValue => {
+        setFormState({ ...formState, deadline: (newValue ? newValue.toDate() : null) });
+    };
+
+    const handleSubmit = e => {
+        e.preventDefault();
+
+        if (!formState.title) {
+            LogW("Cannot create TodoItem - title not provided");
+            return;
+        }
+
+        var todoItem = {
+            title: formState.title,
+            description: formState.description,
+            deadline: formState.deadline,
+            parentId: formState.parentId ? formState.parentId : null,
+            projectId: formState.projectId ? formState.projectId : null,
+            isVisible: true
+        };
+
+        onCreateTodoItem(todoItem);
+        setFormState({ ...formState, title: '', description: '' });
+    };
+
+    return (
+        <Box component="form" sx={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            '& .MuiTextField-root': { m: 1, width: '100%' }
+        }}
+            noValidate autoComplete="off" onSubmit={e => handleSubmit(e)}>
+
+            <Typography variant="h5">Create task</Typography>
+
+            <TextField
+                label="Title" name="title" variant="outlined" required autoFocus
+                value={formState.title} onChange={handleInputChange} />
+
+            <TextField
+                label="Description" name="description" value={formState.description}
+                onChange={handleInputChange} multiline rows={3} />
+
+            <DesktopDatePicker
+                label="Deadline" name="deadline" inputFormat="DD.MM.YYYY" mask="__.__.____"
+                value={formState.deadline} onChange={handleDeadlineChange} minDate={moment()}
+                renderInput={(params) => <TextField {...params} />} />
+
+            <TextField
+                label="Project" name="projectId" select
+                disabled={!projects || projects.length === 0} disabled
+                value={formState.projectId} onChange={handleInputChange}>
+
+                <MenuItem key={0} value={0}>Select project</MenuItem>
+
+                {projects.map((project) => (
+                    <MenuItem key={project.id} value={project.id}>
+                        {project.title}
+                    </MenuItem>
+                ))}
+            </TextField>
+
+            <TextField
+                label="Parent task" name="parentId" select
+                disabled={!todoItems || todoItems.length === 0}
+                value={formState.parentId} onChange={handleInputChange}>
+
+                <MenuItem key={0} value={0}>Select parent task</MenuItem>
+
+                {todoItems.map((todoItem) => {
+                    if (!todoItem.isCompleted && todoItem.isVisible) {
+                        return (
+                            <MenuItem key={todoItem.id} value={todoItem.id} sx={{ pl: (todoItem.nestingLevel + 1) * 2}}>
+                                {todoItem.title}
+                            </MenuItem>
+                        )
+                    }
+                })}
+            </TextField>
+
+            <Button
+                sx={{ m: 1, width: '100%' }}
+                variant="contained" type="submit"
+                startIcon={<AddTaskIcon />}>
+                Create
+            </Button>
+        </Box>
+    );
+}
+
+CreateTodoItemForm.defaultProps = {
+    todoItems: [],
+    projects: [],
+    parentTaskId: '',
+    projectId: ''
+};
+
+export default CreateTodoItemForm;

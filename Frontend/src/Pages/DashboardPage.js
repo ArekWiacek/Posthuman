@@ -9,7 +9,7 @@ import ProjectsList from '../components/Project/ProjectsList';
 
 import { AvatarContext } from "../App";
 import { LogT, LogI, LogE } from '../Utilities/Utilities';
-import { ApiRepository } from '../Utilities/ApiRepository';
+import Api from '../Utilities/ApiHelper';
 
 function todoItemFormInitialValues() {
   return {

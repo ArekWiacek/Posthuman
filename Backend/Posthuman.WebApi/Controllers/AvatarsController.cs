@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,8 @@ namespace PosthumanWebApi.Controllers
         {
             var avatar = await avatarsService.GetAvatarById(id);
             if (avatar == null)
-                return NotFound();
+                throw new ArgumentNullException("Avatar");
+                //return NotFound();
 
             return avatar;
         }

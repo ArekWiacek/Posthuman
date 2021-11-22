@@ -139,7 +139,14 @@ namespace Posthuman.Services
             { 12, new ExperienceRange(3000, 3500) },        // 500
             { 13, new ExperienceRange(3500, 4000) },        // 500
             { 14, new ExperienceRange(4500, 5000) },        // 500
-            { 15, new ExperienceRange(5000, 5500) }         // 500
+            { 15, new ExperienceRange(5000, 5500) },        // 500
+
+            { 16, new ExperienceRange(5500, 6250) },        // 750
+            { 17, new ExperienceRange(6250, 7500) },        // 750
+            { 18, new ExperienceRange(7500, 8750) },        // 750
+            { 19, new ExperienceRange(8750, 10000) },       // 750
+            
+            { 20, new ExperienceRange(10000, 11000) }      // 1000
         };
     }
 }

@@ -17,6 +17,7 @@ namespace Posthuman.Data
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
         public DbSet<Project> Projects { get; set; } = default!;
         public DbSet<EventItem> EventItems { get; set; } = default!;
+        public DbSet<BlogPost> BlogPosts { get; set; } = default!;
 
         public static readonly int AvatarId = 2;
         

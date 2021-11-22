@@ -10,17 +10,20 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="log4net" Version="2.0.13" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
 	  <ProjectReference Include="..\Posthuman.Data\Posthuman.Data.csproj" />
+	  <ProjectReference Include="..\Posthuman.RealTime\Posthuman.RealTime.csproj" />
 	  <ProjectReference Include="..\Posthuman.Services\Posthuman.Services.csproj" />
 	</ItemGroup>
 

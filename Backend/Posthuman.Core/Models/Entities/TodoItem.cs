@@ -62,9 +62,6 @@ namespace Posthuman.Core.Models.Entities
                 return 0;
             else
             {
-                //var subtasksSum = Subtasks.Count;
-                //subtasksSum = Subtasks.Sum(s => s.SubtasksCount());
-
                 var count = Subtasks.Count;
                 foreach (var subtask in Subtasks)
                     count += subtask.SubtasksCount();

@@ -16,10 +16,12 @@ namespace PosthumanWebApi.Controllers
 
         public TodoItemsController(
             ILogger<TodoItemsController> logger,
-            ITodoItemsService todoItemsService)
+            ITodoItemsService todoItemsService) 
         {
             this.logger = logger;
             this.todoItemsService = todoItemsService;
+
+            //GlobalHost
         }
 
         /// GET: api/TodoItems
@@ -93,7 +95,7 @@ namespace PosthumanWebApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/Complete")]
+        [HttpPut("Complete/{id}")]
         public async Task<IActionResult> CompleteTodoItem(int id, TodoItemDTO todoItemDTO)
         {
             if (id != todoItemDTO.Id)

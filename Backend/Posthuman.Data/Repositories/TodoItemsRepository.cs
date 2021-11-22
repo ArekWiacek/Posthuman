@@ -40,6 +40,7 @@ namespace Posthuman.Data.Repositories
                  .TodoItems
                  .Where(ti => ti.Id == todoItemId)
                  .Include(ti => ti.Subtasks)
+                 .Include(ti => ti.Avatar)
                  .FirstOrDefaultAsync();
         }
 
@@ -47,6 +48,7 @@ namespace Posthuman.Data.Repositories
         {
             return await TodoItemsDbContext
                 .TodoItems
+                .Include(ti => ti.Avatar)
                 .Include(ti => ti.Subtasks)
                 .Where(ti => ti.ParentId == id)
                 .ToListAsync();
