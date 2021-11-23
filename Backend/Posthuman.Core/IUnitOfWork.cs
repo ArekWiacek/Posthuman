@@ -14,6 +14,7 @@ namespace Posthuman.Core
         IEventItemsRepository EventItems { get; }
         IAvatarsRepository Avatars { get; }
         IBlogPostsRepository BlogPosts { get; }
+        IRewardCardsRepository RewardCards { get; }
 
         Task<int> CommitAsync();
     }

@@ -80,7 +80,7 @@ namespace Posthuman.Services
 
             await unitOfWork.EventItems.AddAsync(projectCreatedEvent);
 
-            ownerAvatar.Exp += projectCreatedEvent.ExpGained;
+            //ownerAvatar.Exp += projectCreatedEvent.ExpGained;
 
             await unitOfWork.CommitAsync();
 
@@ -108,8 +108,8 @@ namespace Posthuman.Services
 
             await unitOfWork.EventItems.AddAsync(projectDeletedEvent);
 
-            if (ownerAvatar != null)
-                ownerAvatar.Exp += projectDeletedEvent.ExpGained;
+            //if (ownerAvatar != null)
+                //ownerAvatar.Exp += projectDeletedEvent.ExpGained;
 
             await unitOfWork.CommitAsync();
         }
@@ -166,7 +166,7 @@ namespace Posthuman.Services
                 await unitOfWork.EventItems.AddAsync(projectFinishedEvent);
 
                 // Update Avatar Exp points
-                ownerAvatar.Exp += projectFinishedEvent.ExpGained;
+                //ownerAvatar.Exp += projectFinishedEvent.ExpGained;
             }
 
             await unitOfWork.CommitAsync();

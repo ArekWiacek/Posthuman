@@ -15,6 +15,8 @@
         ProjectFinished = 8,
 
         LevelGained = 9,
-        ExpGained = 10
+        ExpGained = 10,
+
+        CardDiscovered = 11
     }
 }

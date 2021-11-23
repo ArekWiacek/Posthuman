@@ -17,7 +17,8 @@ namespace Posthuman.Core.Models.Entities
             EventType type,
             DateTime occured,
             EntityType? relatedEntityType = null,
-            int? relatedEntityId = null)
+            int? relatedEntityId = null,
+            int expGained = 0)
         {
             AvatarId = avatarId;
             Type = type;
@@ -25,6 +26,7 @@ namespace Posthuman.Core.Models.Entities
 
             RelatedEntityType = relatedEntityType;
             RelatedEntityId = relatedEntityId;
+            ExpGained = expGained;
         }
 
         [Key]

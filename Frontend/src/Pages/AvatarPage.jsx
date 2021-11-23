@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useContext } from 'react'
-import Grid from '@mui/material/Grid';
+import { Grid, Container } from '@mui/material';
 import AvatarView from '../components/Avatar/AvatarView';
 import SelectAvatar from '../components/Avatar/SelectAvatar';
 import { AvatarContext } from '../App';
+import RewardCardsList from '../components/RewardCards/RewardCardsList'
 
 const AvatarPage = () => {
     const { activeAvatar } = useContext(AvatarContext);
@@ -15,10 +16,10 @@ const AvatarPage = () => {
                     <AvatarView avatar={activeAvatar} viewMode='full'/>
                 </Grid>
                 <Grid item xs={12} md={12} lg={4}>
-                    <SelectAvatar />
+                    <RewardCardsList />
                 </Grid>
                 <Grid item xs={12} md={12} lg={4}>
-                    
+                    <SelectAvatar />
                 </Grid>
             </Grid>
         </React.Fragment>

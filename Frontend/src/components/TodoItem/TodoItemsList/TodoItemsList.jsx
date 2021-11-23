@@ -58,6 +58,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
                                     return (
                                         <React.Fragment key={'todoItem_' + todoItem.id}>
                                             <TodoItemsListItem
+                                                displayMode={displayOptions.displayMode}
                                                 todoItem={todoItem}
                                                 onAddSubtaskClicked={handleAddSubtask}
                                                 onDeleteClicked={handleTodoItemDelete}

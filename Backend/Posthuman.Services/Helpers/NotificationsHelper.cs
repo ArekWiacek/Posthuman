@@ -77,6 +77,12 @@ namespace Posthuman.Services.Helpers
                     notification.Text = $"{avatar.Name} reached {avatar.Level}. Next level at {avatar.ExpToNewLevel} XP.";
                     notification.SecondText = $"Some second text";
                     break;
+
+                case EventType.CardDiscovered:
+                    notification.Title = "New card discovered!";
+                    notification.Reward = "New card";
+                    notification.Text = $"{avatar.Name} discovered new card. Go to cards page to see it!.";
+                    break;
             }
 
             return notification;

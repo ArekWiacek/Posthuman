@@ -9,6 +9,7 @@ using Posthuman.Core.Services;
 using Posthuman.RealTime.Notifications;
 using Posthuman.Services.Helpers;
 using System;
+using Posthuman.Core.Models.Enums;
 
 namespace Posthuman.Services
 {
@@ -17,13 +18,20 @@ namespace Posthuman.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly INotificationsService notificationsService;
+        private readonly IRewardCardsService rewardCardsService;
+        private readonly ExperienceManager expManager;
 
-        public AvatarsService(IUnitOfWork unitOfWork, IMapper mapper,
-            INotificationsService notificationsService)
+        public AvatarsService(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper,
+            INotificationsService notificationsService,
+            IRewardCardsService rewardCardsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.notificationsService = notificationsService;
+            this.rewardCardsService = rewardCardsService;
+            expManager = new ExperienceManager();
         }
 
         public async Task<AvatarDTO> GetActiveAvatar()
@@ -120,6 +128,65 @@ namespace Posthuman.Services
             }
 
             await unitOfWork.CommitAsync();
+        }
+
+        public async Task UpdateAvatarGainedExp(Avatar avatar, int exp)
+        {
+            // Add event of completion
+            var experienceGainedEvent = new EventItem(
+                avatar.Id,
+                EventType.ExpGained,
+                DateTime.Now,
+                expGained: exp);
+
+            await unitOfWork.EventItems.AddAsync(experienceGainedEvent);
+
+            avatar.Exp += exp;
+
+            if (avatar.Exp >= avatar.ExpToNewLevel)
+            {
+                await UpdateAvatarGainedLevel(avatar);
+            }
+
+        }
+
+        public async Task UpdateAvatarGainedLevel(Avatar avatar)
+        {
+            avatar.Level++;
+
+            var expRangeForNextLevel = expManager.GetExperienceRangeForLevel(avatar.Level);
+
+            avatar.ExpToCurrentLevel = expRangeForNextLevel.StartXp;
+            avatar.ExpToNewLevel = expRangeForNextLevel.EndXp;
+
+            var avatarLevelGainedEvent = new EventItem(
+                avatar.Id,
+                EventType.LevelGained,
+                DateTime.Now);
+
+            await unitOfWork.EventItems.AddAsync(avatarLevelGainedEvent);
+
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarLevelGainedEvent));
+
+            if(await HasAvatarDiscoveredNewCard(avatar))
+            {
+                var avatarCardDiscoveredEvent = new EventItem(
+                    avatar.Id,
+                    EventType.CardDiscovered,
+                    DateTime.Now);
+
+                await unitOfWork.EventItems.AddAsync(avatarCardDiscoveredEvent);
+
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarCardDiscoveredEvent));
+
+            }
+        }
+
+        public async Task<bool> HasAvatarDiscoveredNewCard(Avatar avatar)
+        {
+            var cardsEnabledToCurrentLevel = await rewardCardsService.GetRewardCardsForAvatar(avatar.Id);
+            var cardEnabledByCurrentLevel = cardsEnabledToCurrentLevel.Where(card => card.LevelExpected == avatar.Level);
+            return cardEnabledByCurrentLevel != null;
         }
     }
 }

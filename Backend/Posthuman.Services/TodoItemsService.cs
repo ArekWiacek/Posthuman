@@ -18,16 +18,22 @@ namespace Posthuman.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly INotificationsService notificationsService;
+        private readonly IAvatarsService avatarsService;
+        private readonly IEventItemsService eventItemsService;
         private readonly ExperienceManager expManager;
 
         public TodoItemsService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            INotificationsService notificationsService)
+            INotificationsService notificationsService,
+            IAvatarsService avatarsService,
+            IEventItemsService eventItemsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.notificationsService = notificationsService;
+            this.avatarsService = avatarsService;
+            this.eventItemsService = eventItemsService;
             expManager = new ExperienceManager();
         }
 
@@ -50,15 +56,27 @@ namespace Posthuman.Services
         {
             var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
 
-            var allTodoItems = await
+            var avatarTodoItems = await
                 unitOfWork
                 .TodoItems
                 .GetAllByAvatarIdAsync(avatar.Id);
 
-            var allTodoItemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
+            // Ordering tasks in flat list mode:
+            // First unfinished - all completed goes to end
+            // Then those with deadline specified
+            // Then by deadline date
+            // Then those without deadline specified
+            // Then completed tasks
+            // Visible / invisible changes nothing here
+            var sortedTodoItemsList = avatarTodoItems
+                .OrderBy(t => t.IsCompleted)
+                .ThenByDescending(t => t.Deadline.HasValue)
+                .ThenBy(t => t.Deadline);
 
-            return allTodoItemsMapped.ToList();
+            var todoItemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(sortedTodoItemsList);
+
+            return todoItemsMapped.ToList();
         }
 
         public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical()
@@ -128,19 +146,16 @@ namespace Posthuman.Services
                 }
             }
 
-
             // TODO - remove commit from here; now it's added so event item can save created todo item ID
             await unitOfWork.TodoItems.AddAsync(newTodoItem);
             await unitOfWork.CommitAsync();
 
-            var todoItemCreatedEvent = new EventItem(
+            var todoItemCreatedEvent = await eventItemsService.AddNewEvent(
                 ownerAvatar.Id,
                 EventType.TodoItemCreated,
-                DateTime.Now,
                 EntityType.TodoItem,
                 newTodoItem.Id);
 
-            await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
             await unitOfWork.CommitAsync();
 
             notificationsService.AddNotification(NotificationsHelper.CreateNotification(ownerAvatar, todoItemCreatedEvent, newTodoItem));
@@ -212,17 +227,16 @@ namespace Posthuman.Services
                     }
                 }
 
-                var todoItemModifiedEvent = new EventItem(
-                        ownerAvatar.Id,
-                        EventType.TodoItemModified,
-                        DateTime.Now,
-                        EntityType.TodoItem,
-                        todoItem.Id);
+                var todoItemModifiedEvent = await eventItemsService.AddNewEvent(
+                    ownerAvatar.Id, 
+                    EventType.TodoItemModified, 
+                    EntityType.TodoItem, 
+                    todoItem.Id);
 
-                await unitOfWork.EventItems.AddAsync(todoItemModifiedEvent);
                 await unitOfWork.CommitAsync();
 
                 notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
+                
                 await notificationsService.SendAllNotifications();
             }
         }
@@ -248,26 +262,18 @@ namespace Posthuman.Services
                 todoItem.CompletionDate = DateTime.Now;
 
                 // Add event of completion
-                var todoItemCompletedEvent = new EventItem(
+                var todoItemCompletedEvent = await eventItemsService.AddNewEvent(
                     avatar.Id,
                     EventType.TodoItemCompleted,
-                    DateTime.Now,
                     EntityType.TodoItem,
                     todoItem.Id);
 
-                await unitOfWork.EventItems.AddAsync(todoItemCompletedEvent);
-
-                // Update Avatar Exp points
-                var experienceGained = await UpdateAvatarGainedExp(avatar, todoItemCompletedEvent, null);
-                todoItemCompletedEvent.ExpGained = experienceGained;
+                var experienceForEvent = expManager.CalculateExperienceForEvent(todoItemCompletedEvent, null);
+                todoItemCompletedEvent.ExpGained = experienceForEvent;
 
                 notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemCompletedEvent, todoItem));
 
-                if (avatar.Exp >= avatar.ExpToNewLevel)
-                {
-                    var gainedLevelEventItem = await UpdateAvatarGainedLevel(avatar);
-                    notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, gainedLevelEventItem));
-                }
+                await avatarsService.UpdateAvatarGainedExp(avatar, experienceForEvent);
 
                 await unitOfWork.CommitAsync();
 
@@ -348,20 +354,17 @@ namespace Posthuman.Services
 
             unitOfWork.TodoItems.Remove(todoItem);
 
-            var todoItemDeletedEvent = new EventItem(
+            var todoItemDeletedEvent = await eventItemsService.AddNewEvent(
                 todoItem.AvatarId,
                 EventType.TodoItemDeleted,
-                DateTime.Now,
                 EntityType.TodoItem,
                 todoItem.Id);
-
-            await unitOfWork.EventItems.AddAsync(todoItemDeletedEvent);
 
             notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
         }
         #endregion DELETE
 
-        #region ADDITIONAL - TO BE MOVED OUT
+        #region ADDITIONAL
         /// <summary>
         /// Converts todo items from nested object structure (.Subtasks) into one-level-deep flat list
         /// </summary>
@@ -397,46 +400,9 @@ namespace Posthuman.Services
             return todoItems
                 .OrderBy(t => t.IsCompleted)
                 .ThenByDescending(t => t.IsVisible)
-                .ThenBy(t => t.Deadline.HasValue)
+                .ThenByDescending(t => t.Deadline.HasValue)
                 .ThenBy(t => t.Deadline);
         }
-
-        // TODO - move following methods ito different place (avatar service?)
-        private async Task<EventItem> UpdateAvatarGainedLevel(Avatar avatar)
-        {
-            avatar.Level++;
-
-            var expRangeForNextLevel = expManager.GetExperienceRangeForLevel(avatar.Level);
-
-            avatar.ExpToCurrentLevel = expRangeForNextLevel.StartXp;
-            avatar.ExpToNewLevel = expRangeForNextLevel.EndXp;
-
-            // Add event of completion
-            var avatarLevelGainedEvent = new EventItem(
-                avatar.Id,
-                EventType.LevelGained,
-                DateTime.Now);
-
-            await unitOfWork.EventItems.AddAsync(avatarLevelGainedEvent);
-
-            return avatarLevelGainedEvent;
-        }
-
-        private async Task<int> UpdateAvatarGainedExp(Avatar avatar, EventItem eventItem, SubeventType? subeventType)
-        {
-            // Add event of completion
-            var experienceGainedEvent = new EventItem(
-                avatar.Id,
-                EventType.ExpGained,
-                DateTime.Now);
-
-            await unitOfWork.EventItems.AddAsync(experienceGainedEvent);
-
-            var experienceForEvent = expManager.CalculateExperienceForEvent(eventItem, subeventType);
-            avatar.Exp += experienceForEvent;
-
-            return experienceForEvent;
-        }
-        #endregion ADDITIONAL - TO BE MOVED OUT
+        #endregion
     }
 }

@@ -22,6 +22,9 @@ namespace Posthuman.WebApi.Mappings
 
             CreateMap<BlogPost, BlogPostDTO>();
             CreateMap<BlogPostDTO, BlogPost>();
+
+            CreateMap<RewardCard, RewardCardDTO>();
+            CreateMap<RewardCardDTO, RewardCard>();
         }
     }
 }

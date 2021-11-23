@@ -8,8 +8,8 @@ import EditProject from '../components/Project/EditProject';
 import ProjectsList from '../components/Project/ProjectsList';
 
 import { AvatarContext } from "../App";
-import { LogT, LogI, LogE } from '../Utilities/Utilities';
-import Api from '../Utilities/ApiHelper';
+// import { LogT, LogI, LogE } from '../Utilities/Utilities';
+// import Api from '../Utilities/ApiHelper';
 
 function todoItemFormInitialValues() {
   return {
@@ -35,7 +35,7 @@ function createEmptyProject() {
 const DashboardPage = () => {
   const { activeAvatar } = React.useContext(AvatarContext);
 
-  const [projects, setProjects] = React.useState([
+  /*const [projects, setProjects] = React.useState([
     {
       id: 1,
       title: 'Sample project 1',
@@ -206,11 +206,11 @@ const DashboardPage = () => {
     //     LogE("Error occured when obtaining TodoItems: ", error);
     //   });
   }, [activeAvatar]);
-
+*/
   return (
       <Grid container spacing={3}>
         {/* PROJECT CREATE */}
-        <Grid item xs={12} md={4} lg={3}>
+        {/* <Grid item xs={12} md={4} lg={3}>
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             {
               isProjectInEditMode ?
@@ -222,26 +222,26 @@ const DashboardPage = () => {
                   <CreateProject onCreateProject={handleProjectCreated} />)
             }
           </Paper>
-        </Grid>
+        </Grid> */}
 
         {/* PROJECTS LIST */}
         <Grid item xs={12} md={12} lg={12}>
           {/* <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}> */}
-            <ProjectsList
+            {/* <ProjectsList
               projects={projects}
               onProjectDeleted={handleProjectDeleted}
-              onProjectEdited={handleProjectEdited} />
+              onProjectEdited={handleProjectEdited} /> */}
           {/* </Paper> */}
         </Grid>
 
         {/* TODO ITEMS LIST */}
         <Grid item xs={12} md={12} lg={12}>
           {/* <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}> */}
-            <TodoItemList
+            {/* <TodoItemList
               todoItems={todoItems}
               onTodoItemDeleted={handleTodoItemDeleted}
               onTodoItemEdited={handleTodoItemEdited}
-              onTodoItemDone={handleTodoItemDone} />
+              onTodoItemDone={handleTodoItemDone} /> */}
           {/* </Paper> */}
         </Grid>
       </Grid>

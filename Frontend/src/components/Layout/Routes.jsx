@@ -7,6 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
 
 import InfoPage from '../../Pages/InfoPage';
 import BlogPage from '../../Pages/BlogPage';
@@ -15,6 +16,7 @@ import AvatarPage from '../../Pages/AvatarPage';
 import ProjectsPage from '../../Pages/ProjectsPage';
 import TodoPage from '../../Pages/TodoPage';
 import HistoryPage from '../../Pages/HistoryPage';
+import RewardCardsPage from '../../Pages/RewardCardsPage';
 
 const Routes = [
     {
@@ -46,6 +48,12 @@ const Routes = [
         sidebarTitle: 'Todo',
         sidebarIcon: () => <CheckIcon />,
         destinationPage: () => <TodoPage />
+    },
+    {
+        path: '/rewards',
+        sidebarTitle: 'Cards',
+        sidebarIcon: () => <StarOutlineIcon />,
+        destinationPage: () => <RewardCardsPage />
     }
     // {
     //   path: '/projects',

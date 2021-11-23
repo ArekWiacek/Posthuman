@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { LogI } from '../Utilities/Utilities';
 
 const getSavedValue = (key, initialValue) => {
     const savedValue = JSON.parse(localStorage.getItem(key));
@@ -17,6 +18,7 @@ const useLocalStorage = (key, initialValue) => {
     });
 
     useEffect(() => {
+        LogI("useLocalStorage effect called - dependent on it's value prop");
         localStorage.setItem(key, JSON.stringify(value));
     }, [value]);
 

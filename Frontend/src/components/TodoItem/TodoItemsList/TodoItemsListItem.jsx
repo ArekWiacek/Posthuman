@@ -6,9 +6,8 @@ import TodoItemActions from '../Actions/TodoItemActions';
 import { LogI } from '../../../Utilities/Utilities';
 import useWindowDimensions from '../../../Hooks/useWindowDimensions';
 
-const TodoItemListItem = ({ todoItem, collapseActionButtons, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
+const TodoItemListItem = ({ displayMode, todoItem, collapseActionButtons, onDeleteClicked, onEditClicked, onDoneClicked, onAddSubtaskClicked, onVisibleOnOffClicked }) => {
     const [isHover, setIsHover] = useState(false);
-
     const { height, width, isXs, isSm, isMd, isLg, isXl } = useWindowDimensions();
 
     const handleDeleteClicked = todoItem => onDeleteClicked(todoItem.id);
@@ -30,7 +29,18 @@ const TodoItemListItem = ({ todoItem, collapseActionButtons, onDeleteClicked, on
         return progressText;
     };
 
+    const getLeftPadding = nestingLevel => {
+        if(displayMode === 'flat')
+            return 0;
+        else // if(displayMode === 'hierarchical')
+            return nestingLevel * 2;
+    };
+
     const getFontSizeForTodoItemTitle = nestingLevel => {
+        if(displayMode === 'flat') {
+            return '1.0rem';
+        }
+
         var titleSizes = { 0: '1.2rem', 1: '1.1rem', 2: '1rem' };
         if (nestingLevel < 2) {
             return titleSizes[nestingLevel];
@@ -56,7 +66,7 @@ const TodoItemListItem = ({ todoItem, collapseActionButtons, onDeleteClicked, on
                     component="span"
                     sx={{
                         textDecoration: todoItem.isCompleted ? 'line-through' : 'none',
-                        paddingLeft: todoItem.nestingLevel * 2,
+                        paddingLeft: getLeftPadding(todoItem.nestingLevel),
                         fontSize: getFontSizeForTodoItemTitle(todoItem.nestingLevel)
                     }}>
                     {todoItem.title}

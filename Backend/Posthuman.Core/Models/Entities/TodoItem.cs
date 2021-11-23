@@ -33,6 +33,8 @@ namespace Posthuman.Core.Models.Entities
         public DateTime? CreationDate { get; set; }         // Date when task was created
         public DateTime? CompletionDate { get; set; }       // Date when task was marked as 'Completed'
 
+        // public bool IsCyclic { get; set; }
+
         public bool IsVisible { get; set; }
 
         // Parent & Subtasks

@@ -123,12 +123,14 @@ namespace Posthuman.WebApi
             services.AddTransient<IEventItemsRepository, EventItemsRepository>();
             services.AddTransient<IAvatarsRepository, AvatarsRepository>();
             services.AddTransient<IBlogPostsRepository, BlogPostsRepository>();
+            services.AddTransient<IRewardCardsRepository, RewardCardsRepository>();
 
             services.AddTransient<ITodoItemsService, TodoItemsService>();
             services.AddTransient<IProjectsService, ProjectsService>();
             services.AddTransient<IEventItemsService, EventItemsService>();
             services.AddTransient<IAvatarsService, AvatarsService>();
             services.AddTransient<IBlogPostsService, BlogPostsService>();
+            services.AddTransient<IRewardCardsService, RewardCardsService>();
         }
 
         private void BuildAutoMapper(IServiceCollection services)

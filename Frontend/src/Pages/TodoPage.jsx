@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import { Box, Grid, Fab } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+import {  Grid, Typography } from '@mui/material';
 import moment from 'moment';
-import { AvatarContext, ConnectionContext } from "../App";
+import { AvatarContext } from "../App";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
@@ -12,11 +10,12 @@ import CreateTodoItemModal from '../components/TodoItem/Modals/CreateTodoItemMod
 import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
-import { LogI, LogE, LogW } from '../Utilities/Utilities';
+import { LogI } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 import AvatarView from '../components/Avatar/AvatarView';
-import SelectAvatar from '../components/Avatar/SelectAvatar';
+// import SelectAvatar from '../components/Avatar/SelectAvatar';
 import NotificationsPanel from '../components/Notifications/NotificationsPanel';
+import useDisplayOptions from '../Hooks/useDisplayOptions';
 
 moment.updateLocale("pl", {
     week: {
@@ -40,6 +39,9 @@ const TodoPage = () => {
     const todoItemsEndpointName = "TodoItems";
 
     const { activeAvatar } = useContext(AvatarContext);
+    const [displayOptions] = useDisplayOptions();
+    
+    
 
     const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
@@ -177,27 +179,30 @@ const TodoPage = () => {
     const closeEditTodoItemModal = () => setModalVisible('edit', false);
     const closeDeleteTodoItemModal = () => setModalVisible('delete', false);
 
-    
     useEffect(() => {
         Api.Get("Projects", projects => setProjects(projects));
     }, [activeAvatar]);
 
     useEffect(() => {
-        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
-            setTodoItems(todoItems);
-        });
+        getTodoItems();
     }, [activeAvatar]);
 
-    
-    // Temporary lame method for refreshing whole todo items collection when changes occured
-    const refreshTodoItemsCollection = () => {
-        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
+    const getTodoItems = () => {
+        let endpointName = displayOptions.displayMode === 'flat' ? todoItemsEndpointName : todoItemsEndpointName + "/Hierarchical";
+        LogI(`TodoPage: Getting todo items list! Endpoint: ${endpointName}`);
+
+        Api.Get(endpointName, todoItems => {
             setTodoItems(todoItems);
         });
     };
 
+    // Temporary lame method for refreshing whole todo items collection when changes occured
+    const refreshTodoItemsCollection = () => {
+        getTodoItems(displayOptions.displayMode);
+    };
+
     return (
-        <React.Fragment>
+        <React.Fragment>            
             <Grid container spacing={3}>
                 {/* LIST VIEW */}
                 <Grid item xs={12} md={8} lg={9}>
