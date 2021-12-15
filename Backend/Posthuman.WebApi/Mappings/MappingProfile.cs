@@ -8,8 +8,14 @@ namespace Posthuman.WebApi.Mappings
     {
         public MappingProfile()
         {
+            CreateMap<User, UserDTO>();
+            CreateMap<UserDTO, User>();
+
             CreateMap<TodoItem, TodoItemDTO>();
             CreateMap<TodoItemDTO, TodoItem>();
+
+            CreateMap<TodoItemCycle, TodoItemCycleDTO>();
+            CreateMap<TodoItemCycleDTO, TodoItemCycle>();
 
             CreateMap<Project, ProjectDTO>();
             CreateMap<ProjectDTO, Project>();
@@ -23,8 +29,14 @@ namespace Posthuman.WebApi.Mappings
             CreateMap<BlogPost, BlogPostDTO>();
             CreateMap<BlogPostDTO, BlogPost>();
 
-            CreateMap<RewardCard, RewardCardDTO>();
-            CreateMap<RewardCardDTO, RewardCard>();
+            CreateMap<Requirement, RequirementDTO>();
+            CreateMap<RequirementDTO, Requirement>();
+
+            CreateMap<TechnologyCard, TechnologyCardDTO>();
+            CreateMap<TechnologyCardDTO, TechnologyCard>();
+
+            CreateMap<TechnologyCardDiscovery, TechnologyCardDiscoveryDTO>();
+            CreateMap<TechnologyCardDiscoveryDTO, TechnologyCardDiscovery>();
         }
     }
 }

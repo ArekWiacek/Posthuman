@@ -33,7 +33,10 @@ namespace Posthuman.Core.Models.Entities
         public DateTime? CreationDate { get; set; }         // Date when task was created
         public DateTime? CompletionDate { get; set; }       // Date when task was marked as 'Completed'
 
-        // public bool IsCyclic { get; set; }
+        public bool IsCyclic { get; set; }
+        public int? CycleInfoId { get; set; }
+        [JsonIgnore]
+        public virtual TodoItemCycle CycleInfo { get; set; }
 
         public bool IsVisible { get; set; }
 
@@ -53,7 +56,6 @@ namespace Posthuman.Core.Models.Entities
         // Parent project - when to-do item is part of something bigger
         public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
-
 
         public bool IsTopLevel() =>  ParentId == null;
         public bool HasSubtasks() => Subtasks != null && Subtasks.Count > 0;

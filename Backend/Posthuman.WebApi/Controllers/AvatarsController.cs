@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Posthuman.Core.Models.DTO;
@@ -21,6 +22,15 @@ namespace PosthumanWebApi.Controllers
         {
             this.logger = logger;
             this.avatarsService = avatarsService;
+        }
+
+        [Authorize]
+        [HttpGet("AuthorizationTestMethod")]
+        public async Task<ActionResult> AuthorizationTestMethod()
+        {
+            var avatar = await avatarsService.GetActiveAvatar();
+
+            return Ok();
         }
 
         // GET: api/Avatars

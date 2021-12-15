@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Posthuman.Core.Models.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,19 +7,20 @@ using System.Text.Json.Serialization;
 
 namespace Posthuman.Core.Models.Entities
 {
+
     /// <summary>
     /// 
     /// </summary>
-    [Table("RewardCards")]
-    public class RewardCard
+    [Table("TechnologyCards")]
+    public class TechnologyCard
     {
-        public RewardCard()
+        public TechnologyCard()
         {
             ImageUrl = "";
             Title = "";
             Subtitle = "";
-            Description = "";
-            Description2 = "";
+            Body = "";
+            Body2 = "";
         }
 
         [Key]
@@ -29,8 +30,9 @@ namespace Posthuman.Core.Models.Entities
         public string ImageUrl { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
-        public string Description { get; set; }
-        public string Description2 { get; set; }
-        public int LevelExpected { get; set; }
+        public string Body { get; set; }
+        public string Body2 { get; set; }
+        public int RequiredLevel { get; set; }
+        public CardCategory Categories { get; set; } 
     }
 }

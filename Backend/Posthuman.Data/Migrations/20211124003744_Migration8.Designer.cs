@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Posthuman.Data;
 
 namespace Posthuman.Data.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20211124003744_Migration8")]
+    partial class Migration8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,35 +182,52 @@ namespace Posthuman.Data.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Requirement", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.RepetitionInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Exp")
+                    b.Property<int>("CompletedInstances")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Level")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Instances")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TechnologyCardDiscoveryId")
+                    b.Property<int>("InstancesStreak")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
+                    b.Property<int>("MissedInstances")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RepetitionPeriod")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TodoItemId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("TechnologyCardDiscoveryId");
+                    b.HasIndex("ParentId");
 
-                    b.ToTable("Requirements");
+                    b.HasIndex("TodoItemId");
+
+                    b.ToTable("RepetitionInfo");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TechnologyCard", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.RewardCard", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -222,9 +241,6 @@ namespace Posthuman.Data.Migrations
                     b.Property<string>("Body2")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Categories")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -243,10 +259,10 @@ namespace Posthuman.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TechnologyCards");
+                    b.ToTable("RewardCards");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TechnologyCardDiscovery", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.RewardCardDiscovery", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -259,9 +275,6 @@ namespace Posthuman.Data.Migrations
                     b.Property<DateTime>("DiscoveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("HasBeenSeen")
-                        .HasColumnType("bit");
-
                     b.Property<int>("RewardCardId")
                         .HasColumnType("int");
 
@@ -271,7 +284,7 @@ namespace Posthuman.Data.Migrations
 
                     b.HasIndex("RewardCardId");
 
-                    b.ToTable("TechnologyCardsDiscoveries");
+                    b.ToTable("RewardCardsDiscoveries");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItem", b =>
@@ -290,9 +303,6 @@ namespace Posthuman.Data.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CycleInfoId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
 
@@ -301,9 +311,6 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCyclic")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsVisible")
@@ -331,74 +338,6 @@ namespace Posthuman.Data.Migrations
                     b.ToTable("TodoItem");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItemCycle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CompletedInstances")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Instances")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InstancesStreak")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsInfinite")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MissedInstances")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RepetitionPeriod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TodoItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TodoItemId")
-                        .IsUnique();
-
-                    b.ToTable("TodoItemCycles");
-                });
-
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
                 {
                     b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
@@ -408,14 +347,20 @@ namespace Posthuman.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Requirement", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.RepetitionInfo", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.TechnologyCardDiscovery", null)
-                        .WithMany("Requirements")
-                        .HasForeignKey("TechnologyCardDiscoveryId");
+                    b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
+                    b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "TodoItem")
+                        .WithMany()
+                        .HasForeignKey("TodoItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TechnologyCardDiscovery", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.RewardCardDiscovery", b =>
                 {
                     b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
                         .WithMany()
@@ -423,7 +368,7 @@ namespace Posthuman.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Posthuman.Core.Models.Entities.TechnologyCard", "RewardCard")
+                    b.HasOne("Posthuman.Core.Models.Entities.RewardCard", "RewardCard")
                         .WithMany()
                         .HasForeignKey("RewardCardId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -445,13 +390,6 @@ namespace Posthuman.Data.Migrations
                     b.HasOne("Posthuman.Core.Models.Entities.Project", "Project")
                         .WithMany("TodoItems")
                         .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItemCycle", b =>
-                {
-                    b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "TodoItem")
-                        .WithOne("CycleInfo")
-                        .HasForeignKey("Posthuman.Core.Models.Entities.TodoItemCycle", "TodoItemId");
                 });
 #pragma warning restore 612, 618
         }

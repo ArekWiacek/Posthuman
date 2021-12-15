@@ -146,13 +146,22 @@ namespace Posthuman.Services
                 }
             }
 
+            // Create task cycle (repetition info)
+            if(newTodoItem != null && newTodoItem.IsCyclic)
+            {
+                var cycleInfo = CreateCycleInfo(newTodoItemDTO);
+                CalculateCycleInfoInstances(cycleInfo);
+                newTodoItem.CycleInfo = cycleInfo;
+                await unitOfWork.TodoItemsCycles.AddAsync(cycleInfo);
+            }
+
             // TODO - remove commit from here; now it's added so event item can save created todo item ID
             await unitOfWork.TodoItems.AddAsync(newTodoItem);
             await unitOfWork.CommitAsync();
 
             var todoItemCreatedEvent = await eventItemsService.AddNewEvent(
                 ownerAvatar.Id,
-                EventType.TodoItemCreated,
+                newTodoItem.IsCyclic ? EventType.TodoItemCyclicCreated : EventType.TodoItemCreated,
                 EntityType.TodoItem,
                 newTodoItem.Id);
 
@@ -166,32 +175,32 @@ namespace Posthuman.Services
         #endregion CREATE
 
         #region UPDATE
-        public async Task UpdateTodoItem(TodoItemDTO todoItemDTO)
+        public async Task UpdateTodoItem(TodoItemDTO updatedTodoItemDTO)
         {
-            if (todoItemDTO != null && todoItemDTO.Id != 0)
+            if (updatedTodoItemDTO != null && updatedTodoItemDTO.Id != 0)
             {
-                var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(todoItemDTO.Id);
+                var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(updatedTodoItemDTO.Id);
                 var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
 
                 if (todoItem == null)
-                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {todoItemDTO.Id} could not be found.");
+                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {updatedTodoItemDTO.Id} could not be found.");
 
                 if (ownerAvatar == null)
                     throw new ArgumentNullException("Avatar", "Task owner could not be found");
 
-                todoItem.Title = todoItemDTO.Title;
-                todoItem.Description = todoItemDTO.Description;
+                todoItem.Title = updatedTodoItemDTO.Title;
+                todoItem.Description = updatedTodoItemDTO.Description;
 
                 // Deadline changed - update for todoItem and all children
-                if (todoItem.Deadline != todoItemDTO.Deadline)
-                    await UpdateTodoItemDeadline(todoItem, todoItemDTO.Deadline, true);
+                if (todoItem.Deadline != updatedTodoItemDTO.Deadline)
+                    await UpdateTodoItemDeadline(todoItem, updatedTodoItemDTO.Deadline, true);
 
                 // Visibility changed - update for todoItem and all children
-                if (todoItem.IsVisible != todoItemDTO.IsVisible)
-                    await UpdateTodoItemVisibility(todoItem, todoItemDTO.IsVisible);
+                if (todoItem.IsVisible != updatedTodoItemDTO.IsVisible)
+                    await UpdateTodoItemVisibility(todoItem, updatedTodoItemDTO.IsVisible);
 
                 // Parent Project was changed - update both old and new parent
-                if (todoItem.ProjectId != todoItemDTO.ProjectId)
+                if (todoItem.ProjectId != updatedTodoItemDTO.ProjectId)
                 {
                     if (todoItem.ProjectId.HasValue)
                     {
@@ -200,23 +209,23 @@ namespace Posthuman.Services
                             oldParentProject.TotalSubtasks--;
                     }
 
-                    if (todoItemDTO.ProjectId.HasValue)
+                    if (updatedTodoItemDTO.ProjectId.HasValue)
                     {
-                        var newParentProject = await unitOfWork.Projects.GetByIdAsync(todoItemDTO.ProjectId.Value);
+                        var newParentProject = await unitOfWork.Projects.GetByIdAsync(updatedTodoItemDTO.ProjectId.Value);
                         if (newParentProject != null)
                             newParentProject.TotalSubtasks++;
                     }
 
-                    todoItem.ProjectId = todoItemDTO.ProjectId;
+                    todoItem.ProjectId = updatedTodoItemDTO.ProjectId;
                 }
 
                 // Parent todo item changed
-                if (todoItem.ParentId != todoItemDTO.ParentId)
+                if (todoItem.ParentId != updatedTodoItemDTO.ParentId)
                 {
                     // Update parent
-                    if (todoItemDTO.ParentId.HasValue)
+                    if (updatedTodoItemDTO.ParentId.HasValue)
                     {
-                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.ParentId.Value);
+                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(updatedTodoItemDTO.ParentId.Value);
                         todoItem.Parent = parentTask;
                     }
                     // Or remove parent
@@ -224,6 +233,23 @@ namespace Posthuman.Services
                     {
                         todoItem.Parent = null;
                         todoItem.ParentId = null;
+                    }
+                }
+
+                // Repetitive task checked / unchecked
+                if (todoItem.IsCyclic != updatedTodoItemDTO.IsCyclic)
+                {
+                    // Repetition added
+                    if(updatedTodoItemDTO.IsCyclic)
+                    {
+                        var cycleInfo = CreateCycleInfo(updatedTodoItemDTO);
+                        todoItem.CycleInfo = cycleInfo;
+                        await unitOfWork.TodoItemsCycles.UpdateAsync(cycleInfo);
+                    }
+                    // Repetition removed
+                    else
+                    {
+                        unitOfWork.TodoItemsCycles.Remove(todoItem.CycleInfo);
                     }
                 }
 
@@ -238,6 +264,66 @@ namespace Posthuman.Services
                 notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
                 
                 await notificationsService.SendAllNotifications();
+            }
+        }
+
+        private TodoItemCycle CreateCycleInfo(TodoItemDTO todoItemDTO)
+        {
+            TodoItemCycle cycleInfo = null;
+
+            if (todoItemDTO.IsCyclic)
+            {
+                cycleInfo = new TodoItemCycle();
+                cycleInfo.RepetitionPeriod = (RepetitionPeriod)todoItemDTO.RepetitionPeriod;
+                cycleInfo.StartDate = todoItemDTO.StartDate.HasValue ? todoItemDTO.StartDate.Value : DateTime.Now;
+                cycleInfo.EndDate = todoItemDTO.EndDate;
+                cycleInfo.IsInfinite = !todoItemDTO.EndDate.HasValue;
+
+                return cycleInfo;
+            }
+
+            return cycleInfo;
+        }
+
+        private void CalculateCycleInfoInstances(TodoItemCycle todoItemCycle)
+        {
+            if(!todoItemCycle.IsInfinite && todoItemCycle.EndDate.HasValue)
+            {
+                int instances = 0;
+                DateTime startDate = todoItemCycle.StartDate;
+                DateTime endDate = todoItemCycle.EndDate.Value;
+
+                switch(todoItemCycle.RepetitionPeriod)
+                {
+                    case RepetitionPeriod.Daily:
+                        instances = (endDate.Date - startDate.Date).Days + 1;
+                        break;
+
+                    case RepetitionPeriod.Weekly:
+                        instances = (endDate - startDate).Days / 7 + 1;
+                        break;
+
+                    case RepetitionPeriod.Monthly:
+                        //instances = (endDate)
+                        break;
+
+                    default:
+                        break;
+                }
+
+                // Newly created
+                //if(todoItemCycle.Id == 0)
+                //{
+                //    todoItemCycle.CompletedInstances = 0;
+                //    todoItemCycle.InstancesStreak = 0;
+                //    todoItemCycle.MissedInstances = 0;
+                //}
+                // Edited
+                //else
+                //{
+                //}
+
+                todoItemCycle.Instances = instances;
             }
         }
 

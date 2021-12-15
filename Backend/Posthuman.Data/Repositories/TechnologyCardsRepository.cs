@@ -3,9 +3,9 @@ using Posthuman.Core.Repositories;
 
 namespace Posthuman.Data.Repositories
 {
-    public class RewardCardsRepository : Repository<RewardCard>, IRewardCardsRepository
+    public class TechnologyCardsRepository : Repository<TechnologyCard>, ITechnologyCardsRepository
     {
-        public RewardCardsRepository(PosthumanContext context) : base(context)
+        public TechnologyCardsRepository(PosthumanContext context) : base(context)
         {
         }
 

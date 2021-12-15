@@ -9,12 +9,16 @@ namespace Posthuman.Core
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
+        IUsersRepository Users { get; }
         ITodoItemsRepository TodoItems { get; }
+        ITodoItemsCyclesRepository TodoItemsCycles { get; }
         IProjectsRepository Projects { get; }
         IEventItemsRepository EventItems { get; }
         IAvatarsRepository Avatars { get; }
         IBlogPostsRepository BlogPosts { get; }
-        IRewardCardsRepository RewardCards { get; }
+        IRequirementsRepository Requirements { get;  }
+        ITechnologyCardsRepository TechnologyCards { get; }
+        ITechnologyCardsDiscoveriesRepository TechnologyCardsDiscoveries { get; }
 
         Task<int> CommitAsync();
     }

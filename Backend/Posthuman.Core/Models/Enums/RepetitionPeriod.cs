@@ -2,8 +2,9 @@
 {
     public enum RepetitionPeriod
     {
-        Daily,
-        Weekly,
-        Monthly
+        None = 0,
+        Daily = 1,
+        Weekly = 2,
+        Monthly = 3
     }
 }

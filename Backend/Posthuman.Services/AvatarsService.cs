@@ -18,14 +18,14 @@ namespace Posthuman.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly INotificationsService notificationsService;
-        private readonly IRewardCardsService rewardCardsService;
+        private readonly ITechnologyCardsService rewardCardsService;
         private readonly ExperienceManager expManager;
 
         public AvatarsService(
             IUnitOfWork unitOfWork, 
             IMapper mapper,
             INotificationsService notificationsService,
-            IRewardCardsService rewardCardsService)
+            ITechnologyCardsService rewardCardsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
@@ -184,8 +184,8 @@ namespace Posthuman.Services
 
         public async Task<bool> HasAvatarDiscoveredNewCard(Avatar avatar)
         {
-            var cardsEnabledToCurrentLevel = await rewardCardsService.GetRewardCardsForAvatar(avatar.Id);
-            var cardEnabledByCurrentLevel = cardsEnabledToCurrentLevel.Where(card => card.LevelExpected == avatar.Level);
+            var cardsEnabledToCurrentLevel = await rewardCardsService.GetTechnologyCardsForAvatar(avatar.Id);
+            var cardEnabledByCurrentLevel = cardsEnabledToCurrentLevel.Where(card => card.RequiredLevel == avatar.Level);
             return cardEnabledByCurrentLevel != null;
         }
     }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Posthuman.Data;
 
 namespace Posthuman.Data.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20211127215550_Migration12")]
+    partial class Migration12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,34 +182,6 @@ namespace Posthuman.Data.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Requirement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Exp")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Level")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TechnologyCardDiscoveryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TechnologyCardDiscoveryId");
-
-                    b.ToTable("Requirements");
-                });
-
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TechnologyCard", b =>
                 {
                     b.Property<int>("Id")
@@ -222,9 +196,6 @@ namespace Posthuman.Data.Migrations
                     b.Property<string>("Body2")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Categories")
-                        .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -375,30 +346,6 @@ namespace Posthuman.Data.Migrations
                     b.ToTable("TodoItemCycles");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
                 {
                     b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
@@ -406,13 +353,6 @@ namespace Posthuman.Data.Migrations
                         .HasForeignKey("AvatarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Requirement", b =>
-                {
-                    b.HasOne("Posthuman.Core.Models.Entities.TechnologyCardDiscovery", null)
-                        .WithMany("Requirements")
-                        .HasForeignKey("TechnologyCardDiscoveryId");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TechnologyCardDiscovery", b =>

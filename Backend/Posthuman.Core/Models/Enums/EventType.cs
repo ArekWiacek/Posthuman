@@ -17,6 +17,11 @@
         LevelGained = 9,
         ExpGained = 10,
 
-        CardDiscovered = 11
+        CardDiscovered = 11,
+
+        TodoItemCyclicCreated = 100,
+        TodoItemCyclicModified = 101,
+        TodoItemCyclicDeleted = 102,
+        TodoItemCyclicCompleted = 103
     }
 }

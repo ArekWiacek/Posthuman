@@ -1,10 +1,10 @@
 ﻿using Posthuman.Core.Models.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Posthuman.Core.Repositories
 {
-    public interface IRewardCardsRepository : IRepository<RewardCard>
+    public interface IRequirementsRepository : IRepository<Requirement>
     {
-        // Task<Avatar> GetActiveAvatarAsync();
     }
 }

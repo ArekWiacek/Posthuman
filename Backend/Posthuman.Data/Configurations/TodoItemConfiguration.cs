@@ -32,6 +32,12 @@ namespace Posthuman.Data.Configurations
                 .HasForeignKey(ti => ti.ParentId)
                 .IsRequired(false);
 
+        builder
+                .HasOne(ti => ti.CycleInfo)
+                .WithOne(tic => tic.TodoItem)
+                .HasForeignKey<TodoItem>(ti => ti.CycleInfoId)
+                .IsRequired(false);
+
             builder.ToTable("TodoItems");
         }
     }

@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Repositories;
@@ -15,27 +17,21 @@ using Posthuman.Data.Repositories;
 using Posthuman.Services;
 using PosthumanWebApi.Controllers;
 using Posthuman.RealTime.Notifications;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Diagnostics;
 using Posthuman.WebApi.Middleware;
 
 namespace Posthuman.WebApi
 {
     public class Startup
     {
-        public Startup(
-            IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddControllers();
-
             BuildServices(services);
             BuildAutoMapper(services);
             BuildSwagger(services);
@@ -79,26 +75,22 @@ namespace Posthuman.WebApi
 
         private void BuildServices(IServiceCollection services)
         {
-            var envType = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            if (envType == null)
-            {
-                envType = "Production";
-            }
+            var environmentType = GetEnvironmentType();
 
             services
                 .AddDbContext<PosthumanContext>(options => options
-                    .UseSqlServer(GetConnectionString(envType),
+                    .UseSqlServer(GetConnectionString(environmentType),
                         x => x.MigrationsAssembly("Posthuman.Data")));
 
             services.AddCors(options =>
             {
-                var originHost = GetFrontendUrl(envType);
+                var originHost = GetFrontendUrl(environmentType);
 
                 options.AddPolicy("ClientPermission", policy =>
                 {
                     policy
                     .WithOrigins(
+                        "http://posthuman.pl",
                         "http://posthumanae-001-site1.itempurl.com",
                         "http://localhost:3000",
                         "http://localhost:7201",
@@ -113,24 +105,44 @@ namespace Posthuman.WebApi
             });
 
             services.AddControllers();
+
+            //services.AddAuthentication()
+            //    .AddFacebook(facebookOptions =>
+            //    {
+            //        facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+            //        facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            //    });
+
             services.AddSignalR();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<INotificationsService, NotificationsService>();
 
+            AddRepositories(services);
+            AddServices(services);
+        }
+
+        private void AddRepositories(IServiceCollection services)
+        {
+            services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<ITodoItemsRepository, TodoItemsRepository>();
+            services.AddTransient<ITodoItemsCyclesRepository, TodoItemsCyclesRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
             services.AddTransient<IEventItemsRepository, EventItemsRepository>();
             services.AddTransient<IAvatarsRepository, AvatarsRepository>();
             services.AddTransient<IBlogPostsRepository, BlogPostsRepository>();
-            services.AddTransient<IRewardCardsRepository, RewardCardsRepository>();
+            services.AddTransient<ITechnologyCardsRepository, TechnologyCardsRepository>();
+        }
 
+        private void AddServices(IServiceCollection services)
+        {
+            services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<ITodoItemsService, TodoItemsService>();
             services.AddTransient<IProjectsService, ProjectsService>();
             services.AddTransient<IEventItemsService, EventItemsService>();
             services.AddTransient<IAvatarsService, AvatarsService>();
             services.AddTransient<IBlogPostsService, BlogPostsService>();
-            services.AddTransient<IRewardCardsService, RewardCardsService>();
+            services.AddTransient<ITechnologyCardsService, TechnologyCardsService>();
+            services.AddScoped<INotificationsService, NotificationsService>();
         }
 
         private void BuildAutoMapper(IServiceCollection services)
@@ -153,11 +165,21 @@ namespace Posthuman.WebApi
             });
         }
 
-        private string GetConnectionString(string envType)
+        private EnvironmentType GetEnvironmentType()
+        {
+            var environmentType = EnvironmentType.Development;
+            var environmentVariable = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environmentVariable == null)
+                environmentType = EnvironmentType.Production;
+
+            return environmentType;
+        }
+
+        private string GetConnectionString(EnvironmentType environmentType)
         {
             string? dbConnectionString;
 
-            if (envType == "Development")
+            if (environmentType == EnvironmentType.Development)
                 dbConnectionString = Configuration.GetConnectionString("PosthumanDatabaseDevelopment");
             else
                 dbConnectionString = Configuration.GetConnectionString("PosthumanDatabaseProduction");
@@ -165,11 +187,11 @@ namespace Posthuman.WebApi
             return dbConnectionString;
         }
 
-        private string GetFrontendUrl(string envType)
+        private string GetFrontendUrl(EnvironmentType environmentType)
         {
             string? hostUrl;
 
-            if (envType == "Development")
+            if (environmentType == EnvironmentType.Development)
                 hostUrl = Configuration.GetSection("FrontendUrl").GetValue<string>("Development");
             else
                 hostUrl = Configuration.GetSection("FrontendUrl").GetValue<string>("Production");
@@ -177,11 +199,11 @@ namespace Posthuman.WebApi
             return hostUrl;
         }
 
-        private string GetBackendUrl(string envType)
+        private string GetBackendUrl(EnvironmentType environmentType)
         {
             string? hostUrl;
 
-            if (envType == "Development")
+            if (environmentType == EnvironmentType.Development)
                 hostUrl = Configuration.GetSection("BackendUrl").GetValue<string>("Development");
             else
                 hostUrl = Configuration.GetSection("BackendUrl").GetValue<string>("Production");

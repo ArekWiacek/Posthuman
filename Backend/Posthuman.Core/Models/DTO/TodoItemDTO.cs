@@ -27,5 +27,10 @@ namespace Posthuman.Core.Models.DTO
         public bool HasUnfinishedSubtasks { get; set; }
         public int SubtasksCount { get; set; }
         public int FinishedSubtasksCount { get; set; }
+
+        public bool IsCyclic { get; set; }
+        public int RepetitionPeriod { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }
