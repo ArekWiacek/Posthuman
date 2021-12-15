@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
-import { Box, FormControlLabel, FormControl, FormGroup, Switch, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Box, FormControlLabel, FormControl, FormGroup, Switch, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ListIcon from '@mui/icons-material/List';
+import TodayIcon from '@mui/icons-material/Today';
 import { LogI } from '../../../Utilities/Utilities';
 import { ColorModeContext } from '../../Layout/LayoutWrapper';
+import DateSelector from '../../Common/DateSelector';
 
 const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) => {
     const theme = useTheme();
@@ -24,6 +26,10 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
 
     const handleDisplayModeChange = (e, value) => {
         onDisplayOptionsChanged('displayMode', value);
+    };
+
+    const handleDateChange = newDate => {
+        onDisplayOptionsChanged('selectedDate', newDate.format('DD.MM.YYYY'));
     };
 
     return (
@@ -67,7 +73,14 @@ const TodoItemsListOptions = ({ listDisplayOptions, onDisplayOptionsChanged }) =
                     <ToggleButton value='flat' key='flat'>
                         <ListIcon />
                     </ToggleButton>
+                    <ToggleButton value='dayByDay' key='dayByDay'>
+                        <TodayIcon />
+                    </ToggleButton>
                 </ToggleButtonGroup>
+            </Box>
+
+            <Box sx={{ display: listDisplayOptions.displayMode !== 'dayByDay' ? 'none' : '' }}>
+                <DateSelector initialValue={listDisplayOptions.selectedDate} onDateChanged={handleDateChange} />
             </Box>
         </Box>
     );

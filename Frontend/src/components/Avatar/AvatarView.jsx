@@ -55,9 +55,10 @@ const AvatarView = ({ avatar, viewMode }) => {
                 image="/Assets/Images/cyborg_brain.jpg"
                 alt="Cyborg brain" />
             <CardContent>
-                <Typography gutterBottom variant="h4" component="div">
+                <Typography variant="h4" component="div">
                     {avatar.name}
                 </Typography>
+                <Divider />
                 <Typography variant="h3" component="div">
                     {avatar.level} lvl
                 </Typography>

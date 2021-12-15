@@ -16,45 +16,50 @@ import AvatarPage from '../../Pages/AvatarPage';
 import ProjectsPage from '../../Pages/ProjectsPage';
 import TodoPage from '../../Pages/TodoPage';
 import HistoryPage from '../../Pages/HistoryPage';
-import RewardCardsPage from '../../Pages/RewardCardsPage';
+import TechnologyCardsPage from '../../Pages/TechnologyCardsPage';
 
 const Routes = [
+    {
+        path: '/todo',
+        sidebarTitle: 'Todo',
+        sidebarIcon: () => <CheckIcon />,
+        destinationPage: () => <TodoPage />,
+        isPrivate: false
+    },
+    {
+        path: '/avatar',
+        sidebarTitle: 'Avatar',
+        sidebarIcon: () => <AccessibilityIcon />,
+        destinationPage: () => <AvatarPage />,
+        isPrivate: true
+    },
+    {
+        path: '/technologies',
+        sidebarTitle: 'Technologies',
+        sidebarIcon: () => <StarOutlineIcon />,
+        destinationPage: () => <TechnologyCardsPage />,
+        isPrivate: true
+    },
     {
         path: '/info',
         sidebarTitle: 'Info',
         sidebarIcon: () => <InfoOutlinedIcon />,
-        destinationPage: () => <InfoPage />
+        destinationPage: () => <InfoPage />,
+        isPrivate: false
     },
     {
         path: '/blog',
         sidebarTitle: 'Blog',
         sidebarIcon: () => <AnnouncementOutlinedIcon />,
-        destinationPage: () => <BlogPage />
-    },
+        destinationPage: () => <BlogPage />,
+        isPrivate: false
+    }
     // {
     //   path: '/dashboard',
     //   sidebarTitle: 'Dashboard',
     //   sidebarIcon: () => <DashboardIcon />,
     //   destinationPage: () => <DashboardPage />
     // },
-    {
-        path: '/avatar',
-        sidebarTitle: 'Avatar',
-        sidebarIcon: () => <AccessibilityIcon />,
-        destinationPage: () => <AvatarPage />
-    },
-    {
-        path: '/todo',
-        sidebarTitle: 'Todo',
-        sidebarIcon: () => <CheckIcon />,
-        destinationPage: () => <TodoPage />
-    },
-    {
-        path: '/rewards',
-        sidebarTitle: 'Cards',
-        sidebarIcon: () => <StarOutlineIcon />,
-        destinationPage: () => <RewardCardsPage />
-    }
     // {
     //   path: '/projects',
     //   sidebarTitle: 'Projects',

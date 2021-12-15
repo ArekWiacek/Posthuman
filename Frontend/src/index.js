@@ -8,10 +8,10 @@ import App from './App';
 const rootElement = document.getElementById("root");
 
 ReactDOM.render(
-  <StrictMode>
-  <BrowserRouter>
-    <App />
-    </BrowserRouter>
-  </StrictMode>,
-  rootElement
+    <StrictMode>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </StrictMode>,
+    rootElement
 );

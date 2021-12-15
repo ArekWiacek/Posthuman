@@ -1,6 +1,8 @@
 import { LogI } from '../Utilities/Utilities';
 import useLocalStorage from './useLocalStorage';
 import { useEffect } from 'react';
+import moment from 'moment';
+import DefaultDateFormat from '../Utilities/Defaults';
 
 const defaultDisplayOptions = {
     showHiddenTasks: false,
@@ -8,7 +10,8 @@ const defaultDisplayOptions = {
     bigItems: false,                // big / small table rows
     displayMode: 'hierarchical',    // hierarchical vs flat
     collapsedMenu: false,           // buttons spreaded or collapsed to menu 
-    isDarkMode: false
+    isDarkMode: true,
+    selectedDate: moment().format(DefaultDateFormat)
 };
 
 const useDisplayOptions = () => {
