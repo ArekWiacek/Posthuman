@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, CardMedia, CardContent, Typography } from '@mui/material';
 
 const CardWithImage = (props) => {
-    const { imgHeight, imgSrc, imgAlt, title, subtitle } = props;
+    const { imgHeight, imgSrc, imgAlt, title, subtitle, sx } = props;
 
     const renderTitle = (title) => {
         if (title)
@@ -19,7 +19,7 @@ const CardWithImage = (props) => {
     };
 
     return (
-        <Card>
+        <Card sx={{...sx}}>
             <CardMedia
                 component="img"
                 height={imgHeight}

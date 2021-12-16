@@ -6,6 +6,6 @@ namespace Posthuman.Core.Services
 {
     public interface IBlogPostsService
     {
-        Task<IEnumerable<BlogPostDTO>> GetBlogPosts();
+        Task<IEnumerable<BlogPostDTO>> GetPublishedPostsAsync();
     }
 }

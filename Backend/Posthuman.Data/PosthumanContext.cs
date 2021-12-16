@@ -14,7 +14,7 @@ namespace Posthuman.Data
         { 
         }
 
-        public DbSet<User> Users { get; set; } = default;
+        public DbSet<User> Users { get; set; } = default!;
         public DbSet<Avatar> Avatars { get; set; } = default!;
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
         public DbSet<TodoItemCycle> TodoItemCycles { get; set; } = default!;
@@ -29,14 +29,16 @@ namespace Posthuman.Data
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            ApplyModelConfigurations(modelBuilder);
+            ConfigureEntities(modelBuilder);
+            ConfigureEnums(modelBuilder);
+        }
+
+        private void ApplyModelConfigurations(ModelBuilder modelBuilder)
+        {
             modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
             modelBuilder.ApplyConfiguration(new TodoItemCycleConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
-
-            ConfigureEntities(modelBuilder);
-
-            ConfigureEnums(modelBuilder);
-
         }
 
         private void ConfigureEntities(ModelBuilder modelBuilder)

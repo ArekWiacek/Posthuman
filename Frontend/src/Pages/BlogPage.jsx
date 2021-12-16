@@ -7,7 +7,6 @@ const BlogPage = () => {
     const blogPostsEndpointName = "BlogPosts";
     const [blogPosts, setBlogPosts] = useState([]); 
 
-    
     useEffect(() => {
         Api.Get(blogPostsEndpointName, posts => {
             setBlogPosts(posts);
@@ -18,10 +17,8 @@ const BlogPage = () => {
         <Grid container spacing={3}>
             {
                 blogPosts.map(post => (
-                    <Grid item xs={12} md={6} lg={4} key={post.id}>
-                        <BlogPost post={post}>
-                            
-                        </BlogPost>
+                    <Grid item xs={12} md={6} lg={4} key={post.id} sx={{ display: !post.isPublished ? 'none' : '' }}>
+                        <BlogPost post={post}></BlogPost>
                     </Grid>
                 ))
             }

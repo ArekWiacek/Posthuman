@@ -13,7 +13,11 @@ export function CreateDummyTodoItems(howMany) {
             isCompleted: i % 2 ? false : true,
             deadline: null, //new Date(),
             projectId: null,
-            avatarId: 1
+            avatarId: 1,
+            isCyclic: false,
+            repetitionPeriod: 1,
+            startDate: new Date(),
+            endDate: null
         };
 
         dummyTodoItems.push(dummyTodo);

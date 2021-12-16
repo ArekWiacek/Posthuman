@@ -137,6 +137,7 @@ namespace Posthuman.WebApi
         {
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<ITodoItemsService, TodoItemsService>();
+            services.AddTransient<ITodoItemsCyclesService, TodoItemsCyclesService>();
             services.AddTransient<IProjectsService, ProjectsService>();
             services.AddTransient<IEventItemsService, EventItemsService>();
             services.AddTransient<IAvatarsService, AvatarsService>();

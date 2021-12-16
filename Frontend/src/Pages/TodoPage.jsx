@@ -31,7 +31,10 @@ function todoItemFormInitialValues() {
         deadline: new Date(),
         projectId: null,
         avatarId: null,
-        parentId: null
+        parentId: null,
+        isCyclic: false,
+        startDate: new Date(),
+        endDate: null
     }
 }
 
@@ -40,10 +43,8 @@ const TodoPage = () => {
 
     const { activeAvatar } = useContext(AvatarContext);
     const [displayOptions] = useDisplayOptions();
-    
-    
 
-    const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
+    const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(5));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
     const [todoItemToEdit, setTodoItemToEdit] = useState(todoItemFormInitialValues());
     const [todoItemToDelete, setTodoItemToDelete] = useState(todoItemFormInitialValues());
@@ -71,6 +72,8 @@ const TodoPage = () => {
                 newArray = ArrayHelper.InsertObjectAtIndex(todoItems, createdTodoItem, parentIndex + 1);
             }
             setTodoItems(newArray);
+        }, (error) => {
+            console.error(error);
         });
 
         setModalVisible('create', false);

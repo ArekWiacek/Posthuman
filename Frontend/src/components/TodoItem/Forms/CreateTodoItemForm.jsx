@@ -17,7 +17,7 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
         title: '', description: '', deadline: null,
         parentId: parentTaskId ? parentTaskId : '',
         projectId: parentProjectId ? parentProjectId : '',
-        isCyclic: false, repetitionPeriod: '1',
+        isCyclic: false, repetitionPeriod: null,
         startDate: null, endDate: null,
         isInfinite: true
     });
@@ -63,7 +63,8 @@ const CreateTodoItemForm = ({ onCreateTodoItem, todoItems, projects, parentTaskI
             deadline: formState.deadline,
             parentId: formState.parentId ? formState.parentId : null,
             projectId: formState.projectId ? formState.projectId : null,
-            isVisible: true, isCyclic: formState.isCyclic,
+            isVisible: true, 
+            isCyclic: formState.isCyclic,
             repetitionPeriod: formState.repetitionPeriod,
             startDate: formState.startDate ? formState.startDate : null,
             endDate: formState.endDate ? formState.endDate : null

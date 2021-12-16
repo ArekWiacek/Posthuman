@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Services;
 using System.Collections.Generic;
@@ -19,9 +18,9 @@ namespace Posthuman.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BlogPostDTO>>> GetAvatars()
+        public async Task<ActionResult<IEnumerable<BlogPostDTO>>> GetPublishedBlogPosts()
         {
-            var blogPosts = await blogPostsService.GetBlogPosts();
+            var blogPosts = await blogPostsService.GetPublishedPostsAsync();
             return Ok(blogPosts);
         }
     }

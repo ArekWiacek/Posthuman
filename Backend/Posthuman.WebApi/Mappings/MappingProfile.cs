@@ -13,6 +13,7 @@ namespace Posthuman.WebApi.Mappings
 
             CreateMap<TodoItem, TodoItemDTO>();
             CreateMap<TodoItemDTO, TodoItem>();
+            CreateMap<CreateTodoItemDTO, TodoItem>();
 
             CreateMap<TodoItemCycle, TodoItemCycleDTO>();
             CreateMap<TodoItemCycleDTO, TodoItemCycle>();

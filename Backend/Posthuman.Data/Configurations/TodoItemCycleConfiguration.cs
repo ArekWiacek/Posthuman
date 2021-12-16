@@ -13,9 +13,10 @@ namespace Posthuman.Data.Configurations
 
             builder
                 .HasOne(tic => tic.TodoItem)
-                .WithOne(ti => ti.CycleInfo)
+                .WithOne(ti => ti.TodoItemCycle)
                 .HasForeignKey<TodoItemCycle>(tic => tic.TodoItemId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.ToTable("TodoItemCycles");
         }

@@ -29,16 +29,10 @@ namespace Posthuman.Core.Models.Entities
         public string Title { get; set; }
         public string Description { get; set; }
         public bool IsCompleted { get; set; }               // Is task completed?
+        public bool IsVisible { get; set; }                 // Is visibility on list turned on
         public DateTime? Deadline { get; set; }             // Date until when task should be completed
-        public DateTime? CreationDate { get; set; }         // Date when task was created
+        public DateTime CreationDate { get; set; }         // Date when task was created
         public DateTime? CompletionDate { get; set; }       // Date when task was marked as 'Completed'
-
-        public bool IsCyclic { get; set; }
-        public int? CycleInfoId { get; set; }
-        [JsonIgnore]
-        public virtual TodoItemCycle CycleInfo { get; set; }
-
-        public bool IsVisible { get; set; }
 
         // Parent & Subtasks
         public int? ParentId { get; set; }
@@ -47,16 +41,20 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual ICollection<TodoItem> Subtasks { get; set; }
 
-
         // Avatar (Think as user "hero" - with level, exp and so on)
         public int AvatarId { get; set; }
         public Avatar Avatar { get; set; }
-
 
         // Parent project - when to-do item is part of something bigger
         public int? ProjectId { get; set; }
         public virtual Project Project { get; set; }
 
+        // Task can be repetitive - repetition info is stored in TodoItemCycle table
+        public bool IsCyclic { get; set; }
+        public int? TodoItemCycleId { get; set; }
+        [JsonIgnore]
+        public virtual TodoItemCycle TodoItemCycle { get; set; }
+        
         public bool IsTopLevel() =>  ParentId == null;
         public bool HasSubtasks() => Subtasks != null && Subtasks.Count > 0;
         public bool HasUnfinishedSubtasks() => FinishedSubtasksCount() < SubtasksCount();

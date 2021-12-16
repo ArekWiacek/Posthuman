@@ -20,14 +20,10 @@ namespace PosthumanWebApi.Controllers
         {
             this.logger = logger;
             this.todoItemsService = todoItemsService;
-
-            //GlobalHost
         }
 
         /// GET: api/TodoItems
-        /// <summary>
-        ///     Returns list of TodoItems for active Avatar
-        /// </summary>
+        /// Returns list of TodoItems for active Avatar
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
@@ -39,10 +35,8 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// GET: api/TodoItems/Hierarchical
-        /// <summary>
-        ///     Returns flat list of TodoItems for active Avatar
-        ///     List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
-        /// </summary>
+        /// Returns flattened list of TodoItems for active Avatar
+        /// List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
         [HttpGet("Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
@@ -54,9 +48,7 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// GET: api/TodoItem/5
-        /// <summary>
-        ///     Returns TodoItem of given ID
-        /// </summary>
+        /// Returns TodoItem of given ID
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(int id)
         {
@@ -69,21 +61,16 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// POST: api/TodoItem
-        /// <summary>
-        ///     Creates new TodoItem with all backend logic
-        /// </summary>
+        /// Creates new TodoItem with all backend logic
         [HttpPost]
-        public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(TodoItemDTO todoItemDTO)
+        public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(CreateTodoItemDTO createTodoItemDTO)
         {
-            var createdTodoItemDTO = await todoItemsService.CreateTodoItem(todoItemDTO);
-
-            return CreatedAtAction(nameof(GetTodoItem), new { id = createdTodoItemDTO.Id }, createdTodoItemDTO);
+            var todoItemDTO = await todoItemsService.CreateTodoItem(createTodoItemDTO);
+            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDTO.Id }, todoItemDTO);
         }
 
         /// PUT: api/TodoItem/5
-        /// <summary>
-        ///     Updates TodoItem with all backend logic
-        /// </summary>
+        /// Updates TodoItem with all backend logic
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodoItem(int id, TodoItemDTO todoItemDTO)
         {
@@ -107,9 +94,7 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// DELETE: api/TodoItem/5
-        /// <summary>
-        ///     Deletes TodoItem with all backend logic
-        /// </summary>
+        /// Deletes TodoItem with all backend logic
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {

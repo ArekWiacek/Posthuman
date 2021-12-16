@@ -87,7 +87,10 @@ namespace Posthuman.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PublishDate")
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("PublishDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Subtitle")
@@ -287,11 +290,8 @@ namespace Posthuman.Data.Migrations
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CreationDate")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("CycleInfoId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
@@ -320,6 +320,9 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
+                    b.Property<int?>("TodoItemCycleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AvatarId");
@@ -344,17 +347,26 @@ namespace Posthuman.Data.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Instances")
+                    b.Property<int>("InstancesStreak")
                         .HasColumnType("int");
 
-                    b.Property<int>("InstancesStreak")
+                    b.Property<int>("InstancesToComplete")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsInfinite")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastCompletedInstanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastInstanceDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MissedInstances")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("NextIstanceDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("RepetitionPeriod")
                         .IsRequired()
@@ -365,6 +377,9 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TodoItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalInstances")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -450,7 +465,7 @@ namespace Posthuman.Data.Migrations
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItemCycle", b =>
                 {
                     b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "TodoItem")
-                        .WithOne("CycleInfo")
+                        .WithOne("TodoItemCycle")
                         .HasForeignKey("Posthuman.Core.Models.Entities.TodoItemCycle", "TodoItemId");
                 });
 #pragma warning restore 612, 618

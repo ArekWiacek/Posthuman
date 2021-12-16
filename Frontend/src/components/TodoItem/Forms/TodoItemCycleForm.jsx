@@ -6,9 +6,9 @@ import moment from 'moment';
 
 const TodoItemCycleForm = ({ onCycleDefinitionChanged }) => {    
     const initialValues = {
-        repetitionPeriod: 2, 
+        repetitionPeriod: 1, 
         startDate: new Date(),
-        endDate: new Date()
+        endDate: null
     };
 
     const repetitionPeriods = [{

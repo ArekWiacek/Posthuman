@@ -11,7 +11,7 @@ namespace Posthuman.Core.Services
         Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar();
         Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical();
         
-        Task<TodoItemDTO> CreateTodoItem(TodoItemDTO todoItemDTO);
+        Task<TodoItemDTO> CreateTodoItem(CreateTodoItemDTO todoItemDTO);
         
         Task UpdateTodoItem(TodoItemDTO todoItemDTO);
         
