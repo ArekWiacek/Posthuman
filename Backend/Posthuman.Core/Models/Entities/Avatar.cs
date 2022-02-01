@@ -10,19 +10,29 @@ namespace Posthuman.Core.Models.Entities
     /// This class represents game player character (= hero, user profile)
     /// </summary>
     [Table("Avatars")]
-    public class Avatar
+    public class Avatar : IEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Avatar()
+        {
+            Name = "";
+            Bio = "";
+            CreationDate = DateTime.Now;
+            Level = 1;
+            Exp = 0;
+            CybertribeName = "Polaczki";
+        }
+
         public int Id { get; set; }
+        
+        // Owner user - this is connection between authenticated asp.net user and it's avatar in game
+        public int UserId { get; set; }
+        public User User { get; set; }
+
+
         public string Name { get; set; }            // User nickname
         public string Bio { get; set; }             // "About" user
         public DateTime CreationDate { get; set; }  // Date when user created account        
 
-
-        // Temporary value to indicate whether this entity is "current user"
-        // This is used to quickly switch between avatars during development
-        public bool IsActive { get; set; }          // Is this current user?
 
 
         public int Level { get; set; }              // Avatar level - it grows when gaining experience

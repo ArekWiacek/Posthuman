@@ -22,9 +22,9 @@ namespace Posthuman.Data.Configurations
                 .HasForeignKey(ti => ti.ProjectId)
                 .IsRequired(false);
 
-            builder
-                .HasOne(todoItem => todoItem.Avatar)
-                .WithMany(avatar => avatar.TodoItems);
+            //builder
+            //    .HasOne(todoItem => todoItem.Avatar)
+            //    .WithMany(avatar => avatar.TodoItems);
 
             builder
                 .HasOne(ti => ti.Parent)

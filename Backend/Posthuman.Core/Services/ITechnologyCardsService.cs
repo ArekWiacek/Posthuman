@@ -1,5 +1,5 @@
 ﻿using Posthuman.Core.Models.DTO;
-using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.DTO.Avatar;
 using Posthuman.Core.Models.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;

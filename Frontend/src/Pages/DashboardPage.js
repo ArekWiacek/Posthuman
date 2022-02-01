@@ -7,7 +7,7 @@ import CreateProject from '../components/Project/CreateProject';
 import EditProject from '../components/Project/EditProject';
 import ProjectsList from '../components/Project/ProjectsList';
 
-import { AvatarContext } from "../App";
+// import { AvatarContext } from "../App";
 // import { LogT, LogI, LogE } from '../Utilities/Utilities';
 // import Api from '../Utilities/ApiHelper';
 
@@ -33,7 +33,7 @@ function createEmptyProject() {
 }
 
 const DashboardPage = () => {
-  const { activeAvatar } = React.useContext(AvatarContext);
+  //const { activeAvatar } = React.useContext(AvatarContext);
 
   /*const [projects, setProjects] = React.useState([
     {

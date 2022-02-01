@@ -4,9 +4,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Posthuman.Core.Services;
 using Posthuman.Core.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Posthuman.WebApi.Extensions;
 
 namespace PosthumanWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TodoItemsController : ControllerBase
@@ -23,26 +26,26 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// GET: api/TodoItems
-        /// Returns list of TodoItems for active Avatar
+        /// Returns list of TodoItems for current user
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
-            var allTodoItems = await
+            var userTodoItems = await
                 todoItemsService
-                .GetAllTodoItemsForActiveAvatar();
+                .GetAllTodoItems(this.GetCurrentUserId());
 
-            return Ok(allTodoItems);
+            return Ok(userTodoItems);
         }
 
         /// GET: api/TodoItems/Hierarchical
-        /// Returns flattened list of TodoItems for active Avatar
+        /// Returns flattened list of TodoItems for current user
         /// List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
         [HttpGet("Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
             var allTodoItems = await
                 todoItemsService
-                .GetTodoItemsHierarchical();
+                .GetAllTodoItemsHierarchical(this.GetCurrentUserId());
 
             return Ok(allTodoItems);
         }
@@ -65,7 +68,8 @@ namespace PosthumanWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(CreateTodoItemDTO createTodoItemDTO)
         {
-            var todoItemDTO = await todoItemsService.CreateTodoItem(createTodoItemDTO);
+            var userId = this.GetCurrentUserId();
+            var todoItemDTO = await todoItemsService.CreateTodoItem(userId, createTodoItemDTO);
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDTO.Id }, todoItemDTO);
         }
 
@@ -87,6 +91,8 @@ namespace PosthumanWebApi.Controllers
         {
             if (id != todoItemDTO.Id)
                 return BadRequest();
+
+            //var userId = this.GetCurrentUserId();
 
             await todoItemsService.CompleteTodoItem(todoItemDTO);
 

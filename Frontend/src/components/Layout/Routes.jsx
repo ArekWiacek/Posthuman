@@ -8,7 +8,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
+import LoginPage from '../../Pages/LoginPage';
 import InfoPage from '../../Pages/InfoPage';
 import BlogPage from '../../Pages/BlogPage';
 import DashboardPage from '../../Pages/DashboardPage';
@@ -20,11 +22,18 @@ import TechnologyCardsPage from '../../Pages/TechnologyCardsPage';
 
 const Routes = [
     {
+        path: '/login',
+        sidebarTitle: 'Login',
+        sidebarIcon: () => <VpnKeyIcon />,
+        destinationPage: () => <LoginPage />,
+        isPrivate: false
+    },
+    {
         path: '/todo',
         sidebarTitle: 'Todo',
         sidebarIcon: () => <CheckIcon />,
         destinationPage: () => <TodoPage />,
-        isPrivate: false
+        isPrivate: true
     },
     {
         path: '/avatar',

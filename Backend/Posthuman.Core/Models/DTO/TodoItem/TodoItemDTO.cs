@@ -17,6 +17,7 @@ namespace Posthuman.Core.Models.DTO
         public bool IsVisible { get; set; }
         public DateTime? Deadline { get; set; }
 
+        //public int UserId { get; set; }
         public int AvatarId { get; set; }
         public int? ParentId { get; set; }
         public int? ProjectId { get; set; }

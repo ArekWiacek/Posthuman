@@ -1,22 +1,21 @@
-import * as React from 'react';
+import React, { useContext, useState } from 'react';
 import { Paper, Grid } from '@mui/material';
-
 
 import CreateProject from '../components/Project/CreateProject';
 import EditProject from '../components/Project/EditProject';
 import ProjectView from '../components/Project/ProjectView';
 import ProjectsList from '../components/Project/ProjectsList';
 
-import { AvatarContext } from "../App";
+import { UserContext } from "../App";
 import { CreateDummyProject, CreateDummyProjects } from '../Utilities/DummyObjects';
 
 import Api from '../Utilities/ApiHelper';
 
 const ProjectsPage = () => {
-  const { activeAvatar } = React.useContext(AvatarContext);
-  const [projects, setProjects] = React.useState(CreateDummyProjects(4));
-  const [isProjectInEditMode, setIsProjectInEditMode] = React.useState(false);
-  const [currentProject, setCurrentProject] = React.useState(CreateDummyProject());
+  const { currentUser } = null;//  TODO useContext(UserContext);
+  const [projects, setProjects] = useState(CreateDummyProjects(4));
+  const [isProjectInEditMode, setIsProjectInEditMode] = useState(false);
+  const [currentProject, setCurrentProject] = useState(CreateDummyProject());
 
   const handleProjectCreated = (newProject) => {
     Api.Post("Projects", newProject, data => {
@@ -56,7 +55,7 @@ const ProjectsPage = () => {
 
   React.useEffect(() => {
     Api.Get("Projects", data => setProjects(data));
-  }, [activeAvatar])
+  }, [currentUser])
 
   return (
     <Grid container spacing={3}>

@@ -10,6 +10,7 @@ using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
 using Posthuman.Services.Helpers;
 using Posthuman.RealTime.Notifications;
+using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.Services
 {
@@ -46,23 +47,22 @@ namespace Posthuman.Services
             var todoItem = await unitOfWork.TodoItems.GetByIdAsync(id);
             return mapper.Map<TodoItemDTO>(todoItem);
         }
-
-        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems()
+    
+        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItems(int userId)
         {
-            var allTodoItems = await
-                unitOfWork.TodoItems.GetAllAsync();
+            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
 
-            return mapper.Map<IEnumerable<TodoItemDTO>>(allTodoItems);
+            var todoItems = await GetAllTodoItemsForAvatar(avatar);
+
+            return todoItems;
         }
 
-        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar()
+        private async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForAvatar(Avatar avatar)
         {
-            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
             var avatarTodoItems = await
                 unitOfWork
                 .TodoItems
-                .GetAllByAvatarIdAsync(avatar.Id);
+                .GetAllByUserIdAsync(avatar.Id);
 
             // Ordering tasks in flat list mode:
             // First unfinished - all completed goes to end
@@ -82,14 +82,14 @@ namespace Posthuman.Services
             return todoItemsMapped.ToList();
         }
 
-        public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical()
+        public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsHierarchical(int userId)
         {
-            var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
 
             var todoItems = await
                 unitOfWork
                 .TodoItems
-                .GetAllByAvatarIdAsync(avatar.Id);
+                .GetAllByUserIdAsync(userId);
 
             var topLevelTasks = todoItems.Where(ti => ti.IsTopLevel()).ToList();
             var flattenedTasksList = await FlattenSubtasksListAsync(topLevelTasks);
@@ -102,20 +102,18 @@ namespace Posthuman.Services
         #endregion GET
 
         #region CREATE
-        public async Task<TodoItemDTO> CreateTodoItem(CreateTodoItemDTO createTodoItemDTO)
+        public async Task<TodoItemDTO> CreateTodoItem(int userId, CreateTodoItemDTO createTodoItemDTO)
         {
+            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
+            if (avatar == null)
+                throw new Exception($"User of ID {userId} does not have avatar created");
+
             var newTodoItem = mapper.Map<TodoItem>(createTodoItemDTO);
             newTodoItem.IsCompleted = false;
             newTodoItem.CreationDate = DateTime.Now;
             newTodoItem.IsVisible = true;
-
-            // Set owner Avatar, if not provided then set active user
-            var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-            if (ownerAvatar == null)
-                throw new ArgumentException("Cannot create todo item - could not obtain active avatar");
-
-            newTodoItem.Avatar = ownerAvatar;
-            newTodoItem.AvatarId = ownerAvatar.Id;
+            newTodoItem.UserId = userId;
+            newTodoItem.Avatar = avatar;
             
             // Has parent todo item?
             if (newTodoItem.ParentId.HasValue)
@@ -129,40 +127,20 @@ namespace Posthuman.Services
                 newTodoItem.Parent = parentTodoItem;
             }
 
-            // New TodoItem has parent Project selected - so update subtasks counter 
-            if (newTodoItem.ProjectId.HasValue)
-            {
-                var parentProject = await
-                    unitOfWork
-                    .Projects
-                    .GetByIdAsync(newTodoItem.ProjectId.Value);
-
-                if (parentProject != null)
-                    parentProject.TotalSubtasks += 1;
-            }
-
-            // Create info about task repetitions
-            if(newTodoItem.IsCyclic)
-            {
-                var cycleInfo = todoItemsCyclesService.CreateCycleInfo(createTodoItemDTO);
-                //todoItemsCyclesService.RecalculateCycleInfoInstances(cycleInfo);
-                newTodoItem.TodoItemCycle = cycleInfo;
-                await unitOfWork.TodoItemsCycles.AddAsync(cycleInfo);
-            }
-
             // TODO - remove commit from here; now it's added so event item can save created todo item ID
             await unitOfWork.TodoItems.AddAsync(newTodoItem);
             await unitOfWork.CommitAsync();
 
-            var todoItemCreatedEvent = await eventItemsService.AddNewEvent(
-                ownerAvatar.Id,
-                newTodoItem.IsCyclic ? EventType.TodoItemCyclicCreated : EventType.TodoItemCreated,
+            var todoItemCreatedEvent = await eventItemsService.CreateEventItem(
+                userId,
+                EventType.TodoItemCreated,
                 EntityType.TodoItem,
                 newTodoItem.Id);
 
+            await unitOfWork.EventItems.AddAsync(todoItemCreatedEvent);
             await unitOfWork.CommitAsync();
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(ownerAvatar, todoItemCreatedEvent, newTodoItem));
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(newTodoItem.Avatar, todoItemCreatedEvent, newTodoItem));
             await notificationsService.SendAllNotifications();
 
             return mapper.Map<TodoItemDTO>(newTodoItem);
@@ -174,8 +152,9 @@ namespace Posthuman.Services
         {
             if (updatedTodoItemDTO != null && updatedTodoItemDTO.Id != 0)
             {
+                // TODO
                 var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(updatedTodoItemDTO.Id);
-                var ownerAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+                var ownerAvatar = await unitOfWork.Avatars.GetByIdAsync(1017);
 
                 if (todoItem == null)
                     throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {updatedTodoItemDTO.Id} could not be found.");
@@ -248,7 +227,7 @@ namespace Posthuman.Services
                     }
                 }
 
-                var todoItemModifiedEvent = await eventItemsService.AddNewEvent(
+                var todoItemModifiedEvent = await eventItemsService.CreateEventItem(
                     ownerAvatar.Id, 
                     EventType.TodoItemModified, 
                     EntityType.TodoItem, 
@@ -256,8 +235,8 @@ namespace Posthuman.Services
 
                 await unitOfWork.CommitAsync();
 
-                notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
-                await notificationsService.SendAllNotifications();
+                //notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
+                //await notificationsService.SendAllNotifications();
             }
         }
 
@@ -266,7 +245,7 @@ namespace Posthuman.Services
             if (todoItemDTO != null && todoItemDTO.Id != 0)
             {
                 var todoItem = await unitOfWork.TodoItems.GetByIdAsync(todoItemDTO.Id);
-                var avatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+                var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItemDTO.AvatarId);
 
                 if (todoItem == null)
                     throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {todoItemDTO.Id} could not be found.");
@@ -278,29 +257,11 @@ namespace Posthuman.Services
                 if (todoItem.HasUnfinishedSubtasks())
                     throw new Exception("Cannot complete TodoItem - complete subtasks first.");
 
-                //if (todoItem.IsCyclic)
-                //{
-                //    todoItem.CycleInfo.CompletedInstances++;
-
-                //    if (DidMissedLastInstance(todoItem))
-                //    {
-                //        var missedInstances = RecalculateMissedInstances(todoItem.CycleInfo);
-                //        todoItem.CycleInfo.MissedInstances = missedInstances;
-                //        todoItem.CycleInfo.InstancesStreak = 1;
-                //    }
-                //    else
-                //    {
-                //        todoItem.CycleInfo.InstancesStreak++;
-                //    }
-                //}
-                //else
-                //{
-                    todoItem.IsCompleted = true;
-                    todoItem.CompletionDate = DateTime.Now;
-                //}
+                todoItem.IsCompleted = true;
+                todoItem.CompletionDate = DateTime.Now;
 
                 // Add event of completion
-                var todoItemCompletedEvent = await eventItemsService.AddNewEvent(
+                var todoItemCompletedEvent = await eventItemsService.CreateEventItem(
                     avatar.Id,
                     EventType.TodoItemCompleted,
                     EntityType.TodoItem,
@@ -317,8 +278,9 @@ namespace Posthuman.Services
 
                 await notificationsService.SendAllNotifications();
 
-                var owner = mapper.Map<AvatarDTO>(avatar);
-                await notificationsService.UpdateAvatar(owner);
+                var avatarDto = mapper.Map<AvatarDTO>(avatar);
+                if(avatarDto != null)
+                    await notificationsService.UpdateAvatar(avatarDto);
             }
         }
 
@@ -392,13 +354,13 @@ namespace Posthuman.Services
 
             unitOfWork.TodoItems.Remove(todoItem);
 
-            var todoItemDeletedEvent = await eventItemsService.AddNewEvent(
-                todoItem.AvatarId,
+            var todoItemDeletedEvent = await eventItemsService.CreateEventItem(
+                todoItem.UserId,
                 EventType.TodoItemDeleted,
                 EntityType.TodoItem,
                 todoItem.Id);
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
+            // notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
         }
         #endregion DELETE
 

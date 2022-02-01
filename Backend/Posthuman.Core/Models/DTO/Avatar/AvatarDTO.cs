@@ -1,4 +1,4 @@
-﻿namespace Posthuman.Core.Models.DTO
+﻿namespace Posthuman.Core.Models.DTO.Avatar
 {
     public class AvatarDTO
     {
@@ -10,9 +10,9 @@
         }
 
         public int Id { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public string Bio { get; set; }
-        public bool IsActive { get; set; }
 
         public int Level { get; set; }
         public int Exp { get; set; }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.Entities.Authentication;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Data.Configurations;
 
@@ -15,6 +16,9 @@ namespace Posthuman.Data
         }
 
         public DbSet<User> Users { get; set; } = default!;
+        public DbSet<Role> Roles { get; set; } = default!;
+
+
         public DbSet<Avatar> Avatars { get; set; } = default!;
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
         public DbSet<TodoItemCycle> TodoItemCycles { get; set; } = default!;
@@ -32,10 +36,16 @@ namespace Posthuman.Data
             ApplyModelConfigurations(modelBuilder);
             ConfigureEntities(modelBuilder);
             ConfigureEnums(modelBuilder);
+
+
+            // TEMP
+            modelBuilder.Entity<User>().Property(u => u.Email).IsRequired();
+            modelBuilder.Entity<Role>().Property(r => r.Name).IsRequired();
         }
 
         private void ApplyModelConfigurations(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
             modelBuilder.ApplyConfiguration(new TodoItemCycleConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
@@ -52,7 +62,6 @@ namespace Posthuman.Data
             modelBuilder.Entity<TechnologyCard>().ToTable("TechnologyCards");
             modelBuilder.Entity<TechnologyCardDiscovery>().ToTable("TechnologyCardsDiscoveries");
             modelBuilder.Entity<Requirement>().ToTable("Requirements");
-
 
             EnumToNumberConverter<CardCategory, int> converter = new EnumToNumberConverter<CardCategory, int>();
             modelBuilder.Entity<TechnologyCard>()

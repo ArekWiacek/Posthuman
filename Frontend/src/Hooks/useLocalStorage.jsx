@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { LogI } from '../Utilities/Utilities';
 
 const getSavedValue = (key, initialValue) => {
-    const savedValue = JSON.parse(localStorage.getItem(key));
-    if(savedValue)
-        return savedValue;
+    const savedValue = localStorage.getItem(key);
+    if(savedValue != 'undefined' && savedValue != null)
+        return JSON.parse(savedValue);
+
+    // if(savedValue)
+    //     return savedValue;
     
     if(initialValue instanceof Function)
         return initialValue();
@@ -18,7 +21,6 @@ const useLocalStorage = (key, initialValue) => {
     });
 
     useEffect(() => {
-        LogI("useLocalStorage effect called - dependent on it's value prop");
         localStorage.setItem(key, JSON.stringify(value));
     }, [value]);
 

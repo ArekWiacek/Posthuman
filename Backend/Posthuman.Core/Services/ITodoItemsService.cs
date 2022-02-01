@@ -7,16 +7,15 @@ namespace Posthuman.Core.Services
     public interface ITodoItemsService
     {
         Task<TodoItemDTO> GetTodoItemById(int id);
-        Task<IEnumerable<TodoItemDTO>> GetAllTodoItems();
-        Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsForActiveAvatar();
-        Task<IEnumerable<TodoItemDTO>> GetTodoItemsHierarchical();
+        Task<IEnumerable<TodoItemDTO>> GetAllTodoItems(int userId);
+        Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsHierarchical(int userId);
+
         
-        Task<TodoItemDTO> CreateTodoItem(CreateTodoItemDTO todoItemDTO);
+        Task<TodoItemDTO> CreateTodoItem(int userId, CreateTodoItemDTO todoItemDTO);
         
         Task UpdateTodoItem(TodoItemDTO todoItemDTO);
         
         Task DeleteTodoItem(int id);
-
 
         Task CompleteTodoItem(TodoItemDTO todoITemDTO);
     }

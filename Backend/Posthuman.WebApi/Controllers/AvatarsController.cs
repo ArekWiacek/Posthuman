@@ -3,37 +3,47 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Posthuman.Core.Models.DTO;
+using Posthuman.Core.Models.DTO.Avatar;
 using Posthuman.Core.Services;
+using Posthuman.WebApi.Extensions;
 
 namespace PosthumanWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AvatarsController : ControllerBase
     {
-        private readonly ILogger<AvatarsController> logger;
         private readonly IAvatarsService avatarsService;
 
-        public AvatarsController(
-            ILogger<AvatarsController> logger,
-            IAvatarsService avatarsService)
+        public AvatarsController(IAvatarsService avatarsService)
         {
-            this.logger = logger;
             this.avatarsService = avatarsService;
         }
 
-        [Authorize]
-        [HttpGet("AuthorizationTestMethod")]
-        public async Task<ActionResult> AuthorizationTestMethod()
+        [HttpGet("GetAvatarForLoggedUser")]
+        public async Task<ActionResult<AvatarDTO>> GetAvatarForLoggedUser()
         {
-            var avatar = await avatarsService.GetActiveAvatar();
+            int userId = this.GetCurrentUserId();
+            var avatar = await avatarsService.GetAvatarByUserId(userId);
 
-            return Ok();
+            if (avatar == null)
+                throw new ArgumentNullException("Avatar");
+            
+            return avatar;
         }
 
-        // GET: api/Avatars
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AvatarDTO>> GetAvatar(int id)
+        {
+            var avatar = await avatarsService.GetAvatarById(id);
+
+            if (avatar == null)
+                throw new ArgumentNullException("Avatar");
+            
+            return avatar;
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AvatarDTO>>> GetAvatars()
         {
@@ -41,32 +51,8 @@ namespace PosthumanWebApi.Controllers
             return Ok(allAvatars);
         }
 
-        // GET: api/Avatars/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AvatarDTO>> GetAvatar(int id)
-        {
-            var avatar = await avatarsService.GetAvatarById(id);
-            if (avatar == null)
-                throw new ArgumentNullException("Avatar");
-                //return NotFound();
-
-            return avatar;
-        }
-
-        // GET: api/Avatar/GetActiveAvatar
-        [HttpGet("GetActiveAvatar")]
-        public async Task<ActionResult<TodoItemDTO>> GetActiveAvatar()
-        {
-            var avatar = await avatarsService.GetActiveAvatar();
-            if (avatar == null)
-                return NotFound();
-
-            return Ok(avatar);
-        }
-
-        // PUT: api/Avatars/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAvatar(int id, AvatarDTO updatedAvatarDTO)
+        public async Task<IActionResult> UpdateAvatar(int id, UpdateAvatarDTO updatedAvatarDTO)
         {
             if (id != updatedAvatarDTO.Id)
                 return BadRequest();
@@ -74,15 +60,6 @@ namespace PosthumanWebApi.Controllers
             await avatarsService.UpdateAvatar(updatedAvatarDTO);
 
             return NoContent();
-        }
-
-        // PUT: api/Avatar/SetActiveAvatar/5
-        [HttpPut("SetActiveAvatar/{id}")]
-        public async Task<IActionResult> SetActiveAvatar(int id)
-        {
-            await avatarsService.SetActiveAvatar(id);
-            var avatar = await avatarsService.GetActiveAvatar();
-            return Ok(avatar);
         }
     }
 }

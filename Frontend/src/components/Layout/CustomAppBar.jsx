@@ -1,10 +1,13 @@
 
 import * as React from "react";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
+import { Toolbar, Button, IconButton, Typography } from '@mui/material';
 import MenuIcon from "@mui/icons-material/Menu";
-import Typography from "@mui/material/Typography";
+import MuiAppBar from "@mui/material/AppBar";
+import LoggedUser from '../Accounts/LoggedUser';
+
+// import Toolbar from "@mui/material/Toolbar";
+// import IconButton from "@mui/material/IconButton";
+// import Typography from "@mui/material/Typography";
 
 import { styled } from "@mui/material/styles";
 
@@ -67,6 +70,8 @@ const CustomAppBar = ({ title, open, onToggleDrawerClicked }) => {
                 >
                     {title}
                 </Typography>
+
+                <LoggedUser />
             </Toolbar>
         </AppBar>
     );

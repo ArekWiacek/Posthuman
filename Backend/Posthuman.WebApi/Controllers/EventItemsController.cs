@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Services;
 
@@ -12,14 +11,11 @@ namespace PosthumanWebApi.Controllers
     [Route("api/[controller]")]
     public class EventItemsController : ControllerBase
     {
-        private readonly ILogger<EventItemsController> logger;
         private readonly IEventItemsService eventItemsService;
 
         public EventItemsController(
-            ILogger<EventItemsController> logger,
             IEventItemsService eventItemsService)
         {
-            this.logger = logger;
             this.eventItemsService = eventItemsService;
         }
 

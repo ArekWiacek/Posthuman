@@ -1,4 +1,4 @@
-import axios from 'axsios';
+import axios from 'axios';
 import { accountService } from '../Services';
 
 

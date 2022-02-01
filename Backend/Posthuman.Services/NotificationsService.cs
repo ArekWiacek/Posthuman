@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Posthuman.RealTime.Notifications;
 using Microsoft.AspNetCore.SignalR;
 using Posthuman.Core.Models.DTO;
+using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.Services
 {

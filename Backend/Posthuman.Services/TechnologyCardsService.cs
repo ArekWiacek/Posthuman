@@ -8,6 +8,7 @@ using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Services;
 using Posthuman.RealTime.Notifications;
 using Posthuman.Core.Models.Enums;
+using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.Services
 {

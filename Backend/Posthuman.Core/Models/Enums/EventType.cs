@@ -4,20 +4,24 @@
     {
         None = 0,
 
-        TodoItemCreated = 1,
-        TodoItemModified = 2,
-        TodoItemDeleted = 3,
-        TodoItemCompleted = 4,
+        UserRegistered = 1,
 
-        ProjectCreated = 5,
-        ProjectModified = 6,
-        ProjectDeleted = 7,
-        ProjectFinished = 8,
+        AvatarCreated = 10,
+        AvatarModified = 11,
+        AvatarExpGained = 12,
+        AvatarLevelGained = 13,
 
-        LevelGained = 9,
-        ExpGained = 10,
+        TodoItemCreated = 20,
+        TodoItemModified = 21,
+        TodoItemDeleted = 22,
+        TodoItemCompleted = 23,
 
-        CardDiscovered = 11,
+        ProjectCreated = 30,
+        ProjectModified = 31,
+        ProjectDeleted = 32,
+        ProjectFinished = 33,
+
+        CardDiscovered = 40,
 
         TodoItemCyclicCreated = 100,
         TodoItemCyclicModified = 101,

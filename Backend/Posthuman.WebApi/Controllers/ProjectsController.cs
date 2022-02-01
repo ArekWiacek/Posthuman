@@ -29,8 +29,8 @@ namespace PosthumanWebApi.Controllers
         public async Task<ActionResult<IEnumerable<ProjectDTO>>> GetProjects()
         {
             try 
-            { 
-                var allProjects = await projectsService.GetAllProjectsForActiveAvatar();
+            {
+                var allProjects = new List<ProjectDTO>(); // await projectsService.GetAllProjectsForActiveAvatar();
                 return Ok(allProjects);
             }
             catch(Exception ex)

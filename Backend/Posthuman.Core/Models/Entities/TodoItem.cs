@@ -41,9 +41,11 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual ICollection<TodoItem> Subtasks { get; set; }
 
-        // Avatar (Think as user "hero" - with level, exp and so on)
+        // Owner
+        public int UserId { get; set; }
         public int AvatarId { get; set; }
-        public Avatar Avatar { get; set; }
+        [JsonIgnore]
+        public virtual Avatar Avatar { get; set; }
 
         // Parent project - when to-do item is part of something bigger
         public int? ProjectId { get; set; }

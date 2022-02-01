@@ -12,10 +12,19 @@ namespace Posthuman.Data.Repositories
         public UsersRepository(PosthumanContext context) : base(context)
         {
         }
-
+        
         private PosthumanContext UsersDbContext
         {
             get { return Context; }
+        }
+
+        public new async Task<User> GetByIdAsync(int userId)
+        {
+            return await UsersDbContext
+                .Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<User> GetByEmail(string email)
@@ -23,6 +32,7 @@ namespace Posthuman.Data.Repositories
             return await UsersDbContext
                 .Users
                 .Where(u => u.Email == email)
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync();
         }
     }

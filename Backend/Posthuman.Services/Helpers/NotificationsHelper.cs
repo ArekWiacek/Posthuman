@@ -75,7 +75,7 @@ namespace Posthuman.Services.Helpers
                     notification.SecondText = $"Some second text";
                     break;
 
-                case EventType.LevelGained:
+                case EventType.AvatarLevelGained:
                     notification.Title = $"{avatar.Name}";
                     notification.Reward = $"Level {avatar.Level}";
                     //notification.Subtitle = $"Level {avatar.Level}";

@@ -12,6 +12,6 @@ namespace Posthuman.Core.Services
 
         Task<EventItemDTO> GetEventItemById(int id);
 
-        Task<EventItem> AddNewEvent(int avatarId, EventType eventType, EntityType? relatedEntityType, int? relatedEntityId, int expGained = 0);
+        Task<EventItem> CreateEventItem(int userId, EventType eventType, EntityType? relatedEntityType, int? relatedEntityId, int expGained = 0);
     }
 }

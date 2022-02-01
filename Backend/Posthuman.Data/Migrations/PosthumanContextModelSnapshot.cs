@@ -19,6 +19,22 @@ namespace Posthuman.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.Authentication.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Avatar", b =>
                 {
                     b.Property<int>("Id")
@@ -46,9 +62,6 @@ namespace Posthuman.Data.Migrations
                     b.Property<int>("ExpToNewLevel")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -56,7 +69,13 @@ namespace Posthuman.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Avatars");
                 });
@@ -113,9 +132,6 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AvatarId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ExpGained")
                         .HasColumnType("int");
 
@@ -133,6 +149,9 @@ namespace Posthuman.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -284,7 +303,7 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AvatarId")
+                    b.Property<int?>("AvatarId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CompletionDate")
@@ -321,6 +340,9 @@ namespace Posthuman.Data.Migrations
                         .HasMaxLength(150);
 
                     b.Property<int?>("TodoItemCycleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -401,17 +423,28 @@ namespace Posthuman.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RoleId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.Avatar", b =>
+                {
+                    b.HasOne("Posthuman.Core.Models.Entities.User", "User")
+                        .WithOne("Avatar")
+                        .HasForeignKey("Posthuman.Core.Models.Entities.Avatar", "UserId");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
@@ -447,11 +480,9 @@ namespace Posthuman.Data.Migrations
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItem", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
+                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", null)
                         .WithMany("TodoItems")
-                        .HasForeignKey("AvatarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AvatarId");
 
                     b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "Parent")
                         .WithMany("Subtasks")
@@ -467,6 +498,15 @@ namespace Posthuman.Data.Migrations
                     b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "TodoItem")
                         .WithOne("TodoItemCycle")
                         .HasForeignKey("Posthuman.Core.Models.Entities.TodoItemCycle", "TodoItemId");
+                });
+
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.User", b =>
+                {
+                    b.HasOne("Posthuman.Core.Models.Entities.Authentication.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

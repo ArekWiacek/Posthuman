@@ -1,19 +1,17 @@
 import React from 'react';
-
 import { Route, Redirect } from 'react-router-dom';
-import { accountService } from '../../Services/AccountService';
+import useAuth from '../../Hooks/useAuth';
 
 const PrivateRoute = ({component: Component, ...rest }) => {
+    const { isLogged } = useAuth();
+
     return (
         <Route { ...rest } render={ props => {
-            const account = accountService.accountValue;
-            
-            if(!account) {
-                // Not logged in - redirect to login page with the return url
+            // Not logged in - redirect to login page with the return url
+            if(!isLogged()) 
                 return <Redirect to={{ pathname: '/login', state: { from: props.location }}} />
-            }
-
-            return <Component { ...props } />;
+            else
+                return <Component { ...props } />;
         }} />
     );
 };

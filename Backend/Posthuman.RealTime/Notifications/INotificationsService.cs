@@ -1,5 +1,5 @@
-﻿using Posthuman.Core.Models.DTO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.RealTime.Notifications
 {

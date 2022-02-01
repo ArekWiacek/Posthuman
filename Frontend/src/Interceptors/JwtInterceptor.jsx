@@ -1,16 +1,26 @@
-import axios from 'axsios';
-import { accountService } from '../Services';
+import axios from 'axios';
 
+const getJwtToken = () => {
+    let token = null;
+    let authData = localStorage.getItem('user');
+    if (authData != null) {
+        let authDataJson = JSON.parse(authData);
+        if(authDataJson.token != null && authDataJson.token != '')
+            token = authDataJson.token;
+    }
+    return token;
+};
 
+// This middleware is executed before making any request to API
+// It adds authentication jwt token to every request we make (ofc when there is user logged in)
 const jwtInterceptor = () => {
     axios.interceptors.request.use(request => {
-        // Add auth header with jwt if account is logged in and request is to the api url
-        const account = accountService.accountValue;
-        const isLoggedIn = account?.token;
-        const isApiUrl = request.url.startsWith(process.env.REACT_APP_API_URL);
-        
-        if(isLoggedIn && isApiUrl) {
-            request.headers.common.Authorization = `Bearer ${account.token}`;
+        let token = getJwtToken();
+        const isLoggedIn = token != null; 
+        const isApiUrl = request.url.startsWith('https://localhost') || request.url.startsWith('https://posthuman.pl');
+
+        if (isLoggedIn && isApiUrl) {
+            request.headers.common.Authorization = `Bearer ${token}`;
         }
 
         return request;

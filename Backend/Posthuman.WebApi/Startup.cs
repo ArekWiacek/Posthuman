@@ -18,6 +18,15 @@ using Posthuman.Services;
 using PosthumanWebApi.Controllers;
 using Posthuman.RealTime.Notifications;
 using Posthuman.WebApi.Middleware;
+using Microsoft.AspNetCore.Identity;
+using Posthuman.Core.Models.Entities;
+using FluentValidation;
+using Posthuman.Core.Models.Validators;
+using FluentValidation.AspNetCore;
+using Posthuman.WebApi.Utilities;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Posthuman.Shared;
 
 namespace Posthuman.WebApi
 {
@@ -32,25 +41,20 @@ namespace Posthuman.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            BuildServices(services);
-            BuildAutoMapper(services);
-            BuildSwagger(services);
+            AddAuthentication(services);
+            AddDotnetServices(services);
+            AddCustomRepositories(services);
+            AddCustomServices(services);
+            AddValidators(services);
+            AddAutoMapper(services);
+            AddSwagger(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             logger.LogInformation("Configuring Posthuman app...");
 
-            if (env.IsDevelopment())
-            {
-                logger.LogInformation("Dev environment - developer exception page will be used.");
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                logger.LogInformation("Prod environment - /error exception handler page will be used.");
-                app.UseExceptionHandler("/error");
-            }
+            SetExceptionHandlingMode(app, env, logger);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -60,8 +64,11 @@ namespace Posthuman.WebApi
 
             app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
             app.UseCors("ClientPermission");
+            app.UseMiddleware<JwtMiddleware>();
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -73,7 +80,57 @@ namespace Posthuman.WebApi
             logger.LogInformation("Posthuman configuration done!");
         }
 
-        private void BuildServices(IServiceCollection services)
+        private void AddAuthentication(IServiceCollection services)
+        {
+            var authenticationSettings = new AuthenticationSettings();
+
+            Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+            services.AddSingleton(authenticationSettings);
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = "Bearer";
+                option.DefaultScheme = "Bearer";
+                option.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+                };
+            });
+            //.AddFacebook(facebookOptions =>
+            //{
+            //    facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+            //    facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            //});
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Role", "Admin"));
+                options.AddPolicy("UsersOnly", policy => policy.RequireClaim("Role", "Admin", "User"));
+            });
+        }
+
+        private void SetExceptionHandlingMode(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        {
+            if (env.IsDevelopment())
+            {
+                logger.LogInformation("Dev environment - developer exception page will be used.");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                logger.LogInformation("Prod environment - /error exception handler page will be used.");
+                app.UseExceptionHandler("/error");
+            }
+        }
+
+        private void AddDotnetServices(IServiceCollection services)
         {
             var environmentType = GetEnvironmentType();
 
@@ -84,8 +141,7 @@ namespace Posthuman.WebApi
 
             services.AddCors(options =>
             {
-                var originHost = GetFrontendUrl(environmentType);
-
+                // var originHost = GetFrontendUrl(environmentType);
                 options.AddPolicy("ClientPermission", policy =>
                 {
                     policy
@@ -96,33 +152,22 @@ namespace Posthuman.WebApi
                         "http://localhost:7201",
                         "http://posthumanbackapp-001-site1.btempurl.com",
                         "posthumanbackapp-001-site1.btempurl.com",
-                        "posthumanae-001-site1.itempurl.com")
+                        "posthumanae-001-site1.itempurl.com",
+                        "https://red-robot-490980.postman.co/")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    //.WithOrigins(originHost)
                     .AllowCredentials();
                 });
             });
 
-            services.AddControllers();
-
-            //services.AddAuthentication()
-            //    .AddFacebook(facebookOptions =>
-            //    {
-            //        facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
-            //        facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-            //    });
-
+            services.AddControllers().AddFluentValidation();
             services.AddSignalR();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            AddRepositories(services);
-            AddServices(services);
+            services.AddHttpContextAccessor();
         }
 
-        private void AddRepositories(IServiceCollection services)
+        private void AddCustomRepositories(IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<ITodoItemsRepository, TodoItemsRepository>();
             services.AddTransient<ITodoItemsCyclesRepository, TodoItemsCyclesRepository>();
@@ -133,9 +178,9 @@ namespace Posthuman.WebApi
             services.AddTransient<ITechnologyCardsRepository, TechnologyCardsRepository>();
         }
 
-        private void AddServices(IServiceCollection services)
+        private void AddCustomServices(IServiceCollection services)
         {
-            services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<ITodoItemsService, TodoItemsService>();
             services.AddTransient<ITodoItemsCyclesService, TodoItemsCyclesService>();
             services.AddTransient<IProjectsService, ProjectsService>();
@@ -144,9 +189,15 @@ namespace Posthuman.WebApi
             services.AddTransient<IBlogPostsService, BlogPostsService>();
             services.AddTransient<ITechnologyCardsService, TechnologyCardsService>();
             services.AddScoped<INotificationsService, NotificationsService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
 
-        private void BuildAutoMapper(IServiceCollection services)
+        private void AddValidators(IServiceCollection services)
+        {
+            services.AddScoped<IValidator<RegisterUserDTO>, RegisterUserDTOValidator>();
+        }
+
+        private void AddAutoMapper(IServiceCollection services)
         {
             // TODO: WTF is this
             var assembly1 = typeof(TodoItemDTO).Assembly;
@@ -154,7 +205,7 @@ namespace Posthuman.WebApi
             services.AddAutoMapper(new Assembly[] { assembly1, assembly2 });
         }
 
-        private void BuildSwagger(IServiceCollection services)
+        private void AddSwagger(IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
@@ -166,13 +217,12 @@ namespace Posthuman.WebApi
             });
         }
 
+        // TODO: to be moved somewhere else
+        #region Helpers
         private EnvironmentType GetEnvironmentType()
         {
-            var environmentType = EnvironmentType.Development;
-            var environmentVariable = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (environmentVariable == null)
-                environmentType = EnvironmentType.Production;
-
+            var environmentType = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == null
+                ? EnvironmentType.Production : EnvironmentType.Development;
             return environmentType;
         }
 
@@ -187,30 +237,6 @@ namespace Posthuman.WebApi
 
             return dbConnectionString;
         }
-
-        private string GetFrontendUrl(EnvironmentType environmentType)
-        {
-            string? hostUrl;
-
-            if (environmentType == EnvironmentType.Development)
-                hostUrl = Configuration.GetSection("FrontendUrl").GetValue<string>("Development");
-            else
-                hostUrl = Configuration.GetSection("FrontendUrl").GetValue<string>("Production");
-
-            return hostUrl;
-        }
-
-        private string GetBackendUrl(EnvironmentType environmentType)
-        {
-            string? hostUrl;
-
-            if (environmentType == EnvironmentType.Development)
-                hostUrl = Configuration.GetSection("BackendUrl").GetValue<string>("Development");
-            else
-                hostUrl = Configuration.GetSection("BackendUrl").GetValue<string>("Production");
-
-            return hostUrl;
-        }
-
+        #endregion Helpers
     }
 }

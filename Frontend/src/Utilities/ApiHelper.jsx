@@ -8,7 +8,7 @@ const ApiUrl = (process.env.NODE_ENV === "development") ? developmentApi : produ
 const Api = {
     Get: (entityName, successCallback, errorCallback) => {
         axios
-            .get(ApiUrl + entityName)
+            .get(ApiUrl + entityName, { withCerdentials: true })
             .then(response => successCallback(response.data))
             .catch(error => {
                 LogE("Error occured when calling GET method for " + entityName, error);
@@ -30,9 +30,10 @@ const Api = {
 
     Post: (entityName, entityData, successCallback, errorCallback) => {
         axios
-            .post(ApiUrl + entityName, entityData)
+            .post(ApiUrl + entityName, entityData, { withCredentials: true })
             .then(response => successCallback(response.data))
             .catch(error => {
+                //var errorJson = error.toJSON();
                 LogE("Error occured when calling POST method for " + entityName, error);
                 if (errorCallback)
                     errorCallback(error);

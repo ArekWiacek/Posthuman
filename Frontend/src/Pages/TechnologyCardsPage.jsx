@@ -3,15 +3,15 @@ import { Grid } from '@mui/material';
 import TechnologyCardList from '../components/TechnologyCards/TechnologyCardsList';
 import TechnologyCard from '../components/TechnologyCards/TechnologyCard';
 import Api from '../Utilities/ApiHelper';
-import { AvatarContext } from '../App';
+import useAvatar from '../Hooks/useAvatar';
 
 const TechnologyCardsPage = () => {
     const technologyCardsEndpointName = "TechnologyCards";
-    const { activeAvatar } = useContext(AvatarContext);
-    const [technologyCards, setTechnologyCards] = useState([]); 
+    const { avatar } = useAvatar();
+    const [technologyCards, setTechnologyCards] = useState([]);
 
     const hiddenCard = {
-        imageUrl: '/Assets/Images/RewardCards/next.jpg',
+        imageUrl: '/Assets/Images/TechnologyCards/next.jpg',
         title: 'Card hidden',
         subtitle: 'Card hidden...',
         description: 'Reach 15 level to unlock the card',
@@ -20,10 +20,15 @@ const TechnologyCardsPage = () => {
     };
 
     useEffect(() => {
-        Api.Get(technologyCardsEndpointName + '/' + activeAvatar.id , technologyCards => {
-            setTechnologyCards(technologyCards);
-        });
-    }, [activeAvatar]);
+        console.log("!!! TEH CARDS PAGE EVVECT");
+        if (avatar != null && avatar != undefined && avatar.id) {
+            console.log("!!! TEH CARDS PAGE Avatar: ");
+            console.log(avatar);
+            Api.Get(technologyCardsEndpointName + '/' + avatar.id, technologyCards => {
+                setTechnologyCards(technologyCards);
+            });
+        }
+    }, [avatar]);
 
     return (
         <Grid container spacing={3}>

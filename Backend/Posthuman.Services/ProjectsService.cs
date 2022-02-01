@@ -116,7 +116,7 @@ namespace Posthuman.Services
 
         public async Task<IEnumerable<ProjectDTO>> GetAllProjectsForActiveAvatar()
         {
-            var activeAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
+            var activeAvatar = await unitOfWork.Avatars.GetByIdAsync(1017);
 
             var allProjects = await 
                 unitOfWork

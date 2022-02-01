@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageList, ImageListItem, Typography, ListSubheader } from '@mui/material';
 import TechnologyCard from './TechnologyCard';
 import Api from '../../Utilities/ApiHelper';
-import { AvatarContext } from '../../App';
 import TechnologyCardModal from './TechnologyCardModal';
 import * as ArrayHelper from '../../Utilities/ArrayHelper';
+import useAvatar from '../../Hooks/useAvatar';
 
 const TechnologyCardsList = ({ category, title, showHiddenCard }) => {
     const technologyCardsEndpointName = "TechnologyCards";
-    const { activeAvatar } = useContext(AvatarContext);
+    const { avatar } = useAvatar();
     const [technologyCards, setTechnologyCards] = useState([]);
-    const [clickedCard, setClickedCard] = useState({}); 
+    const [clickedCard, setClickedCard] = useState({});
     const [cardModalOpen, setCardModalOpen] = useState(false);
 
     const hiddenCard = {
@@ -22,7 +22,7 @@ const TechnologyCardsList = ({ category, title, showHiddenCard }) => {
     };
 
     const handleCardClicked = (card) => {
-        setClickedCard({ ...card});
+        setClickedCard({ ...card });
         setCardModalOpen(true);
     };
 
@@ -31,11 +31,13 @@ const TechnologyCardsList = ({ category, title, showHiddenCard }) => {
     };
 
     useEffect(() => {
-        Api.Get(technologyCardsEndpointName + '/' + activeAvatar.id + '/' + category, technologyCards => {
-            var technologies = showHiddenCard ? ArrayHelper.InsertObjectAtIndex(technologyCards, hiddenCard, 0) : technologyCards;
-            setTechnologyCards(technologies);
-        });
-    }, [activeAvatar]);
+        if (avatar != null && avatar != undefined) {
+            Api.Get(technologyCardsEndpointName + '/' + avatar.id + '/' + category, technologyCards => {
+                var technologies = showHiddenCard ? ArrayHelper.InsertObjectAtIndex(technologyCards, hiddenCard, 0) : technologyCards;
+                setTechnologyCards(technologies);
+            });
+        }
+    }, [avatar]);
 
     return (
         <React.Fragment>
@@ -50,7 +52,7 @@ const TechnologyCardsList = ({ category, title, showHiddenCard }) => {
                 ))}
             </ImageList>
 
-            <TechnologyCardModal isOpen={cardModalOpen} card={clickedCard} onClose={handleCloseCardModal}/>
+            <TechnologyCardModal isOpen={cardModalOpen} card={clickedCard} onClose={handleCloseCardModal} />
         </React.Fragment>
     );
 }
