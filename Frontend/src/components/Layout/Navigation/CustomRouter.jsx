@@ -19,6 +19,7 @@ const CustomRouter = () => {
                 </Route>
                 
                 { Routes.map(route => createRoute(route)) }
+                
             </Switch>
         </div>
     );

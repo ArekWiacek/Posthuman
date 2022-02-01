@@ -28,7 +28,7 @@ const LoginPage = () => {
                                     Reach the new peaks of your life by taking part in an awesome futuristic adventure
                                 </Typography>
                                 <Typography>
-                                    Below you can create new account or sign in to existing one
+                                    Below you can create new account or sign into existing one
                                 </Typography>
                             </Grid>
                         </Grid>

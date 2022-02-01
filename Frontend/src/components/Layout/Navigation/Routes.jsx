@@ -10,15 +10,12 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
-import LoginPage from '../../Pages/LoginPage';
-import InfoPage from '../../Pages/InfoPage';
-import BlogPage from '../../Pages/BlogPage';
-import DashboardPage from '../../Pages/DashboardPage';
-import AvatarPage from '../../Pages/AvatarPage';
-import ProjectsPage from '../../Pages/ProjectsPage';
-import TodoPage from '../../Pages/TodoPage';
-import HistoryPage from '../../Pages/HistoryPage';
-import TechnologyCardsPage from '../../Pages/TechnologyCardsPage';
+import LoginPage from '../../../Pages/LoginPage';
+import InfoPage from '../../../Pages/InfoPage';
+import BlogPage from '../../../Pages/BlogPage';
+import AvatarPage from '../../../Pages/AvatarPage';
+import TodoPage from '../../../Pages/TodoPage';
+import TechnologyCardsPage from '../../../Pages/TechnologyCardsPage';
 
 const Routes = [
     {
@@ -26,7 +23,8 @@ const Routes = [
         sidebarTitle: 'Login',
         sidebarIcon: () => <VpnKeyIcon />,
         destinationPage: () => <LoginPage />,
-        isPrivate: false
+        isPrivate: false,
+        hideWhenAuthenticated: true
     },
     {
         path: '/todo',

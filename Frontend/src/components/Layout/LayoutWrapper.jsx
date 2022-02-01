@@ -6,7 +6,7 @@ import { Scrollbar } from "react-scrollbars-custom";
 import AdapterMoment from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
-import CustomRouter from './CustomRouter';
+import CustomRouter from './Navigation/CustomRouter';
 import CustomAppBar from './CustomAppBar';
 import CustomDrawer from './CustomDrawer';
 

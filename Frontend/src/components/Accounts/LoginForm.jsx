@@ -3,8 +3,6 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Typography, Button, Paper } from '@mui/material';
-import { LogI, LogE } from '../../Utilities/Utilities';
-import { authenticationService } from '../../Services/authenticationService';
 import FormInputText from '../Common/Forms/FormInputText';
 import customStyles from '../Common/CustomStyles';
 import useAuth from '../../Hooks/useAuth';
@@ -26,14 +24,6 @@ const LoginForm = ({ onUserLogged }) => {
     const { login, loading, error } = useAuth();
     const onSubmit = (formData) => {
         login(formData.email, formData.password);
-        // authenticationService.login(formData.email, formData.password, loggedUser => {
-        //     LogI(`Logging successfull for user with email: '${loggedUser.email}'`);
-        //     reset({ defaultValues }); 
-        //     if(onUserLogged)
-        //         onUserLogged(loggedUser);   
-        // }, error => {
-        //     LogE(`Failed to login user with email: '${formData.name}'`, error);
-        // });
     };
 
     return (
