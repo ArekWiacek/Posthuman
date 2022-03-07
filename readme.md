@@ -13,8 +13,8 @@ Task planner combined with futuristic gamification system
   - This is gamification part of app - simulates developing RPG character, but here you gain experience by completing real life tasks not by killing monsters :)
   - Represents user 'hero'
   - You gain XP points for for completing tasks. With XP your Avatar reaches new levels
-  - Then you discover Technology Cards with description of futuristic technologies
-  - And Team cards with famous scientists info 
+  - Then you discover "Technology Cards" with description of futuristic technologies
+  - And "Team Cards" with famous scientists info 
 
 - Other
   - Authentication / Authorization
@@ -22,6 +22,10 @@ Task planner combined with futuristic gamification system
   - Design by Material UI
   - Real time notifications @ SignalR
   - Dark / light mode
+  - Layered architecture
+  - Backend in C# & ASP.NET & WebApi
+  - Entity Framework integrated
+  - Database @ MS SQL 
 
 ### Todo List
 ![Screenshot1](https://user-images.githubusercontent.com/10595928/157107573-4ac8352e-f748-439a-998d-302beced0a31.png)
@@ -55,19 +59,20 @@ Below you will find technical information about this project - used architecture
 
 ### Architecture
 
-Backend solution is divided into different layers to separate responsibility of different parts of app. Layers are : 
-- Core (models)
-- Data (here is entity framework implementation)
-- Services ( containing "game" logic) 
-- Web API (endpoint for outer world to communicate with frontend). 
-- Additionally there is additional layer implementing SignalR library to communicate with frontend in real time - called "RealTimeCommunication". 
+Backend solution is divided into different layers to separate responsibility of different parts of app. 
+
+Layers are : 
+- Core - models
+- Data - here is entity framework implementation
+- Services - containing application / game logic 
+- Web API - endpoint for outer world to communicate with frontend 
+- RealTimeCommunication - additional layer implementing SignalR library to communicate with frontend in real time 
 
 Frontend application is written in React with MaterialUI.
 
 Below you have more details about each layer
 
 ### Posthuman.Core
-
 * Model Layer
 * Models definitions
 * Entities, DTOs, Enums
