@@ -12,7 +12,7 @@ Backend solution is divided into different layers to separate responsibility of 
 - Data (here is entity framework implementation)
 - Services ( containing "game" logic) 
 - Web API (endpoint for outer world to communicate with frontend). 
-- Additionally there is additional layer implementing SignalR library to communicate with frontend in real time - called "RealTimeCommunication".* * *  
+- Additionally there is additional layer implementing SignalR library to communicate with frontend in real time - called "RealTimeCommunication". 
 
 Frontend application is written in React with MaterialUI.
 
@@ -22,7 +22,9 @@ Below you have more details about each layer
 
 * Model Layer
 * Models definitions
-* Entities, DTOs, Enums*Repositories interfaces Services interfaces
+* Entities, DTOs, Enums
+* Repositories interfaces 
+* Services interfaces
 * Unit of work interface
 
 ### Posthuman.Data
