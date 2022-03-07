@@ -24,10 +24,7 @@ export const AvatarProvider = ({ children }) => {
     const [loadingInitial, setLoadingInitial] = useState(true);
 
     useEffect(() => {
-        console.log('!!! GETTING AV FROM USE AVATAR HOOK! MAYBER USER CHANGED OR WAS SET');
-        
         if (isLogged()) {
-            console.log('!!! USER NOT NULL - GETTING AVATAAAAAAAAAAAAAAAAAAR');
             Api.Get("Avatars/GetAvatarForLoggedUser", data => {
                 if (data !== undefined && data.id !== undefined && data.id !== 0) {
                     setAvatar(data);

@@ -4,7 +4,7 @@ import { Box, Paper, TableContainer, Table, TableHead,
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid';
 
-import Api from '../Utilities/ApiHelper';
+import Api from '../../Utilities/ApiHelper';
 
 const HistoryPage = () => {
     const [eventItems, setEventItems] = React.useState([

@@ -13,14 +13,14 @@ const LoginPage = () => {
                 <Grid item xs={12}>
                     <Paper>
                         <Grid container>
-                            <Grid item sm={12} md={5}>
+                            <Grid item sm={12} md={4}>
                                 <Box
                                     className={classes.eyecandy}
                                     component="img" 
                                     src='/Assets/Images/Backgrounds/background3.jpg'
                                 />
                             </Grid>
-                            <Grid item sm={12} md={7} sx={{ padding: 2 }}>
+                            <Grid item sm={12} md={8} sx={{ padding: 2 }}>
                                 <Typography variant='h6' gutterBottom>
                                     Welcome to Posthuman
                                 </Typography>

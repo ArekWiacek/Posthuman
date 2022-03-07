@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Posthuman.Core.Models.DTO;
+using Posthuman.RealTime.Notifications;
 using Posthuman.WebApi.Extensions;
 
 namespace PosthumanWebApi.Controllers
@@ -12,7 +13,7 @@ namespace PosthumanWebApi.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly Posthuman.Core.Services.IAuthenticationService authenticationService;
-
+        
         public AuthenticationController(
             Posthuman.Core.Services.IAuthenticationService usersService)
         {
@@ -39,7 +40,7 @@ namespace PosthumanWebApi.Controllers
 
             var userDto = new UserDTO
             {
-                Id = 5,
+                Id = 666,
                 Email = loginUserDTO.Email,
                 Token = tokenContent
             };

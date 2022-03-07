@@ -4,6 +4,10 @@ using Posthuman.Core.Repositories;
 
 namespace Posthuman.Core.Models.Validators
 {
+    /// <summary>
+    /// Registers rules for validating input for user registration
+    /// TODO: move to different project
+    /// </summary>
     public class RegisterUserDTOValidator : AbstractValidator<RegisterUserDTO>
     {
         public RegisterUserDTOValidator(IUsersRepository usersRepository) 

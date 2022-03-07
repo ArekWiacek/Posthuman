@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
-import BlogPost from '../components/Blog/BlogPost';
-import Api from '../Utilities/ApiHelper';
+import BlogPost from '../../components/Blog/BlogPost';
 
 const LandingPage = () => {
-    useEffect(() => {    
-    }, []);
-
     return (
         <Grid container spacing={3}>
             {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Grid, Paper } from '@mui/material';
 
-import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
+import TodoItemList from '../../components/TodoItem/TodoItemsList/TodoItemsList';
 
-import CreateProject from '../components/Project/CreateProject';
-import EditProject from '../components/Project/EditProject';
-import ProjectsList from '../components/Project/ProjectsList';
+import CreateProject from '../../components/Project/CreateProject';
+import EditProject from '../../components/Project/EditProject';
+import ProjectsList from '../../components/Project/ProjectsList';
 
 // import { AvatarContext } from "../App";
 // import { LogT, LogI, LogE } from '../Utilities/Utilities';

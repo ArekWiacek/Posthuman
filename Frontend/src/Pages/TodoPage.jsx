@@ -210,10 +210,20 @@ const TodoPage = () => {
 
     useEffect(() => {
         getTodoItems();
-    }, [user]);
+    }, [user, displayOptions]);
 
     const getTodoItems = () => {
-        let endpointName = displayOptions.displayMode === 'flat' ? todoItemsEndpointName : todoItemsEndpointName + "/Hierarchical";
+        let endpointName = '';
+
+        if(displayOptions.displayMode === 'flat')
+            endpointName = todoItemsEndpointName;
+        else if(displayOptions.displayMode === 'hierarchical')
+            endpointName = todoItemsEndpointName + '/Hierarchical';
+        else if(displayOptions.displayMode === 'dayByDay')
+            endpointName = todoItemsEndpointName + '/ByDeadline/';
+            
+
+        //let endpointName = displayOptions.displayMode === 'flat' ? todoItemsEndpointName : todoItemsEndpointName + "/Hierarchical";
         LogI(`TodoPage: Getting todo items list! Endpoint: ${endpointName}`);
 
         Api.Get(endpointName, todoItems => {

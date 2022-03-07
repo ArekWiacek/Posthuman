@@ -1,15 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Paper, Grid } from '@mui/material';
 
-import CreateProject from '../components/Project/CreateProject';
-import EditProject from '../components/Project/EditProject';
-import ProjectView from '../components/Project/ProjectView';
-import ProjectsList from '../components/Project/ProjectsList';
+import CreateProject from '../../components/Project/CreateProject';
+import EditProject from '../../components/Project/EditProject';
+import ProjectView from '../../components/Project/ProjectView';
+import ProjectsList from '../../components/Project/ProjectsList';
 
-import { UserContext } from "../App";
-import { CreateDummyProject, CreateDummyProjects } from '../Utilities/DummyObjects';
+import { UserContext } from "../../App";
+import { CreateDummyProject, CreateDummyProjects } from '../../Utilities/DummyObjects';
 
-import Api from '../Utilities/ApiHelper';
+import Api from '../../Utilities/ApiHelper';
 
 const ProjectsPage = () => {
   const { currentUser } = null;//  TODO useContext(UserContext);

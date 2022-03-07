@@ -14,6 +14,11 @@ using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.Services
 {
+    /// <summary>
+    /// Service for managing main entity in application - TodoItem, which represents single task to complete
+    /// Completing task triggers various actions, it gives xp points to player, 
+    /// logs various information (event items), sends notifications and so on
+    /// </summary>
     public class TodoItemsService : ITodoItemsService
     {
         private readonly IUnitOfWork unitOfWork;
@@ -98,6 +103,35 @@ namespace Posthuman.Services
                 mapper.Map<IEnumerable<TodoItemDTO>>(flattenedTasksList);
 
             return itemsMapped.ToList();
+        }
+
+
+        public async Task<IEnumerable<TodoItemDTO>> GetTodoItemsByDeadline(int userId, DateTime deadline)
+        {
+            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
+
+            var todoItems = await
+                unitOfWork
+                .TodoItems
+                .GetAllByUserIdAsync(userId);
+
+            var todoItemsWithDeadline = todoItems.Where(ti => ti.Deadline.HasValue);
+            var todoItemsWithoutDeadline = todoItems.Where(ti => !ti.Deadline.HasValue);
+
+            var overduedTodoItems = 
+                todoItemsWithDeadline
+                .Where(ti => (ti.Deadline.Value - DateTime.Now).TotalDays < 0);
+
+            var todoItemsForDeadlineDate = 
+                todoItemsWithDeadline
+                .Where(ti => ti.Deadline.Value.Date == deadline)
+                .OrderBy(ti => ti.Deadline.Value);
+
+            var itemsMapped =
+                mapper.Map<IEnumerable<TodoItemDTO>>(todoItemsForDeadlineDate);
+
+            return itemsMapped.ToList();
+
         }
         #endregion GET
 
@@ -216,7 +250,9 @@ namespace Posthuman.Services
                     // Repetition added
                     if(updatedTodoItemDTO.IsCyclic)
                     {
-                        var cycleInfo = todoItemsCyclesService.CreateCycleInfo((RepetitionPeriod)updatedTodoItemDTO.RepetitionPeriod.Value, updatedTodoItemDTO.StartDate.Value, updatedTodoItemDTO.EndDate.Value);
+                        var cycleInfo = todoItemsCyclesService.CreateCycleInfo(
+                            (RepetitionPeriod)updatedTodoItemDTO.RepetitionPeriod.Value, 
+                            updatedTodoItemDTO.StartDate.Value, updatedTodoItemDTO.EndDate.Value);
                         todoItem.TodoItemCycle = cycleInfo;
                         await unitOfWork.TodoItemsCycles.UpdateAsync(cycleInfo);
                     }
@@ -280,7 +316,7 @@ namespace Posthuman.Services
 
                 var avatarDto = mapper.Map<AvatarDTO>(avatar);
                 if(avatarDto != null)
-                    await notificationsService.UpdateAvatar(avatarDto);
+                    await notificationsService.SendUpdateAvatarNotification(avatarDto);
             }
         }
 

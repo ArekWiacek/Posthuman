@@ -6,6 +6,7 @@ using Posthuman.Core.Services;
 using Posthuman.Core.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Posthuman.WebApi.Extensions;
+using System;
 
 namespace PosthumanWebApi.Controllers
 {
@@ -48,6 +49,20 @@ namespace PosthumanWebApi.Controllers
                 .GetAllTodoItemsHierarchical(this.GetCurrentUserId());
 
             return Ok(allTodoItems);
+        }
+
+
+
+        /// GET: api/TodoItems/ByDeadline/04-03-2022
+        /// Returns list of TodoItems scheduled for current user for given date
+        [HttpGet("ByDeadline/{deadline}")]
+        public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsByDeadline(DateTime deadline)
+        {
+            var todoItemsByDeadline = await
+                todoItemsService
+                .GetTodoItemsByDeadline(this.GetCurrentUserId(), deadline);
+
+            return Ok(todoItemsByDeadline);
         }
 
         /// GET: api/TodoItem/5
