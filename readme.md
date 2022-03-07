@@ -1,6 +1,21 @@
 # Posthuman
 Task planner combined with futuristic gamification system
 
+## Features
+- Todo List 
+  - This is "serious" part of app - tool for managing tasks you have to do in your everyday life. You can nest tasks inside each other to create complex goals. 
+  - Creating, editing and managing tasks
+  - Nesting tasks to create complex goals
+  - Different views - tree, flat, day-by-day
+  - Actions menu in two view modes
+  
+- Avatar
+  - This is gamification part of app - simulates developing RPG character, but here you gain experience by completing real life tasks not by killing monsters :)
+  - Represents user 'hero'
+  - You gain XP points for for completing tasks. With XP your Avatar reaches new levels
+  - Then you discover Technology Cards with description of futuristic technologies
+  - And Team cards with famous scientists info 
+
 ## Technical information
 
 Below you will find technical information about this project - used architecture, design patterns, libraries and technologies. This is useful mostly for developers.
