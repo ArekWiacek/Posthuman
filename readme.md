@@ -30,8 +30,11 @@ Task planner combined with futuristic gamification system
 ![Screenshot2](https://user-images.githubusercontent.com/10595928/157107735-6b7b6294-8b7c-44c0-b57f-77486610f6a7.png)
 
 ### Task actions view modes
-![Screenshot6](https://user-images.githubusercontent.com/10595928/157108685-f02614c3-0cf4-46f4-b564-bba0cc6cfd39.png)
-![Screenshot7](https://user-images.githubusercontent.com/10595928/157108700-202a3284-3bf5-4335-9bcd-a757c298f4d3.png)
+![Screenshot10](https://user-images.githubusercontent.com/10595928/157114498-839eb5a2-713c-41d8-9cdf-37d78a0d4367.png)
+![Screenshot11](https://user-images.githubusercontent.com/10595928/157114510-5ea67fee-b709-4ead-b936-95234acf9a19.png)
+
+### Display options
+![Screenshot9](https://user-images.githubusercontent.com/10595928/157114544-1597e70c-599e-4144-a7ef-21ef21b37431.png)
 
 ### Avatar view
 ![Screenshot3](https://user-images.githubusercontent.com/10595928/157107785-fde5e64a-3409-44cc-b095-327cf8ae160e.png)
@@ -41,6 +44,9 @@ Task planner combined with futuristic gamification system
 
 ### Scientist card
 ![Screenshot5](https://user-images.githubusercontent.com/10595928/157107843-05b347bd-b7f7-48a3-b8ee-efbbeade2867.png)
+
+### Login page
+![Screenshot8](https://user-images.githubusercontent.com/10595928/157114835-e5a2e5f1-4277-4f0a-962c-67b8dae62983.png)
 
 
 ## Technical information
