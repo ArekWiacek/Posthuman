@@ -280,3 +280,14 @@
 #todoListScrollbar .ScrollbarsCustom-Thumb, #notificationsScrollbar .ScrollbarsCustom-Thumb {
     border-radius: 0 !important;
 }
+
+.ScrollbarsCustom-Track, #contentScrollbar .ScrollbarsCustom-Track {
+    top: 0 !important;
+    height: 100% !important;
+    /* border: 1px solid red !important; */
+}
+
+.ScrollbarsCustom-Thumb, #contentScrollbar .ScrollbarsCustom-Thumb {
+    /* border: 1px solid green !important; */
+}
+

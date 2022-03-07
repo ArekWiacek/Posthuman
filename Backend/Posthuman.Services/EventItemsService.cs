@@ -5,6 +5,9 @@ using AutoMapper;
 using Posthuman.Core;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Services;
+using System;
+using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.Enums;
 
 namespace Posthuman.Services
 {
@@ -35,10 +38,30 @@ namespace Posthuman.Services
         {
             var eventItem = await unitOfWork.EventItems.GetByIdAsync(id);
 
-            if (eventItem != null)
-                return mapper.Map<EventItemDTO>(eventItem);
+            if (eventItem == null)
+                throw new ArgumentException($"Could not obtain EventItem of ID: {id}.", "id");
 
-            return null;
+            return mapper.Map<EventItemDTO>(eventItem);
+        }
+
+        public async Task<EventItem> CreateEventItem(
+            int userId, 
+            EventType eventType, 
+            EntityType? relatedEntityType, 
+            int? relatedEntityId, 
+            int expGained = 0)
+        {
+            var eventItem = new EventItem(
+                userId, 
+                eventType, 
+                DateTime.Now, 
+                relatedEntityType, 
+                relatedEntityId, 
+                expGained);
+
+            await unitOfWork.EventItems.AddAsync(eventItem);
+
+            return eventItem;
         }
     }
 }

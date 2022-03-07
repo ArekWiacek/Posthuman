@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
     Card, CardContent, CardMedia, Typography,
-    Divider, Stack, LinearProgress, Box
+    Divider, Stack, LinearProgress, Box, Button
 } from '@mui/material';
-import { AvatarContext } from "../../App";
+import useAvatar from '../../Hooks/useAvatar';
 
-const AvatarView = ({ avatar, viewMode }) => {
-    const { activeAvatar } = useContext(AvatarContext);
+const AvatarView = ({ viewMode }) => {
+    const { avatar, setAvatar } = useAvatar();
 
     const calculateNewLevelProgress = () => {
-        var levelProgress = ((activeAvatar.exp - activeAvatar.expToCurrentLevel) / (activeAvatar.expToNewLevel - activeAvatar.expToCurrentLevel)) * 100;
+        var levelProgress = ((avatar.exp - avatar.expToCurrentLevel) / (avatar.expToNewLevel - avatar.expToCurrentLevel)) * 100;
         return Math.round(levelProgress);
     };
 
@@ -48,16 +48,17 @@ const AvatarView = ({ avatar, viewMode }) => {
     };
 
     return (
-        <Card sx={{ maxWidth: 400, mb: 3  }}>
+        <Card sx={{ mb: 3  }}>
             <CardMedia
                 component="img"
                 height="140"
                 image="/Assets/Images/cyborg_brain.jpg"
                 alt="Cyborg brain" />
             <CardContent>
-                <Typography gutterBottom variant="h4" component="div">
-                    {avatar.name}
+                <Typography variant="h4" component="div">
+                    {avatar.name ? avatar.name : '[Name]'}
                 </Typography>
+                <Divider />
                 <Typography variant="h3" component="div">
                     {avatar.level} lvl
                 </Typography>

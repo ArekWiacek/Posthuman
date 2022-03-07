@@ -4,7 +4,7 @@ using Posthuman.Core.Models.Entities;
 
 namespace Posthuman.Data.Configurations
 {
-    public class TodoItemConfiguration  : IEntityTypeConfiguration<TodoItem>
+    public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
     {
         public void Configure(EntityTypeBuilder<TodoItem> builder)
         {
@@ -22,15 +22,22 @@ namespace Posthuman.Data.Configurations
                 .HasForeignKey(ti => ti.ProjectId)
                 .IsRequired(false);
 
-            builder
-                .HasOne<Avatar>(todoItem => todoItem.Avatar)
-                .WithMany(avatar => avatar.TodoItems);
+            //builder
+            //    .HasOne(todoItem => todoItem.Avatar)
+            //    .WithMany(avatar => avatar.TodoItems);
 
             builder
                 .HasOne(ti => ti.Parent)
                 .WithMany(p => p.Subtasks)
                 .HasForeignKey(ti => ti.ParentId)
                 .IsRequired(false);
+
+            builder
+                    .HasOne(ti => ti.TodoItemCycle)
+                    .WithOne(tic => tic.TodoItem)
+                    .HasForeignKey<TodoItem>(ti => ti.TodoItemCycleId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("TodoItems");
         }

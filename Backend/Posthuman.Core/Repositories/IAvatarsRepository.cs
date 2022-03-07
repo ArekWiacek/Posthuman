@@ -5,6 +5,6 @@ namespace Posthuman.Core.Repositories
 {
     public interface IAvatarsRepository : IRepository<Avatar>
     {
-        Task<Avatar> GetActiveAvatarAsync();
+        Task<Avatar> GetAvatarForUserAsync(int userId);
     }
 }

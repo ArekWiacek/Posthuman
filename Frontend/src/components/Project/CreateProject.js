@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -9,10 +9,10 @@ import { LogW } from '../../Utilities/Utilities';
 
 
 const CreateProject = ({ onCreateProject }) => {
-    const { activeAvatar } = React.useContext(AvatarContext);
-    const [title, setTitle] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [startDate, setStartDate] = React.useState(new Date());
+    const { activeAvatar } = {};//React.useContext(AvatarContext);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [startDate, setStartDate] = useState(new Date());
 
     const handleTitleChange = event => setTitle(event.target.value);
     const handleDescriptionChange = event => setDescription(event.target.value);

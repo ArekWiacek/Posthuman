@@ -10,11 +10,15 @@
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.1.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Posthuman.Core\Posthuman.Core.csproj" />
     <ProjectReference Include="..\Posthuman.RealTime\Posthuman.RealTime.csproj" />
+    <ProjectReference Include="..\Posthuman.Shared\Posthuman.Shared.csproj" />
   </ItemGroup>
 
 </Project>

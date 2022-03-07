@@ -22,12 +22,11 @@ namespace Posthuman.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> GetBlogPosts()
+        public async Task<IEnumerable<BlogPostDTO>> GetPublishedPostsAsync()
         {
-            var blogPosts = await unitOfWork.BlogPosts.GetAllAsync();
-            blogPosts = blogPosts.OrderByDescending(bp => bp.PublishDate);
-            var blogPostsMapped = mapper.Map<IEnumerable<BlogPost>, IEnumerable<BlogPostDTO>>(blogPosts);
-            return blogPostsMapped;
+            var publishedPosts = await unitOfWork.BlogPosts.GetPublishedPostsAsync();
+            publishedPosts = publishedPosts.OrderByDescending(bp => bp.PublishDate);
+            return mapper.Map<IEnumerable<BlogPost>, IEnumerable<BlogPostDTO>>(publishedPosts);
         }
     }
 }

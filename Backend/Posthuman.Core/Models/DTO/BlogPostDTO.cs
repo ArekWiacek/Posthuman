@@ -4,9 +4,6 @@ namespace Posthuman.Core.Models.DTO
 {
     public class BlogPostDTO
     {
-        public int Id { get; set; }
-        public string ImageUrl { get; set; }
-
         public BlogPostDTO()
         {
             ImageUrl = "";
@@ -17,12 +14,16 @@ namespace Posthuman.Core.Models.DTO
             Author = "";
         }
 
+        public int Id { get; set; }
+        public string ImageUrl { get; set; }
+
         public string Author { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string AdditionalText { get; set; }
         public string Content { get; set; }
         public DateTime CreationDate { get; set; }
-        public DateTime PublishDate { get; set; }
+        public DateTime? PublishDate { get; set; }
+        public bool IsPublished { get; set; }
     }
 }

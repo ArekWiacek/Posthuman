@@ -6,7 +6,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import { styled } from "@mui/material/styles";
-import NavigationList from "./NavigationList";
+import NavigationList from "./Navigation/NavigationList";
 
 const drawerWidth = 240;
 

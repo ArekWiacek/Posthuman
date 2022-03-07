@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Posthuman.Core.Exceptions;
 
 namespace Posthuman.WebApi.Middleware
 {
+    /// <summary>
+    /// Custom global handler catching all exceptions
+    /// </summary>
     public class ExceptionHandlingMiddleware
     {
         public RequestDelegate requestDelegate;
@@ -21,6 +25,10 @@ namespace Posthuman.WebApi.Middleware
             try
             {
                 await requestDelegate(context);
+            }
+            catch(BadRequestException ex)
+            {
+                await HandleException(context, ex, logger);
             }
             catch(Exception ex)
             {

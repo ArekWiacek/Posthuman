@@ -4,7 +4,11 @@
     {
         None = 0,
 
-        TodoItem = 1,
-        Project = 2
+        User = 1,
+        Avatar = 2,
+
+        TodoItem = 3,
+        Project = 4
     }
+
 }

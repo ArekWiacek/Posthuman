@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
-import { Box, Grid, Fab } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+import {  Grid, Typography } from '@mui/material';
 import moment from 'moment';
-import { AvatarContext, ConnectionContext } from "../App";
+import UserContext from "../Context/UserContext";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
@@ -12,11 +10,13 @@ import CreateTodoItemModal from '../components/TodoItem/Modals/CreateTodoItemMod
 import EditTodoItemModal from '../components/TodoItem/Modals/EditTodoItemModal';
 import Api from '../Utilities/ApiHelper';
 import * as ArrayHelper from '../Utilities/ArrayHelper';
-import { LogI, LogE, LogW } from '../Utilities/Utilities';
+import { LogI, LogE } from '../Utilities/Utilities';
 import DeleteTodoItemModal from '../components/TodoItem/Modals/DeleteTodoItemModal';
 import AvatarView from '../components/Avatar/AvatarView';
-import SelectAvatar from '../components/Avatar/SelectAvatar';
+// import SelectAvatar from '../components/Avatar/SelectAvatar';
 import NotificationsPanel from '../components/Notifications/NotificationsPanel';
+import useDisplayOptions from '../Hooks/useDisplayOptions';
+import useAuth from '../Hooks/useAuth';
 
 moment.updateLocale("pl", {
     week: {
@@ -32,16 +32,41 @@ function todoItemFormInitialValues() {
         deadline: new Date(),
         projectId: null,
         avatarId: null,
-        parentId: null
+        parentId: null,
+        isCyclic: false,
+        startDate: new Date(),
+        endDate: null
     }
 }
 
+const defaultUser = { 
+    name: 'Major Suchodolski', 
+    level: 3, 
+    bio: 'Psznie jem', 
+    exp: 345, 
+    expToNewLevel: 400, 
+    cybertribeName: 'Szczury wodne' 
+};
+
 const TodoPage = () => {
     const todoItemsEndpointName = "TodoItems";
+    const [displayOptions] = useDisplayOptions();
+    const [avatar, setAvatar] = useState(defaultUser);
+    const { user } = useAuth();
+    
+    useEffect(() => {
+        console.log("TodoPage-useEffect");
 
-    const { activeAvatar } = useContext(AvatarContext);
+        Api.Get("Avatars/GetAvatarForLoggedUser", data => {
+            if (data !== undefined && data.id !== undefined && data.id !== 0) {
+                setAvatar(data);
+            }
+        }, error => 
+            LogE("zjebao sie", error.toJSON()));
+    }, [user]);
 
-    const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(3));
+
+    const [todoItems, setTodoItems] = useState(CreateDummyTodoItems(5));
     const [projects, setProjects] = useState(CreateDummyProjects(2));
     const [todoItemToEdit, setTodoItemToEdit] = useState(todoItemFormInitialValues());
     const [todoItemToDelete, setTodoItemToDelete] = useState(todoItemFormInitialValues());
@@ -69,6 +94,8 @@ const TodoPage = () => {
                 newArray = ArrayHelper.InsertObjectAtIndex(todoItems, createdTodoItem, parentIndex + 1);
             }
             setTodoItems(newArray);
+        }, (error) => {
+            console.error(error);
         });
 
         setModalVisible('create', false);
@@ -177,27 +204,40 @@ const TodoPage = () => {
     const closeEditTodoItemModal = () => setModalVisible('edit', false);
     const closeDeleteTodoItemModal = () => setModalVisible('delete', false);
 
-    
-    useEffect(() => {
-        Api.Get("Projects", projects => setProjects(projects));
-    }, [activeAvatar]);
+    // useEffect(() => {
+    //     Api.Get("Projects", projects => setProjects(projects));
+    // }, [currentUser]);
 
     useEffect(() => {
-        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
-            setTodoItems(todoItems);
-        });
-    }, [activeAvatar]);
+        getTodoItems();
+    }, [user, displayOptions]);
 
-    
-    // Temporary lame method for refreshing whole todo items collection when changes occured
-    const refreshTodoItemsCollection = () => {
-        Api.Get(todoItemsEndpointName + "/Hierarchical", todoItems => {
+    const getTodoItems = () => {
+        let endpointName = '';
+
+        if(displayOptions.displayMode === 'flat')
+            endpointName = todoItemsEndpointName;
+        else if(displayOptions.displayMode === 'hierarchical')
+            endpointName = todoItemsEndpointName + '/Hierarchical';
+        else if(displayOptions.displayMode === 'dayByDay')
+            endpointName = todoItemsEndpointName + '/ByDeadline/';
+            
+
+        //let endpointName = displayOptions.displayMode === 'flat' ? todoItemsEndpointName : todoItemsEndpointName + "/Hierarchical";
+        LogI(`TodoPage: Getting todo items list! Endpoint: ${endpointName}`);
+
+        Api.Get(endpointName, todoItems => {
             setTodoItems(todoItems);
         });
     };
 
+    // Temporary lame method for refreshing whole todo items collection when changes occured
+    const refreshTodoItemsCollection = () => {
+        getTodoItems(displayOptions.displayMode);
+    };
+
     return (
-        <React.Fragment>
+        <React.Fragment>            
             <Grid container spacing={3}>
                 {/* LIST VIEW */}
                 <Grid item xs={12} md={8} lg={9}>
@@ -211,7 +251,7 @@ const TodoPage = () => {
                         onOpenCreateTodoModal={openCreateTodoItemModal} />
                 </Grid>
                 <Grid item xs={12} md={4} lg={3}>
-                    <AvatarView avatar={activeAvatar} viewMode='minimal'/> 
+                    <AvatarView avatar={avatar} viewMode='minimal'/>
                     <NotificationsPanel />
                     {/* />
                     <SelectAvatar isMini /> */}

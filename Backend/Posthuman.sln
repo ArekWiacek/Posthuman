@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.Shared", "Posthum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.RealTime", "Posthuman.RealTime\Posthuman.RealTime.csproj", "{B413104C-B54D-4E57-90B6-8CB37B42D2A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E0E9DF22-22E5-497C-BA2D-B107C4233203}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posthuman.Services.Tests", "Tests\Posthuman.Services.Tests\Posthuman.Services.Tests.csproj", "{693432C3-E425-4228-879F-5E44C797BF2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,9 +49,16 @@ Global
 		{B413104C-B54D-4E57-90B6-8CB37B42D2A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B413104C-B54D-4E57-90B6-8CB37B42D2A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B413104C-B54D-4E57-90B6-8CB37B42D2A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{693432C3-E425-4228-879F-5E44C797BF2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{693432C3-E425-4228-879F-5E44C797BF2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{693432C3-E425-4228-879F-5E44C797BF2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{693432C3-E425-4228-879F-5E44C797BF2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{693432C3-E425-4228-879F-5E44C797BF2A} = {E0E9DF22-22E5-497C-BA2D-B107C4233203}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC77B4E1-C319-4E49-9445-3416E6410650}

@@ -11,6 +11,11 @@ namespace Posthuman.Data.Configurations
             builder
                 .HasKey(a => a.Id);
 
+            //builder
+            //    .HasOne(a => a.User)
+            //    .WithOne(u => u.Avatar)
+            //    .HasForeignKey<Avatar>(a => a.UserId);
+
             builder.ToTable("Avatars");
         }
     }

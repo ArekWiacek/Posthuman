@@ -18,16 +18,16 @@ namespace Posthuman.Data.Repositories
             get { return Context; }
         }
 
-        public async Task<Avatar> GetActiveAvatarAsync()
+        public async Task<Avatar> GetAvatarForUserAsync(int userId)
         {
-            var avatar = await 
+            var avatar = await
                 AvatarsDbContext
                 .Avatars
-                .Where(a => a.IsActive == true)
+                .Where(a => a.UserId == userId)
                 .FirstOrDefaultAsync();
 
             if (avatar == null)
-                throw new Exception();
+                throw new ArgumentException($"Avatar for user with userId: {userId} was not found.", "userId");
 
             return avatar;
         }

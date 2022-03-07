@@ -13,24 +13,26 @@ namespace Posthuman.Core.Models.Entities
     public class EventItem
     {
         public EventItem(
-            int avatarId,
+            int userId,
             EventType type,
             DateTime occured,
             EntityType? relatedEntityType = null,
-            int? relatedEntityId = null)
+            int? relatedEntityId = null,
+            int expGained = 0)
         {
-            AvatarId = avatarId;
+            UserId = userId;
             Type = type;
             Occured = occured;
 
             RelatedEntityType = relatedEntityType;
             RelatedEntityId = relatedEntityId;
+            ExpGained = expGained;
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int AvatarId { get; set; }               // Owner
+
+        public int UserId { get; set; }
+
         public EventType Type { get; set; }             // Type of event, "what happened"
         public DateTime Occured { get; set; }           // When happened
 

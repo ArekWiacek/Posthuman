@@ -52,6 +52,11 @@ namespace Posthuman.Services.Helpers
                     notification.Text = $"{avatar.Name} created new task: '{todoItem.Title}'";
                     break;
 
+                case EventType.TodoItemCyclicCreated:
+                    notification.Title = "Repeating task created";
+                    notification.Text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
+                    break;
+
                 case EventType.TodoItemDeleted:
                     notification.Title = "Task deleted";
                     notification.Text = $"{avatar.Name} deleted task: '{todoItem.Title}'";
@@ -70,12 +75,18 @@ namespace Posthuman.Services.Helpers
                     notification.SecondText = $"Some second text";
                     break;
 
-                case EventType.LevelGained:
+                case EventType.AvatarLevelGained:
                     notification.Title = $"{avatar.Name}";
                     notification.Reward = $"Level {avatar.Level}";
                     //notification.Subtitle = $"Level {avatar.Level}";
                     notification.Text = $"{avatar.Name} reached {avatar.Level}. Next level at {avatar.ExpToNewLevel} XP.";
                     notification.SecondText = $"Some second text";
+                    break;
+
+                case EventType.CardDiscovered:
+                    notification.Title = "New card discovered!";
+                    notification.Reward = "New card";
+                    notification.Text = $"{avatar.Name} discovered new card. Go to cards page to see it!.";
                     break;
             }
 

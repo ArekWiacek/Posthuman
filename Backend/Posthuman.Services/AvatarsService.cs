@@ -9,6 +9,9 @@ using Posthuman.Core.Services;
 using Posthuman.RealTime.Notifications;
 using Posthuman.Services.Helpers;
 using System;
+using Posthuman.Core.Models.Enums;
+using Posthuman.Core.Exceptions;
+using Posthuman.Core.Models.DTO.Avatar;
 
 namespace Posthuman.Services
 {
@@ -16,48 +19,50 @@ namespace Posthuman.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly IEventItemsService eventItemsService;
         private readonly INotificationsService notificationsService;
+        private readonly ITechnologyCardsService rewardCardsService;
+        private readonly ExperienceManager expManager;
 
-        public AvatarsService(IUnitOfWork unitOfWork, IMapper mapper,
-            INotificationsService notificationsService)
+        public AvatarsService(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper,
+            IEventItemsService eventItemsService,
+            INotificationsService notificationsService,
+            ITechnologyCardsService rewardCardsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.eventItemsService = eventItemsService;
             this.notificationsService = notificationsService;
+            this.rewardCardsService = rewardCardsService;
+            expManager = new ExperienceManager();
         }
 
-        public async Task<AvatarDTO> GetActiveAvatar()
+        public async Task<AvatarDTO> GetAvatarByUserId(int userId)
         {
-            var activeAvatars = unitOfWork
-                .Avatars
-                .Find(a => a.IsActive);
+            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
 
-            var activeAvatar = await unitOfWork.Avatars.GetActiveAvatarAsync();
-
-            if (activeAvatar == null)
+            if (avatar == null)
                throw new ArgumentNullException("avatar");
 
-            var mapped = mapper.Map<AvatarDTO>(activeAvatar);
+            return mapper.Map<AvatarDTO>(avatar);
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(
-                activeAvatar,
-                $"{activeAvatar.Name}",
-                "",//$"[{activeAvatar.Name}]: systems ready",
-                $"[{activeAvatar.Name}]: XP: {activeAvatar.Exp}   Level: [{activeAvatar.Level}]",
-                "Some more bullshit",
-                "Activated")); ;
+            //notificationsService.AddNotification(NotificationsHelper.CreateNotification(
+            //    avatar,
+            //    $"{avatar.Name}",
+            //    "",//$"[{activeAvatar.Name}]: systems ready",
+            //    $"[{avatar.Name}]: XP: {avatar.Exp}   Level: [{avatar.Level}]",
+            //    "Some more bullshit",
+            //    "Activated")); ;
 
-            await notificationsService.SendAllNotifications();
-
-            return mapped;
+            //await notificationsService.SendAllNotifications();
         }
         
         public async Task<IEnumerable<AvatarDTO>> GetAllAvatars()
         {
             var allAvatars = await unitOfWork.Avatars.GetAllAsync();
-
             var allMapped = mapper.Map<IEnumerable<Avatar>, IEnumerable<AvatarDTO>>(allAvatars);
-
             return allMapped.ToList();
         }
 
@@ -65,61 +70,122 @@ namespace Posthuman.Services
         {
             var avatar = await unitOfWork.Avatars.GetByIdAsync(id);
 
-            if (avatar != null)
-                return mapper.Map<AvatarDTO>(avatar);
+            if (avatar == null)
+                throw new ArgumentException($"Failed to obtain avatar for user of ID: {id}");
 
-            return null;
+            return mapper.Map<AvatarDTO>(avatar);
         }
 
-        public async Task DeactivateAllAvatars()
+        public async Task<Avatar> CreateNewAvatar(int userId, string name)
         {
-            var activeAvatars = unitOfWork
-                .Avatars
-                .Find(a => a.IsActive);
+            var avatar = new Avatar();
+            avatar.CreationDate = DateTime.Now;
+            avatar.UserId = userId;
+            avatar.Name = name;
+            avatar.Bio = "Write your own story bro";
 
-            foreach (var activeAvatar in activeAvatars)
-                activeAvatar.IsActive = false;
+            SetExperienceNeededForLevel(avatar, 1);
 
-            await unitOfWork.CommitAsync();
+            return avatar;
+
+            //await unitOfWork.Avatars.AddAsync(newAvatar);
+            // notificationsService.AddNotification(NotificationsHelper.CreateNotification(newAvatar, $"Avatar of name {newAvatar.Name} created."));
         }
 
-        public async Task SetActiveAvatar(int id)
+        //public async Task<Avatar> AddAvatar(Avatar avatar)
+        //{
+        //    await unitOfWork.Avatars.AddAsync(avatar);
+        //}
+
+        private async Task<bool> VerifyIfOwner(int userId, int avatarId)
         {
-            var avatarToActivate = await unitOfWork.Avatars.GetByIdAsync(id);
+            var user = await unitOfWork.Users.GetByIdAsync(userId);
+            var avatar = await unitOfWork.Avatars.GetByIdAsync(avatarId);
 
-            if (avatarToActivate != null && !avatarToActivate.IsActive)
-            {
-                await DeactivateAllAvatars();
-
-                avatarToActivate.IsActive = true;
-
-                await unitOfWork.CommitAsync();
-            }
-        }
-
-        public async Task UpdateAvatar(AvatarDTO avatarDTO)
-        {
-            var avatar = await unitOfWork.Avatars.GetByIdAsync(avatarDTO.Id);
+            if (user == null)
+                throw new ArgumentNullException("userId", $"Could not obtain user of id: {userId}");
 
             if (avatar == null)
-                return;
+                throw new ArgumentNullException("avatarId", $"Could not obtain avatar of id: {avatarId} for user of id: {userId}");
 
-            if(avatar.IsActive != avatarDTO.IsActive)
-            {
-                var allAvatars = await unitOfWork.Avatars.GetAllAsync();
+            if (user.Id != avatar.UserId)
+                throw new BadRequestException($"Provided user (ID: {userId}) is not owner of avatar of ID: {avatarId}");
 
-                foreach(var av in allAvatars)
-                {
-                    if(av.IsActive == true)
-                    {
-                        av.IsActive = false;
-                    }
-                }    
+            return true;
+        }
 
-                avatar.IsActive = avatarDTO.IsActive;
-            }
+        public async Task<AvatarDTO> UpdateAvatar(UpdateAvatarDTO updateAvatarDTO)
+        {
+            var user = await unitOfWork.Users.GetByIdAsync(updateAvatarDTO.UserId);
+            var avatar = await unitOfWork.Avatars.GetByIdAsync(updateAvatarDTO.Id);
 
             await unitOfWork.CommitAsync();
+
+            return mapper.Map<AvatarDTO>(avatar);
+        }
+
+        public async Task UpdateAvatarGainedExp(Avatar avatar, int exp)
+        {
+            // Add event of completion
+            var experienceGainedEvent = new EventItem(
+                avatar.Id,
+                EventType.AvatarExpGained,
+                DateTime.Now,
+                expGained: exp);
+
+            await unitOfWork.EventItems.AddAsync(experienceGainedEvent);
+
+            avatar.Exp += exp;
+
+            if (avatar.Exp >= avatar.ExpToNewLevel)
+            {
+                await UpdateAvatarGainedLevel(avatar);
+            }
+
+        }
+
+        public async Task UpdateAvatarGainedLevel(Avatar avatar)
+        {
+            avatar.Level++;
+            
+            SetExperienceNeededForLevel(avatar, avatar.Level);
+
+            var avatarLevelGainedEvent = new EventItem(
+                avatar.Id,
+                EventType.AvatarLevelGained,
+                DateTime.Now);
+
+            await unitOfWork.EventItems.AddAsync(avatarLevelGainedEvent);
+
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarLevelGainedEvent));
+
+            if(await HasAvatarDiscoveredNewCard(avatar))
+            {
+                var avatarCardDiscoveredEvent = new EventItem(
+                    avatar.Id,
+                    EventType.CardDiscovered,
+                    DateTime.Now);
+
+                await unitOfWork.EventItems.AddAsync(avatarCardDiscoveredEvent);
+
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarCardDiscoveredEvent));
+
+            }
+        }
+
+        public async Task<bool> HasAvatarDiscoveredNewCard(Avatar avatar)
+        {
+            var cardsEnabledToCurrentLevel = await rewardCardsService.GetTechnologyCardsForAvatar(avatar.Id);
+            var cardEnabledByCurrentLevel = cardsEnabledToCurrentLevel.Where(card => card.RequiredLevel == avatar.Level);
+            return cardEnabledByCurrentLevel != null;
+        }
+
+
+        private void SetExperienceNeededForLevel(Avatar avatar, int level)
+        {
+            var expRangeForLevel = expManager.GetExperienceRangeForLevel(level);
+            avatar.ExpToCurrentLevel = expRangeForLevel.StartXp;
+            avatar.ExpToNewLevel = expRangeForLevel.EndXp;
         }
     }
 }

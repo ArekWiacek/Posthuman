@@ -4,59 +4,69 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Posthuman.Core.Services;
 using Posthuman.Core.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Posthuman.WebApi.Extensions;
+using System;
 
 namespace PosthumanWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TodoItemsController : ControllerBase
     {
         private readonly ILogger<TodoItemsController> logger;
         private readonly ITodoItemsService todoItemsService;
-
+        
         public TodoItemsController(
             ILogger<TodoItemsController> logger,
             ITodoItemsService todoItemsService) 
         {
             this.logger = logger;
             this.todoItemsService = todoItemsService;
-
-            //GlobalHost
         }
 
         /// GET: api/TodoItems
-        /// <summary>
-        ///     Returns list of TodoItems for active Avatar
-        /// </summary>
+        /// Returns list of TodoItems for current user
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
-            var allTodoItems = await
+            var userTodoItems = await
                 todoItemsService
-                .GetAllTodoItemsForActiveAvatar();
+                .GetAllTodoItems(this.GetCurrentUserId());
 
-            return Ok(allTodoItems);
+            return Ok(userTodoItems);
         }
 
         /// GET: api/TodoItems/Hierarchical
-        /// <summary>
-        ///     Returns flat list of TodoItems for active Avatar
-        ///     List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
-        /// </summary>
+        /// Returns flattened list of TodoItems for current user
+        /// List is sorted by hierarchy (top-level TodoItems first, then recursively it's subtasks)
         [HttpGet("Hierarchical")]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsHierarchical()
         {
             var allTodoItems = await
                 todoItemsService
-                .GetTodoItemsHierarchical();
+                .GetAllTodoItemsHierarchical(this.GetCurrentUserId());
 
             return Ok(allTodoItems);
         }
 
+
+
+        /// GET: api/TodoItems/ByDeadline/04-03-2022
+        /// Returns list of TodoItems scheduled for current user for given date
+        [HttpGet("ByDeadline/{deadline}")]
+        public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsByDeadline(DateTime deadline)
+        {
+            var todoItemsByDeadline = await
+                todoItemsService
+                .GetTodoItemsByDeadline(this.GetCurrentUserId(), deadline);
+
+            return Ok(todoItemsByDeadline);
+        }
+
         /// GET: api/TodoItem/5
-        /// <summary>
-        ///     Returns TodoItem of given ID
-        /// </summary>
+        /// Returns TodoItem of given ID
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(int id)
         {
@@ -69,21 +79,17 @@ namespace PosthumanWebApi.Controllers
         }
 
         /// POST: api/TodoItem
-        /// <summary>
-        ///     Creates new TodoItem with all backend logic
-        /// </summary>
+        /// Creates new TodoItem with all backend logic
         [HttpPost]
-        public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(TodoItemDTO todoItemDTO)
+        public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(CreateTodoItemDTO createTodoItemDTO)
         {
-            var createdTodoItemDTO = await todoItemsService.CreateTodoItem(todoItemDTO);
-
-            return CreatedAtAction(nameof(GetTodoItem), new { id = createdTodoItemDTO.Id }, createdTodoItemDTO);
+            var userId = this.GetCurrentUserId();
+            var todoItemDTO = await todoItemsService.CreateTodoItem(userId, createTodoItemDTO);
+            return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDTO.Id }, todoItemDTO);
         }
 
         /// PUT: api/TodoItem/5
-        /// <summary>
-        ///     Updates TodoItem with all backend logic
-        /// </summary>
+        /// Updates TodoItem with all backend logic
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodoItem(int id, TodoItemDTO todoItemDTO)
         {
@@ -101,15 +107,15 @@ namespace PosthumanWebApi.Controllers
             if (id != todoItemDTO.Id)
                 return BadRequest();
 
+            //var userId = this.GetCurrentUserId();
+
             await todoItemsService.CompleteTodoItem(todoItemDTO);
 
             return NoContent();
         }
 
         /// DELETE: api/TodoItem/5
-        /// <summary>
-        ///     Deletes TodoItem with all backend logic
-        /// </summary>
+        /// Deletes TodoItem with all backend logic
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {
