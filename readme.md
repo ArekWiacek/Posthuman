@@ -77,7 +77,7 @@ Other useful files:
 ### Creating task
 ![Screenshot2](https://user-images.githubusercontent.com/10595928/157107735-6b7b6294-8b7c-44c0-b57f-77486610f6a7.png)
 
-### Task actions view modes
+### Action buttons or actions menu?
 ![Screenshot10](https://user-images.githubusercontent.com/10595928/157114498-839eb5a2-713c-41d8-9cdf-37d78a0d4367.png)
 ![Screenshot11](https://user-images.githubusercontent.com/10595928/157114510-5ea67fee-b709-4ead-b936-95234acf9a19.png)
 
