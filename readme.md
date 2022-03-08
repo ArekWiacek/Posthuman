@@ -1,5 +1,5 @@
 # Posthuman
-Task planner combined with futuristic gamification system
+Awesome TODO list combined with futuristic gamification system
 
 ## Features
 - Todo List 
@@ -7,7 +7,7 @@ Task planner combined with futuristic gamification system
   - Creating, editing and managing tasks
   - Nesting tasks to create complex goals
   - Different views - tree, flat, day-by-day
-  - Actions menu in two view modes
+  - Actions menu in two view modes 
   
 - Avatar
   - This is gamification part of app - simulates developing RPG character, but here you gain experience by completing real life tasks not by killing monsters :)
