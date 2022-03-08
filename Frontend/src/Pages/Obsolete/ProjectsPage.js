@@ -6,13 +6,12 @@ import EditProject from '../../components/Project/EditProject';
 import ProjectView from '../../components/Project/ProjectView';
 import ProjectsList from '../../components/Project/ProjectsList';
 
-import { UserContext } from "../../App";
 import { CreateDummyProject, CreateDummyProjects } from '../../Utilities/DummyObjects';
 
 import Api from '../../Utilities/ApiHelper';
 
 const ProjectsPage = () => {
-  const { currentUser } = null;//  TODO useContext(UserContext);
+  const { currentUser } = null;
   const [projects, setProjects] = useState(CreateDummyProjects(4));
   const [isProjectInEditMode, setIsProjectInEditMode] = useState(false);
   const [currentProject, setCurrentProject] = useState(CreateDummyProject());
