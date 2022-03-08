@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import { accountService } from '../../Services';
-
 function Home() {
     const [mounted, setMounted] = useState(false);
     const [accounts, setAccounts] = useState(null);
     
     seEffect(() => {
         setMounted(true);
-        accountService.getAll().then(x => setAccounts(x));
+        //accountService.getAll().then(x => setAccounts(x));
 
         return () => setMounted(false);
     }, []);
@@ -22,11 +20,11 @@ function Home() {
         }));
 
         // delete account
-        accountService.delete(id).then(() => {
-            if (mounted) {
-                setAccounts(accounts.filter(x => x.id !== id));
-            }
-        });
+        // accountService.delete(id).then(() => {
+        //     if (mounted) {
+        //         setAccounts(accounts.filter(x => x.id !== id));
+        //     }
+        // });
     }
 
     return (

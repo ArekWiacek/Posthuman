@@ -8,12 +8,12 @@ const initialAvatarContext = {
 };
 
 const defaultUser = { 
-    name: 'Major Suchodolski', 
+    name: 'Some exampleplayer', 
     level: 3, 
-    bio: 'Psznie jem', 
+    bio: 'Some example bio', 
     exp: 345, 
     expToNewLevel: 400, 
-    cybertribeName: 'Szczury wodne' 
+    cybertribeName: 'Transhumanist' 
 };
 
 const AvatarContext = createContext(initialAvatarContext);

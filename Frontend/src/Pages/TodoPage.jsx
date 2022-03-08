@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import {  Grid, Typography } from '@mui/material';
 import moment from 'moment';
-import UserContext from "../Context/UserContext";
 import { CreateDummyTodoItems, CreateDummyProjects } from '../Utilities/DummyObjects';
 import TodoItemList from '../components/TodoItem/TodoItemsList/TodoItemsList';
 import ConfirmTodoItemDoneModal from '../components/TodoItem/Modals/ConfirmTodoItemDoneModal';
@@ -40,12 +39,12 @@ function todoItemFormInitialValues() {
 }
 
 const defaultUser = { 
-    name: 'Major Suchodolski', 
+    name: 'Some example player', 
     level: 3, 
-    bio: 'Psznie jem', 
+    bio: 'Some example bio', 
     exp: 345, 
     expToNewLevel: 400, 
-    cybertribeName: 'Szczury wodne' 
+    cybertribeName: 'Transhumanist'
 };
 
 const TodoPage = () => {

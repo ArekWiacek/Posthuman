@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { accountService } from '../Services';
-
+//import { accountService } from '../Services';
 
 const initFacebookSdk = () => {
     return new Promise(resolve => {
@@ -15,7 +14,7 @@ const initFacebookSdk = () => {
             // Auto authenticate with the api if already logged in with facebook
             window.FB.getLogInStatus(({ authResponse }) => {
                 if(authResponse) {
-                    accountService.apiAuthenticate(authResponse.accessToken).then(resolve);
+                    //accountService.apiAuthenticate(authResponse.accessToken).then(resolve);
                 } else {
                     resolve();
                 }
