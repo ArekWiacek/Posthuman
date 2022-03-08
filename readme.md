@@ -69,7 +69,7 @@ Other useful files:
 - [ArrayHelper.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Utilities/ArrayHelper.js) - Cool helper for dealing with arrays
 
 
-## Screenshots
+## Screenshots (click to see in original size) 
 
 ### Todo List
 ![Screenshot1](https://user-images.githubusercontent.com/10595928/157107573-4ac8352e-f748-439a-998d-302beced0a31.png)
