@@ -28,7 +28,7 @@ Task planner combined with futuristic gamification system
   - Database @ MS SQL 
 
 ## Example files to check 
-** If you are recruiter and you want to have general overview on coding style and approach here are some example files to look at. **
+**If you are recruiter and you want to have general overview on coding style and approach here are some example files to look at.**
 
 ### TodoItem
 TodoItem is fundamental entity in whole application. It represents single "to-do" task. Below there is set of files that are responsible for managing TodoItems on backend side. 
@@ -52,6 +52,8 @@ TodoItem is fundamental entity in whole application. It represents single "to-do
 
 - [AuthenticationService.cs](https://github.com/ArekWiacek/Posthuman/blob/master/Backend/Posthuman.Services/AuthenticationService.cs)
 - [NotificationsService.cs](https://github.com/ArekWiacek/Posthuman/blob/master/Backend/Posthuman.Services/NotificationsService.cs)
+
+## Screenshots
 
 ### Todo List
 ![Screenshot1](https://user-images.githubusercontent.com/10595928/157107573-4ac8352e-f748-439a-998d-302beced0a31.png)
