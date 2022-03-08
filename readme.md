@@ -32,6 +32,7 @@ Task planner combined with futuristic gamification system
 
 ### Backend files
 TodoItem 
+
 TodoItem is fundamental entity in whole application. It represents single "to-do" task. Below there is set of files that are responsible for managing TodoItems on backend side. 
 
 - [TodoItemsController.cs](https://github.com/ArekWiacek/Posthuman/blob/master/Backend/Posthuman.WebApi/Controllers/TodoItemsController.cs)
