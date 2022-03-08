@@ -53,6 +53,25 @@ TodoItem is fundamental entity in whole application. It represents single "to-do
 - [AuthenticationService.cs](https://github.com/ArekWiacek/Posthuman/blob/master/Backend/Posthuman.Services/AuthenticationService.cs)
 - [NotificationsService.cs](https://github.com/ArekWiacek/Posthuman/blob/master/Backend/Posthuman.Services/NotificationsService.cs)
 
+### Frontend files
+TodoItem / TodoList related files:
+- [CreateTodoItemForm.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/components/TodoItem/Forms/CreateTodoItemForm.jsx) - Task creation form
+- [TodoItemsList.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/components/TodoItem/TodoItemsList/TodoItemsList.jsx) - Tasks list
+- [TodoItemsListItem.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/components/TodoItem/TodoItemsList/TodoItemsListItem.jsx) - Tasks list item
+- [TodoItemsActions](https://github.com/ArekWiacek/Posthuman/tree/master/Frontend/src/components/TodoItem/Actions) - Task actions
+- [TodoPage.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Pages/TodoPage.jsx) - Page with todo list - most of tasks-related logic is here
+
+Other useful files:
+- [useAuth.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Hooks/useAuth.jsx) - Authentication hook
+- [authenticationService.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Services/authenticationService.js) - Authentication logic
+- [useAvatar.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Hooks/useAvatar.jsx) - Usage of Global Context
+- [useLocalStorage.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Hooks/useLocalStorage.jsx) - Usage of Local Storage
+- [useSignalR.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Hooks/useSignalR.jsx) - Integration with SignalR
+- [JwtInterceptor.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Interceptors/JwtInterceptor.jsx) - Interceptor for preserving jwt tokens
+- [ApiHelper.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Utilities/ApiHelper.jsx) - Shorthands for calling Web API 
+- [ArrayHelper.jsx](https://github.com/ArekWiacek/Posthuman/blob/master/Frontend/src/Utilities/ArrayHelper.js) - Cool helper for dealing with arrays
+
+
 ## Screenshots
 
 ### Todo List
