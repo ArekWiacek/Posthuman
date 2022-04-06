@@ -8,7 +8,7 @@ const initialAvatarContext = {
 };
 
 const defaultUser = { 
-    name: 'Some exampleplayer', 
+    name: 'Some example player', 
     level: 3, 
     bio: 'Some example bio', 
     exp: 345, 
