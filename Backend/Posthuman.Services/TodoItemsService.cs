@@ -23,7 +23,6 @@ namespace Posthuman.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly ITodoItemsCyclesService todoItemsCyclesService;
         private readonly INotificationsService notificationsService;
         private readonly IAvatarsService avatarsService;
         private readonly IEventItemsService eventItemsService;
@@ -32,14 +31,12 @@ namespace Posthuman.Services
         public TodoItemsService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            ITodoItemsCyclesService todoItemsCyclesService,
             INotificationsService notificationsService,
             IAvatarsService avatarsService,
             IEventItemsService eventItemsService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.todoItemsCyclesService = todoItemsCyclesService;
             this.notificationsService = notificationsService;
             this.avatarsService = avatarsService;
             this.eventItemsService = eventItemsService;
@@ -251,23 +248,23 @@ namespace Posthuman.Services
                 }
 
                 // Repetitive task checked / unchecked
-                if (todoItem.IsCyclic != updatedTodoItemDTO.IsCyclic)
-                {
-                    // Repetition added
-                    if(updatedTodoItemDTO.IsCyclic)
-                    {
-                        var cycleInfo = todoItemsCyclesService.CreateCycleInfo(
-                            (RepetitionPeriod)updatedTodoItemDTO.RepetitionPeriod.Value, 
-                            updatedTodoItemDTO.StartDate.Value, updatedTodoItemDTO.EndDate.Value);
-                        todoItem.TodoItemCycle = cycleInfo;
-                        await unitOfWork.TodoItemsCycles.UpdateAsync(cycleInfo);
-                    }
-                    // Repetition removed
-                    else
-                    {
-                        unitOfWork.TodoItemsCycles.Remove(todoItem.TodoItemCycle);
-                    }
-                }
+                //if (todoItem.IsCyclic != updatedTodoItemDTO.IsCyclic)
+                //{
+                //    // Repetition added
+                //    if(updatedTodoItemDTO.IsCyclic)
+                //    {
+                //        var cycleInfo = todoItemsCyclesService.CreateCycleInfo(
+                //            (RepetitionPeriod)updatedTodoItemDTO.RepetitionPeriod.Value, 
+                //            updatedTodoItemDTO.StartDate.Value, updatedTodoItemDTO.EndDate.Value);
+                //        todoItem.TodoItemCycle = cycleInfo;
+                //        await unitOfWork.TodoItemsCycles.UpdateAsync(cycleInfo);
+                //    }
+                //    // Repetition removed
+                //    else
+                //    {
+                //        unitOfWork.TodoItemsCycles.Remove(todoItem.TodoItemCycle);
+                //    }
+                //}
 
                 var todoItemModifiedEvent = await eventItemsService.CreateEventItem(
                     ownerAvatar.Id, 

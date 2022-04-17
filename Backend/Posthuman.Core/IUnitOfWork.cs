@@ -11,7 +11,6 @@ namespace Posthuman.Core
     {
         IUsersRepository Users { get; }
         ITodoItemsRepository TodoItems { get; }
-        ITodoItemsCyclesRepository TodoItemsCycles { get; }
         IProjectsRepository Projects { get; }
         IEventItemsRepository EventItems { get; }
         IAvatarsRepository Avatars { get; }
@@ -19,6 +18,7 @@ namespace Posthuman.Core
         IRequirementsRepository Requirements { get;  }
         ITechnologyCardsRepository TechnologyCards { get; }
         ITechnologyCardsDiscoveriesRepository TechnologyCardsDiscoveries { get; }
+        IHabitsRepository Habits { get; }
 
         Task<int> CommitAsync();
     }

@@ -15,19 +15,20 @@ namespace Posthuman.Data
         { 
         }
 
+        // Authentication-related models
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<Role> Roles { get; set; } = default!;
 
-
+        // Game-related models
         public DbSet<Avatar> Avatars { get; set; } = default!;
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
-        public DbSet<TodoItemCycle> TodoItemCycles { get; set; } = default!;
         public DbSet<Project> Projects { get; set; } = default!;
         public DbSet<EventItem> EventItems { get; set; } = default!;
         public DbSet<BlogPost> BlogPosts { get; set; } = default!;
         public DbSet<TechnologyCard> TechnologyCards { get; set; } = default!;
         public DbSet<TechnologyCardDiscovery> TechnologyCardsDiscoveries { get; set; } = default!;
         public DbSet<Requirement> Requirements { get; set; } = default!;
+        public DbSet<Habit> Habits { get; set; } = default!;
 
         public static readonly int AvatarId = 2;
         
@@ -37,17 +38,25 @@ namespace Posthuman.Data
             ConfigureEntities(modelBuilder);
             ConfigureEnums(modelBuilder);
 
-
             // TEMP
             modelBuilder.Entity<User>().Property(u => u.Email).IsRequired();
             modelBuilder.Entity<Role>().Property(r => r.Name).IsRequired();
+
+            CreateInitialData(modelBuilder);
+        }
+
+        private void CreateInitialData(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Admin" },
+                new Role { Id = 2, Name = "RegisteredUser" }
+            );
         }
 
         private void ApplyModelConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
-            modelBuilder.ApplyConfiguration(new TodoItemCycleConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         }
 
@@ -55,13 +64,13 @@ namespace Posthuman.Data
         {
             modelBuilder.Entity<Avatar>().ToTable("Avatars");
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");
-            modelBuilder.Entity<TodoItemCycle>().ToTable("TodoItemCycles");
             modelBuilder.Entity<Project>().ToTable("Projects");
             modelBuilder.Entity<EventItem>().ToTable("EventItems");
             modelBuilder.Entity<BlogPost>().ToTable("BlogPosts");
             modelBuilder.Entity<TechnologyCard>().ToTable("TechnologyCards");
             modelBuilder.Entity<TechnologyCardDiscovery>().ToTable("TechnologyCardsDiscoveries");
             modelBuilder.Entity<Requirement>().ToTable("Requirements");
+            modelBuilder.Entity<Habit>().ToTable("Habits");
 
             EnumToNumberConverter<CardCategory, int> converter = new EnumToNumberConverter<CardCategory, int>();
             modelBuilder.Entity<TechnologyCard>()
@@ -83,7 +92,7 @@ namespace Posthuman.Data
                     ret => ret.ToString(),
                     ret => (EntityType)Enum.Parse(typeof(EntityType), ret));
 
-            modelBuilder.Entity<TodoItemCycle>().Property(tic => tic.RepetitionPeriod)
+            modelBuilder.Entity<Habit>().Property(tic => tic.RepetitionPeriod)
                 .HasMaxLength(20)
                 .HasConversion(
                     rp => rp.ToString(),

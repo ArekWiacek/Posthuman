@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.DTO.Avatar;
+using Posthuman.Core.Models.DTO.Habit;
 using Posthuman.Core.Models.Entities;
+using System;
 
 namespace Posthuman.WebApi.Mappings
 {
@@ -17,6 +19,7 @@ namespace Posthuman.WebApi.Mappings
             MapBlogPostModels();
             MapRequirementModels();
             MapTechnologyCardModels();
+            MapHabitsModels();
         }
 
         private void MapUserModels()
@@ -41,9 +44,6 @@ namespace Posthuman.WebApi.Mappings
             CreateMap<TodoItem, TodoItemDTO>();
             CreateMap<TodoItemDTO, TodoItem>();
             CreateMap<CreateTodoItemDTO, TodoItem>();
-
-            CreateMap<TodoItemCycle, TodoItemCycleDTO>();
-            CreateMap<TodoItemCycleDTO, TodoItemCycle>();
         }
 
         private void MapProjectModels()
@@ -77,6 +77,15 @@ namespace Posthuman.WebApi.Mappings
 
             CreateMap<TechnologyCardDiscovery, TechnologyCardDiscoveryDTO>();
             CreateMap<TechnologyCardDiscoveryDTO, TechnologyCardDiscovery>();
+        }
+
+        private void MapHabitsModels()
+        {
+            CreateMap<Habit, CreateHabitDTO>();
+            CreateMap<Habit, HabitDTO>();
+
+            CreateMap<HabitDTO, Habit>();
+            CreateMap<CreateHabitDTO, Habit>();
         }
     }
 }

@@ -34,19 +34,19 @@ namespace Posthuman.Core.Models.Entities
         public DateTime CreationDate { get; set; }  // Date when user created account        
 
 
-
         public int Level { get; set; }              // Avatar level - it grows when gaining experience
         public int Exp { get; set; }                // Experience points
         public int ExpToNewLevel { get; set; }      // When new level will be reached 
         public int ExpToCurrentLevel { get; set; }
 
-        // Owned Projects
+
+        // Owned entities
         [JsonIgnore]
         public virtual ICollection<Project> Projects { get; set; }
-
-        // Owned Todo Items (tasks)
         [JsonIgnore]
         public virtual ICollection<TodoItem> TodoItems { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Habit> Habits { get; set; }
 
 
         // NOT YET SURE... - TEST PROPERTIES :)

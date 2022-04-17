@@ -33,6 +33,18 @@ namespace Posthuman.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "RegisteredUser"
+                        });
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Avatar", b =>
@@ -303,7 +315,7 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AvatarId")
+                    b.Property<int>("AvatarId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CompletionDate")
@@ -480,9 +492,11 @@ namespace Posthuman.Data.Migrations
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItem", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", null)
+                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
                         .WithMany("TodoItems")
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "Parent")
                         .WithMany("Subtasks")

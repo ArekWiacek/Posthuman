@@ -55,7 +55,6 @@ namespace Posthuman.WebApi.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<ITodoItemsRepository, TodoItemsRepository>();
-            services.AddTransient<ITodoItemsCyclesRepository, TodoItemsCyclesRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
             services.AddTransient<IEventItemsRepository, EventItemsRepository>();
             services.AddTransient<IAvatarsRepository, AvatarsRepository>();
@@ -67,7 +66,6 @@ namespace Posthuman.WebApi.Extensions
         {
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<ITodoItemsService, TodoItemsService>();
-            services.AddTransient<ITodoItemsCyclesService, TodoItemsCyclesService>();
             services.AddTransient<IProjectsService, ProjectsService>();
             services.AddTransient<IEventItemsService, EventItemsService>();
             services.AddTransient<IAvatarsService, AvatarsService>();
