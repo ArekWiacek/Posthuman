@@ -219,7 +219,7 @@ const TodoPage = () => {
         else if(displayOptions.displayMode === 'hierarchical')
             endpointName = todoItemsEndpointName + '/Hierarchical';
         else if(displayOptions.displayMode === 'dayByDay')
-            endpointName = todoItemsEndpointName + '/ByDeadline/';
+            endpointName = todoItemsEndpointName + '/ByDeadline/2022-04-06';
             
 
         //let endpointName = displayOptions.displayMode === 'flat' ? todoItemsEndpointName : todoItemsEndpointName + "/Hierarchical";

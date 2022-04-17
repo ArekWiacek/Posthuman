@@ -9,6 +9,7 @@ import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import ScienceIcon from '@mui/icons-material/Science';
 
 import LoginPage from '../../../Pages/LoginPage';
 import InfoPage from '../../../Pages/InfoPage';
@@ -16,6 +17,8 @@ import BlogPage from '../../../Pages/BlogPage';
 import AvatarPage from '../../../Pages/AvatarPage';
 import TodoPage from '../../../Pages/TodoPage';
 import TechnologyCardsPage from '../../../Pages/TechnologyCardsPage';
+
+import LabPage from '../../../Pages/LabPage';
 
 const Routes = [
     {
@@ -59,6 +62,13 @@ const Routes = [
         sidebarTitle: 'Blog',
         sidebarIcon: () => <AnnouncementOutlinedIcon />,
         destinationPage: () => <BlogPage />,
+        isPrivate: false
+    },
+    {
+        path: '/lab',
+        sidebarTitle: 'Lab',
+        sidebarIcon: () => <ScienceIcon />,
+        destinationPage: () => <LabPage />,
         isPrivate: false
     }
     // {

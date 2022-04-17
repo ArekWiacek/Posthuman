@@ -115,20 +115,26 @@ namespace Posthuman.Services
                 .TodoItems
                 .GetAllByUserIdAsync(userId);
 
-            var todoItemsWithDeadline = todoItems.Where(ti => ti.Deadline.HasValue);
-            var todoItemsWithoutDeadline = todoItems.Where(ti => !ti.Deadline.HasValue);
+            var todoItemsWithDeadline = 
+                todoItems
+                    .Where(ti => ti.Deadline.HasValue)
+                    .OrderBy(ti => ti.Deadline.Value);
+            
+            // var todoItemsWithoutDeadline = todoItems.Where(ti => !ti.Deadline.HasValue);
 
             var overduedTodoItems = 
                 todoItemsWithDeadline
-                .Where(ti => (ti.Deadline.Value - DateTime.Now).TotalDays < 0);
+                .Where(ti => (ti.Deadline.Value.Date - DateTime.Now.Date).TotalDays < 0);
 
             var todoItemsForDeadlineDate = 
                 todoItemsWithDeadline
-                .Where(ti => ti.Deadline.Value.Date == deadline)
+                .Where(ti => ti.Deadline.Value.Date == deadline.Date)
                 .OrderBy(ti => ti.Deadline.Value);
 
+            var combined = overduedTodoItems.Concat(todoItemsForDeadlineDate);
+
             var itemsMapped =
-                mapper.Map<IEnumerable<TodoItemDTO>>(todoItemsForDeadlineDate);
+                mapper.Map<IEnumerable<TodoItemDTO>>(combined);
 
             return itemsMapped.ToList();
 
