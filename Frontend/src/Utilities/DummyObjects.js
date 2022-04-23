@@ -62,3 +62,22 @@ export function CreateDummyProjects(howMany) {
     return dummyProjects;
 }
 
+export function CreateDummyHabit() {
+    var dummyHabit = {
+        id: 666,
+        title: "[Dummy habit title]",
+        description: "[Dummy habit description]",
+    };
+
+    return dummyHabit;
+}
+
+export function CreateDummyHabits(howMany) {
+    var dummyHabits = [];
+
+    for(var i = 1 ; i <= howMany ; i++) {
+        dummyHabits.push(CreateDummyHabit());
+    }
+    
+    return dummyHabits;
+}

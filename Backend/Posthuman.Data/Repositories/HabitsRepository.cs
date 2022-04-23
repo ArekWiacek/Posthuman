@@ -18,12 +18,23 @@ namespace Posthuman.Data.Repositories
             get { return Context; }
         }
 
-        public async Task<IEnumerable<Habit>> GetAllByUserIdAsync(int userId)
+        public async Task<Habit> GetByUserId(int id, int userId)
         {
             return await HabitsDbContext
-                .Habits
-                .Where(h => h.UserId == userId)
-                .ToListAsync();
+                   .Habits
+                   .Where(h => h.Id == id & h.UserId == userId)
+                   .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<Habit>> GetAllByUserIdAsync(int userId)
+        {
+            var habits = 
+                await HabitsDbContext
+                .Habits
+                .Where(h => h.UserId == userId).ToListAsync();
+
+            return habits;
+        }
+
     }
 }

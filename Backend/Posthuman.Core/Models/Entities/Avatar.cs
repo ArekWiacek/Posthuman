@@ -42,8 +42,6 @@ namespace Posthuman.Core.Models.Entities
 
         // Owned entities
         [JsonIgnore]
-        public virtual ICollection<Project> Projects { get; set; }
-        [JsonIgnore]
         public virtual ICollection<TodoItem> TodoItems { get; set; }
         [JsonIgnore]
         public virtual ICollection<Habit> Habits { get; set; }

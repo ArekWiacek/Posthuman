@@ -10,9 +10,9 @@ namespace Posthuman.Data
 {
     public class PosthumanContext : DbContext
     {
-        public PosthumanContext(DbContextOptions<PosthumanContext> options) 
+        public PosthumanContext(DbContextOptions<PosthumanContext> options)
             : base(options)
-        { 
+        {
         }
 
         // Authentication-related models
@@ -22,7 +22,6 @@ namespace Posthuman.Data
         // Game-related models
         public DbSet<Avatar> Avatars { get; set; } = default!;
         public DbSet<TodoItem> TodoItems { get; set; } = default!;
-        public DbSet<Project> Projects { get; set; } = default!;
         public DbSet<EventItem> EventItems { get; set; } = default!;
         public DbSet<BlogPost> BlogPosts { get; set; } = default!;
         public DbSet<TechnologyCard> TechnologyCards { get; set; } = default!;
@@ -31,7 +30,7 @@ namespace Posthuman.Data
         public DbSet<Habit> Habits { get; set; } = default!;
 
         public static readonly int AvatarId = 2;
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ApplyModelConfigurations(modelBuilder);
@@ -57,14 +56,12 @@ namespace Posthuman.Data
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TodoItemConfiguration());
-            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
         }
 
         private void ConfigureEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Avatar>().ToTable("Avatars");
             modelBuilder.Entity<TodoItem>().ToTable("TodoItem");
-            modelBuilder.Entity<Project>().ToTable("Projects");
             modelBuilder.Entity<EventItem>().ToTable("EventItems");
             modelBuilder.Entity<BlogPost>().ToTable("BlogPosts");
             modelBuilder.Entity<TechnologyCard>().ToTable("TechnologyCards");
@@ -92,17 +89,17 @@ namespace Posthuman.Data
                     ret => ret.ToString(),
                     ret => (EntityType)Enum.Parse(typeof(EntityType), ret));
 
-            modelBuilder.Entity<Habit>().Property(tic => tic.RepetitionPeriod)
-                .HasMaxLength(20)
-                .HasConversion(
-                    rp => rp.ToString(),
-                    rp => (RepetitionPeriod)Enum.Parse(typeof(RepetitionPeriod), rp));
-
             modelBuilder.Entity<Requirement>().Property(r => r.Type)
                 .HasMaxLength(20)
                 .HasConversion(
                     r => r.ToString(),
                     r => (RequirementType)Enum.Parse(typeof(RequirementType), r));
+
+            modelBuilder.Entity<Habit>().Property(h => h.RepetitionPeriod)
+                .HasMaxLength(20)
+                .HasConversion(
+                    h => h.ToString(),
+                    h => (RepetitionPeriod)Enum.Parse(typeof(RepetitionPeriod), h));
         }
     }
 }

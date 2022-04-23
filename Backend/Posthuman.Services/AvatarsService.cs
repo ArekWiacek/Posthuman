@@ -22,21 +22,22 @@ namespace Posthuman.Services
         private readonly IEventItemsService eventItemsService;
         private readonly INotificationsService notificationsService;
         private readonly ITechnologyCardsService rewardCardsService;
-        private readonly ExperienceManager expManager;
+        private readonly IExperienceHelper experienceHelper;
 
         public AvatarsService(
             IUnitOfWork unitOfWork, 
             IMapper mapper,
             IEventItemsService eventItemsService,
             INotificationsService notificationsService,
-            ITechnologyCardsService rewardCardsService)
+            ITechnologyCardsService rewardCardsService,
+            IExperienceHelper experienceHelper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.eventItemsService = eventItemsService;
             this.notificationsService = notificationsService;
             this.rewardCardsService = rewardCardsService;
-            expManager = new ExperienceManager();
+            this.experienceHelper = experienceHelper;
         }
 
         public async Task<AvatarDTO> GetAvatarByUserId(int userId)
@@ -92,11 +93,6 @@ namespace Posthuman.Services
             // notificationsService.AddNotification(NotificationsHelper.CreateNotification(newAvatar, $"Avatar of name {newAvatar.Name} created."));
         }
 
-        //public async Task<Avatar> AddAvatar(Avatar avatar)
-        //{
-        //    await unitOfWork.Avatars.AddAsync(avatar);
-        //}
-
         private async Task<bool> VerifyIfOwner(int userId, int avatarId)
         {
             var user = await unitOfWork.Users.GetByIdAsync(userId);
@@ -127,13 +123,7 @@ namespace Posthuman.Services
         public async Task UpdateAvatarGainedExp(Avatar avatar, int exp)
         {
             // Add event of completion
-            var experienceGainedEvent = new EventItem(
-                avatar.Id,
-                EventType.AvatarExpGained,
-                DateTime.Now,
-                expGained: exp);
-
-            await unitOfWork.EventItems.AddAsync(experienceGainedEvent);
+            var experienceGainedEvent = await eventItemsService.AddNewEventItem(avatar.UserId, EventType.AvatarExpGained, EntityType.Avatar, avatar.Id, exp);
 
             avatar.Exp += exp;
 
@@ -150,26 +140,15 @@ namespace Posthuman.Services
             
             SetExperienceNeededForLevel(avatar, avatar.Level);
 
-            var avatarLevelGainedEvent = new EventItem(
-                avatar.Id,
-                EventType.AvatarLevelGained,
-                DateTime.Now);
-
-            await unitOfWork.EventItems.AddAsync(avatarLevelGainedEvent);
+            var avatarLevelGainedEvent = await eventItemsService.AddNewEventItem(avatar.UserId, EventType.AvatarLevelGained, EntityType.Avatar, avatar.Id);
 
             notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarLevelGainedEvent));
 
             if(await HasAvatarDiscoveredNewCard(avatar))
             {
-                var avatarCardDiscoveredEvent = new EventItem(
-                    avatar.Id,
-                    EventType.CardDiscovered,
-                    DateTime.Now);
-
-                await unitOfWork.EventItems.AddAsync(avatarCardDiscoveredEvent);
+                var avatarCardDiscoveredEvent = await eventItemsService.AddNewEventItem(avatar.Id, EventType.CardDiscovered, null, null);
 
                 notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarCardDiscoveredEvent));
-
             }
         }
 
@@ -183,7 +162,7 @@ namespace Posthuman.Services
 
         private void SetExperienceNeededForLevel(Avatar avatar, int level)
         {
-            var expRangeForLevel = expManager.GetExperienceRangeForLevel(level);
+            var expRangeForLevel = experienceHelper.GetXpRangeForLevel(level);
             avatar.ExpToCurrentLevel = expRangeForLevel.StartXp;
             avatar.ExpToNewLevel = expRangeForLevel.EndXp;
         }

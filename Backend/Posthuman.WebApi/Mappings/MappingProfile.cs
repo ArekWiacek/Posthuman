@@ -3,6 +3,7 @@ using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.DTO.Avatar;
 using Posthuman.Core.Models.DTO.Habit;
 using Posthuman.Core.Models.Entities;
+using Posthuman.WebApi.Mappings.Resolvers;
 using System;
 
 namespace Posthuman.WebApi.Mappings
@@ -14,7 +15,6 @@ namespace Posthuman.WebApi.Mappings
             MapUserModels();
             MapAvatarModels();
             MapTodoItemModels();
-            MapProjectModels();
             MapEventItemModels();
             MapBlogPostModels();
             MapRequirementModels();
@@ -44,12 +44,6 @@ namespace Posthuman.WebApi.Mappings
             CreateMap<TodoItem, TodoItemDTO>();
             CreateMap<TodoItemDTO, TodoItem>();
             CreateMap<CreateTodoItemDTO, TodoItem>();
-        }
-
-        private void MapProjectModels()
-        {
-            CreateMap<Project, ProjectDTO>();
-            CreateMap<ProjectDTO, Project>();
         }
         
         private void MapEventItemModels()
@@ -81,11 +75,11 @@ namespace Posthuman.WebApi.Mappings
 
         private void MapHabitsModels()
         {
-            CreateMap<Habit, CreateHabitDTO>();
-            CreateMap<Habit, HabitDTO>();
+            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
 
-            CreateMap<HabitDTO, Habit>();
-            CreateMap<CreateHabitDTO, Habit>();
+            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
+            CreateMap<CreateHabitDTO, Habit>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertSetOfDaysTagsToBitwiseInt()));
+
         }
     }
 }

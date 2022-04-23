@@ -6,14 +6,17 @@ namespace Posthuman.Core.Services
 {
     public interface IHabitsService
     {
-        Task<IEnumerable<HabitDTO>> GetAllHabits(int userId);
+        Task<HabitDTO> GetByUserId(int id, int userId);
+        Task<IEnumerable<HabitDTO>> GetAllByUserId(int userId);
 
         Task<HabitDTO> CreateHabit(int userId, CreateHabitDTO habitDTO);
         
         Task UpdateHabit(CreateHabitDTO habitDTO);
         
-        Task DeleteHabit(int id);
+        Task DeleteHabit(int id, int userId);
 
-        Task CompleteHabitInstance(HabitDTO habitDTO);
+        Task CompleteHabitInstance(int id, int userId);
+
+        Task ProcessAllHabitsMissedInstances();
     }
 }

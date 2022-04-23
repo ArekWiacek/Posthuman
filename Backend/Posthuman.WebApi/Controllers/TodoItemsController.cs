@@ -70,7 +70,7 @@ namespace PosthumanWebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(int id)
         {
-            var todoItem = await todoItemsService.GetTodoItemById(id);
+            var todoItem = await todoItemsService.GetTodoItemById(id, this.GetCurrentUserId());
 
             if (todoItem == null)
                 return NotFound();
@@ -83,8 +83,7 @@ namespace PosthumanWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(CreateTodoItemDTO createTodoItemDTO)
         {
-            var userId = this.GetCurrentUserId();
-            var todoItemDTO = await todoItemsService.CreateTodoItem(userId, createTodoItemDTO);
+            var todoItemDTO = await todoItemsService.CreateTodoItem(this.GetCurrentUserId(), createTodoItemDTO);
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItemDTO.Id }, todoItemDTO);
         }
 
@@ -96,7 +95,7 @@ namespace PosthumanWebApi.Controllers
             if (id != todoItemDTO.Id)
                 return BadRequest();
 
-            await todoItemsService.UpdateTodoItem(todoItemDTO);
+            await todoItemsService.UpdateTodoItem(this.GetCurrentUserId(), todoItemDTO);
 
             return NoContent();
         }
@@ -104,13 +103,7 @@ namespace PosthumanWebApi.Controllers
         [HttpPut("Complete/{id}")]
         public async Task<IActionResult> CompleteTodoItem(int id, TodoItemDTO todoItemDTO)
         {
-            if (id != todoItemDTO.Id)
-                return BadRequest();
-
-            //var userId = this.GetCurrentUserId();
-
-            await todoItemsService.CompleteTodoItem(todoItemDTO);
-
+            await todoItemsService.CompleteTodoItem(id, this.GetCurrentUserId());
             return NoContent();
         }
 
@@ -119,8 +112,7 @@ namespace PosthumanWebApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {
-            await todoItemsService.DeleteTodoItem(id);
-
+            await todoItemsService.DeleteTodoItem(id, this.GetCurrentUserId());
             return NoContent();
         }
     }

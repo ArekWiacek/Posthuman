@@ -10,6 +10,7 @@ namespace Posthuman.Core.Repositories
     /// </summary>
     public interface ITodoItemsRepository : IRepository<TodoItem>
     {
+        public Task<TodoItem> GetByUserId(int id, int userId);
         public Task<IEnumerable<TodoItem>> GetAllByUserIdAsync(int id);
 
         public Task<IEnumerable<TodoItem>> GetAllByParentIdAsync(int id);

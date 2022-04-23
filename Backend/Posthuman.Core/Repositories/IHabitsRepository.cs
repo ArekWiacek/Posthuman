@@ -10,6 +10,7 @@ namespace Posthuman.Core.Repositories
     /// </summary>
     public interface IHabitsRepository : IRepository<Habit>
     {
+        public Task<Habit> GetByUserId(int id, int userId);
         public Task<IEnumerable<Habit>> GetAllByUserIdAsync(int userId);
     }
 }

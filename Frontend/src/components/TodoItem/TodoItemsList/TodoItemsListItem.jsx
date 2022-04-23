@@ -10,7 +10,7 @@ const TodoItemListItem = ({ displayMode, todoItem, collapseActionButtons, onDele
     const [isHover, setIsHover] = useState(false);
     const { height, width, isXs, isSm, isMd, isLg, isXl } = useWindowDimensions();
 
-    const handleDeleteClicked = todoItem => onDeleteClicked(todoItem.id);
+    const handleDeleteClicked = todoItem => onDeleteClicked(todoItem);
     const handleEditClicked = todoItem => onEditClicked(todoItem);
     const handleDoneClicked = todoItem => onDoneClicked(todoItem);
     const handleAddSubtaskClicked = todoItem => onAddSubtaskClicked(todoItem);

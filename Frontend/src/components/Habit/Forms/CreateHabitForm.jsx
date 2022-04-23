@@ -10,7 +10,7 @@ import WeekdaysSelector from '../../Common/WeekdaysSelector';
 
 const defaultValues = {
     title: 'Type your habit title',
-    description: '', 
+    description: 'Describe your habit',
     repetitionPeriod: 'weekly',
     weekDays: ['mon'],
     dayOfMonth: 1,
@@ -46,8 +46,8 @@ const CreateHabitForm = ({ onCreateHabit }) => {
             return;
         }
 
-        if(formState.repetitionPeriod == 'monthly') {
-            if(formState.dayOfMonth < 1 || formState.dayOfMonth > 31) {
+        if (formState.repetitionPeriod == 'monthly') {
+            if (formState.dayOfMonth < 1 || formState.dayOfMonth > 31) {
                 LogW('If you want to repeat your habit each month, select number from 1 to 31 to specify on which day of month you want to accomplish it.');
                 return;
             }
@@ -55,13 +55,14 @@ const CreateHabitForm = ({ onCreateHabit }) => {
 
         var habit = {
             title: formState.title,
+            description: formState.description,
             repetitionPeriod: formState.repetitionPeriod,
             dayOfMonth: formState.dayOfMonth ? formState.dayOfMonth : null,
             weekDays: formState.weekDays ? formState.weekDays : null,
         };
 
         onCreateHabit(habit);
-        setFormState({ ...formState, title: '', repetitionPeriod: 'weekly' });
+        setFormState({ ...formState, title: 'Another habit', repetitionPeriod: 'weekly' });
     };
 
     return (
@@ -80,7 +81,7 @@ const CreateHabitForm = ({ onCreateHabit }) => {
                 label='Description' name='description' variant='outlined' multiline rows={3}
                 value={formState.description} onChange={handleInputChange} />
 
-            <FormControl sx={{ alignSelf: 'start' }}>
+            <FormControl sx={{ alignItems: 'center', width: '100%' }}>
                 <FormLabel id='repetition-period-label'>Repeat every</FormLabel>
 
                 <RadioGroup
@@ -97,14 +98,14 @@ const CreateHabitForm = ({ onCreateHabit }) => {
                         allowMultipleSelection={true}
                         disabled={formState.repetitionPeriod != 'weekly'}
                         onWeekdaysChanged={handleWeekdaysChanged} />
-                    
+
                     Weekdays: {formState.weekDays}
 
                     <FormControlLabel value='monthly' control={<Radio />} label='Month' />
 
                     <TextField
                         label='Day of month' name='dayOfMonth' variant='outlined'
-                        disabled={formState.repetitionPeriod != 'monthly'} 
+                        disabled={formState.repetitionPeriod != 'monthly'}
                         value={formState.dayOfMonth} onChange={handleInputChange} inputProps={{ min: 1, max: 31 }} />
 
                 </RadioGroup>

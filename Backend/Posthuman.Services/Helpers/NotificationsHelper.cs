@@ -52,10 +52,10 @@ namespace Posthuman.Services.Helpers
                     notification.Text = $"{avatar.Name} created new task: '{todoItem.Title}'";
                     break;
 
-                case EventType.TodoItemCyclicCreated:
-                    notification.Title = "Repeating task created";
-                    notification.Text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
-                    break;
+                //case EventType.TodoItemCyclicCreated:
+                //    notification.Title = "Repeating task created";
+                //    notification.Text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
+                //    break;
 
                 case EventType.TodoItemDeleted:
                     notification.Title = "Task deleted";

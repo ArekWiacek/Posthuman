@@ -12,7 +12,6 @@ namespace Posthuman.Data
         private readonly PosthumanContext context;
         private UsersRepository usersRepository;
         private TodoItemsRepository todoItemsRepository;
-        private ProjectsRepository projectsRepository;
         private EventItemsRepository eventItemsRepository;
         private AvatarsRepository avatarsRepository;
         private BlogPostsRepository blogPostsRepository;
@@ -26,7 +25,6 @@ namespace Posthuman.Data
             this.context = context;
             usersRepository             = usersRepository           ?? new UsersRepository(context);
             todoItemsRepository         = todoItemsRepository       ?? new TodoItemsRepository(context);
-            projectsRepository          = projectsRepository        ?? new ProjectsRepository(context);
             eventItemsRepository        = eventItemsRepository      ?? new EventItemsRepository(context);
             todoItemsRepository         = todoItemsRepository       ?? new TodoItemsRepository(context);
             avatarsRepository           = avatarsRepository         ?? new AvatarsRepository(context);
@@ -39,7 +37,6 @@ namespace Posthuman.Data
 
         public IUsersRepository Users                       => usersRepository              = usersRepository           ??  new UsersRepository(context);
         public ITodoItemsRepository TodoItems               => todoItemsRepository          = todoItemsRepository       ??  new TodoItemsRepository(context);
-        public IProjectsRepository Projects                 => projectsRepository           = projectsRepository        ??  new ProjectsRepository(context);
         public IEventItemsRepository EventItems             => eventItemsRepository         = eventItemsRepository      ??  new EventItemsRepository(context);
         public IAvatarsRepository Avatars                   => avatarsRepository            = avatarsRepository         ??  new AvatarsRepository(context);
         public IBlogPostsRepository BlogPosts               => blogPostsRepository          = blogPostsRepository       ??  new BlogPostsRepository(context);
