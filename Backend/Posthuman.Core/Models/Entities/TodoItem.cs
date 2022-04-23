@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Posthuman.Core.Models.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,7 @@ namespace Posthuman.Core.Models.Entities
     /// Represents single "to-do" task
     /// </summary>
     [Table("TodoItems")]
-    public class TodoItem
+    public class TodoItem : IEntity, IOwnable
     {
         public TodoItem()
         {

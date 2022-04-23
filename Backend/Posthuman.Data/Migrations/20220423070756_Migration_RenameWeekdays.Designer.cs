@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Posthuman.Data;
 
 namespace Posthuman.Data.Migrations
 {
     [DbContext(typeof(PosthumanContext))]
-    partial class PosthumanContextModelSnapshot : ModelSnapshot
+    [Migration("20220423070756_Migration_RenameWeekdays")]
+    partial class Migration_RenameWeekdays
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

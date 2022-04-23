@@ -28,7 +28,7 @@ namespace Posthuman.Services.Tests
             DateTime now = DateTime.Now;
             Habit habit = new Habit
             {
-                WeekDays = 48,
+                DaysOfWeek = 48,
                 RepetitionPeriod = RepetitionPeriod.Weekly,
                 LastCompletedInstanceDate = null,
             };
@@ -44,7 +44,7 @@ namespace Posthuman.Services.Tests
 
             //HabitsService habitsService = new HabitsService();
 
-            var days = DaysOfWeekUtils.DaysOfWeek(habit.WeekDays);
+            var days = DaysOfWeekUtils.DaysOfWeek(habit.DaysOfWeek);
             if(days.Contains(now.DayOfWeek))
             {
                 habit.NextIstanceDate = now;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Posthuman.Core.Models.Entities;
+using Posthuman.Core.Models.Entities.Interfaces;
 using Posthuman.Core.Models.Enums;
 using Posthuman.RealTime.Notifications;
 
@@ -7,36 +8,11 @@ namespace Posthuman.Services.Helpers
 {
     internal static class NotificationsHelper
     {
-        public static NotificationMessage CreateNotification(Avatar avatar, 
-            string title, string subtitle = "", 
-            string text = "", string secondText = "", string reward = "") 
+        public static NotificationMessage CreateNotification<TEntityType>(Avatar avatar, EventItem eventItem, IEntity entity)
         {
-            if (avatar == null)
-                throw new ArgumentNullException("avatar");
-
-            NotificationMessage notification = new NotificationMessage
-            {
-                Occured = DateTime.Now,
-                AvatarName = avatar.Name,
-                ShowInModal = false,
-                Title = title,
-                Subtitle = subtitle,
-                Text = text,
-                SecondText = secondText,
-                Reward = reward
-            };
-
-            return notification;
-        }
-
-        public static NotificationMessage CreateNotification(Avatar avatar, EventItem eventItem, TodoItem? todoItem = null)
-        {
-            if(avatar == null)
-                throw new ArgumentNullException("avatar");
-
-            if (eventItem == null)
-                throw new ArgumentNullException("eventItem");
-
+            ValidationHelper.CheckIfExists(avatar);
+            ValidationHelper.CheckIfExists(eventItem);
+            ValidationHelper.CheckIfExists(entity);
 
             NotificationMessage notification = new NotificationMessage
             {
@@ -45,6 +21,27 @@ namespace Posthuman.Services.Helpers
                 ShowInModal = false
             };
 
+            var entityTypeName = entity.GetType().Name;
+            var entityType = Enum.Parse(typeof(EntityType), entityTypeName);
+
+            switch (entityType)
+            {
+                case EntityType.TodoItem:
+                    var todoItem = (TodoItem)entity;
+                    notification = CreateTodoItemNotification(notification, avatar, eventItem, todoItem);
+                    break;
+
+                case EntityType.Habit:
+                    var habit = (Habit)entity;
+                    notification = CreateHabitNotification(notification, avatar, eventItem, habit);
+                    break;
+            }
+
+            return notification;
+        }
+
+        public static NotificationMessage CreateTodoItemNotification(NotificationMessage notification, Avatar avatar, EventItem eventItem, TodoItem? todoItem = null)
+        {
             switch (eventItem.Type)
             {
                 case EventType.TodoItemCreated:
@@ -87,6 +84,37 @@ namespace Posthuman.Services.Helpers
                     notification.Title = "New card discovered!";
                     notification.Reward = "New card";
                     notification.Text = $"{avatar.Name} discovered new card. Go to cards page to see it!.";
+                    break;
+            }
+
+            return notification;
+        }
+
+        public static NotificationMessage CreateHabitNotification(NotificationMessage notification, Avatar avatar, EventItem eventItem, Habit habit)
+        {
+            switch (eventItem.Type)
+            {
+                case EventType.HabitCreated:
+                    notification.Title = "Habit created";
+                    notification.Text = $"{avatar.Name} created new habit: '{habit.Title}'";
+                    break;
+
+                case EventType.HabitDeleted:
+                    notification.Title = "Habit deleted";
+                    notification.Text = $"{avatar.Name} deleted habit: '{habit.Title}'";
+                    break;
+
+                case EventType.HabitModified:
+                    notification.Title = "Habit modified";
+                    notification.Text = $"{avatar.Name} modified habit: '{habit.Title}'";
+                    break;
+
+                case EventType.HabitCompleted:
+                    notification.Title = "Habit completed";
+                    notification.Reward = $"+ {eventItem.ExpGained} XP";
+                    //  notification.Subtitle = $"Jebane +{eventItem.ExpGained} expa!";
+                    notification.Text = $"{avatar.Name} gained + {eventItem.ExpGained} experience points for completing habit: '{habit.Title}'";
+                    notification.SecondText = $"Some second text";
                     break;
             }
 

@@ -1,6 +1,4 @@
-﻿using Posthuman.Core.Models.Enums;
-
-namespace Posthuman.Core.Models.DTO.Habit
+﻿namespace Posthuman.Core.Models.DTO.Habit
 {
     public class CreateHabitDTO
     {
@@ -16,7 +14,7 @@ namespace Posthuman.Core.Models.DTO.Habit
         public string Description { get; set; }
 
         public string RepetitionPeriod { get; set; }  
-        public string[] WeekDays { get; set; }                      
+        public string[] DaysOfWeek { get; set; }                      
         public int DayOfMonth { get; set; }                    
 
     }

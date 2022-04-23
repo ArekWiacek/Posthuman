@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Posthuman.Core.Models.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,7 @@ namespace Posthuman.Core.Models.Entities
     /// This class represents game player character (= hero, user profile)
     /// </summary>
     [Table("Avatars")]
-    public class Avatar : IEntity
+    public class Avatar : IEntity, IOwnable
     {
         public Avatar()
         {

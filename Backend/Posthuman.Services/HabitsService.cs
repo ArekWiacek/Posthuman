@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Posthuman.Core;
-using Posthuman.Core.Models.DTO;
 using Posthuman.Core.Models.Entities;
 using Posthuman.Core.Models.Enums;
 using Posthuman.Core.Services;
 using Posthuman.Services.Helpers;
 using Posthuman.RealTime.Notifications;
-using Posthuman.Core.Models.DTO.Avatar;
 using Posthuman.Core.Models.DTO.Habit;
 
 namespace Posthuman.Services
@@ -59,8 +57,7 @@ namespace Posthuman.Services
         public async Task<HabitDTO> CreateHabit(int userId, CreateHabitDTO habitDTO)
         {
             var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
-            if (avatar == null)
-                throw new Exception($"User of ID {userId} does not have avatar created");
+            ValidationHelper.CheckIfExists(avatar);
 
             var newHabit = mapper.Map<Habit>(habitDTO);
             newHabit.CreationDate = DateTime.Now;
@@ -71,55 +68,43 @@ namespace Posthuman.Services
             newHabit.LastCompletedInstanceDate = null;
             newHabit.IsActive = newHabit.NextIstanceDate.Date == DateTime.Today ? true : false;
 
-            switch (newHabit.RepetitionPeriod)
-            {
-                case RepetitionPeriod.Weekly:
-                    newHabit.DayOfMonth = 0;
-                    break;
+            //switch (newHabit.RepetitionPeriod)
+            //{
+            //    case RepetitionPeriod.Weekly:
+            //        newHabit.DayOfMonth = 0;
+            //        break;
 
-                case RepetitionPeriod.Monthly:
-                    newHabit.WeekDays = 0;
-                    break;
+            //    case RepetitionPeriod.Monthly:
+            //        newHabit.DaysOfWeek = 0;
+            //        break;
 
-                default:
-                    throw new Exception("Wrong type of repetition. Allowed types are: 'Weekly' and 'Monthly'");
-            }
+            //    default:
+            //        throw new Exception("Wrong type of repetition. Allowed types are: 'Weekly' and 'Monthly'");
+            //}
 
             await unitOfWork.Habits.AddAsync(newHabit);
             await unitOfWork.CommitAsync();
 
-            await eventItemsService.AddNewEventItem(userId, EventType.HabitCreated, EntityType.Habit, newHabit.Id);
-
+            var habitCreatedEvent = await eventItemsService.AddNewEventItem(userId, EventType.HabitCreated, EntityType.Habit, newHabit.Id);
             await unitOfWork.CommitAsync();
 
-            //notificationsService.AddNotification(NotificationsHelper.CreateNotification(newTodoItem.Avatar, todoItemCreatedEvent, newTodoItem));
-            //await notificationsService.SendAllNotifications();
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification<Habit>(avatar, habitCreatedEvent, newHabit));
+            await notificationsService.SendAllNotifications();
 
             return mapper.Map<HabitDTO>(newHabit);
         }
 
-        private async Task<IEnumerable<Habit>> GetAll()
-        {
-            var habits = await
-                unitOfWork
-                .Habits
-                .GetAllAsync();
-
-            return habits;
-        }
-
+        
         public async Task UpdateHabit(CreateHabitDTO habitDTO)
         {
             if (habitDTO != null && habitDTO.Id != 0)
             {
                 var habit = await unitOfWork.Habits.GetByIdAsync(habitDTO.Id);
-
-                if (habit == null)
-                    throw new ArgumentNullException("Habit", $"Habit of ID: {habitDTO.Id} could not be found.");
+                ValidationHelper.CheckIfExists(habit);
 
                 habit.Title = habitDTO.Title;
                 habit.Description = habitDTO.Description;
-                habit.WeekDays = DaysOfWeekUtils.ValueOf(habitDTO.WeekDays);
+                habit.DaysOfWeek = DaysOfWeekUtils.ValueOf(habitDTO.DaysOfWeek);
                 habit.RepetitionPeriod = Enum.Parse<RepetitionPeriod>(habitDTO.RepetitionPeriod);
                 await unitOfWork.CommitAsync();
             }
@@ -128,16 +113,20 @@ namespace Posthuman.Services
         public async Task DeleteHabit(int id, int userId)
         {
             var habit = await unitOfWork.Habits.GetByIdAsync(id);
-
-            if (habit == null)
-                throw new ArgumentNullException("HabitId", $"Cannot find habit of ID: {id}");
-
-            if (habit.UserId != userId)
-                throw new Exception($"User with ID: {userId} is not owner of habit with ID: {id}. Access denied. Go fuck yourself.");
-
+            ValidationHelper.CheckIfExists(habit);
+            ValidationHelper.CheckIfUserHasAccess(habit, userId);
             unitOfWork.Habits.Remove(habit);
 
+            var avatar = await unitOfWork.Avatars.GetByIdAsync(habit.AvatarId);
+            ValidationHelper.CheckIfExists(avatar);
+
+            var habitDeletedEvent = await eventItemsService.AddNewEventItem(userId, EventType.HabitDeleted, EntityType.Habit, habit.Id);
+            ValidationHelper.CheckIfExists(habitDeletedEvent);
+
             await unitOfWork.CommitAsync();
+
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification<Habit>(avatar, habitDeletedEvent, habit));
+            await notificationsService.SendAllNotifications();
         }
 
         public async Task CompleteHabitInstance(int id, int userId)
@@ -145,11 +134,8 @@ namespace Posthuman.Services
             if (id != 0 && userId != 0)
             {
                 var habit = await unitOfWork.Habits.GetByIdAsync(id);
-                if (habit == null)
-                    throw new ArgumentNullException("Habit", $"Habit of ID: {id} could not be found.");
-
-                if (habit.UserId != userId)
-                    throw new Exception($"User with ID: {userId} is not owner of habit with ID: {id}. Access denied. Go fuck yourself.");
+                ValidationHelper.CheckIfExists(habit);
+                ValidationHelper.CheckIfUserHasAccess(habit, userId);
 
                 // Skip if not active yet
                 if (!habit.IsActive || habit.NextIstanceDate.Date > DateTime.Now.Date)
@@ -167,19 +153,35 @@ namespace Posthuman.Services
                 if (habit.CurrentStreak > habit.LongestStreak)
                     habit.LongestStreak = habit.CurrentStreak;
 
-                await eventItemsService.AddNewEventItem(userId, EventType.HabitCompleted, EntityType.Habit, habit.Id);
+                var habitCompletedEvent = await eventItemsService.AddNewEventItem(userId, EventType.HabitCompleted, EntityType.Habit, habit.Id);
 
+                var experienceForEvent = expManager.CalculateExperienceForEvent(habitCompletedEvent);
+                habitCompletedEvent.ExpGained = experienceForEvent;
+
+                var avatar = await unitOfWork.Avatars.GetByIdAsync(habit.AvatarId);
+                ValidationHelper.CheckIfExists(avatar);
+                await avatarsService.UpdateAvatarGainedExp(avatar, experienceForEvent);
                 await unitOfWork.CommitAsync();
 
-                //notificationsService.AddNotification(NotificationsHelper.CreateNotification(habit.Avatar, habitCompletedEvent));
-                //await notificationsService.SendAllNotifications();
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification<Habit>(habit.Avatar, habitCompletedEvent, habit));
+                await notificationsService.SendAllNotifications();
             }
         }
+
         public async Task ProcessAllHabitsMissedInstances()
         {
             var allHabits = await GetAll();
             allHabits.ToList().ForEach(habit => ProcessMissedInstances(habit));
             await unitOfWork.CommitAsync();
+        }
+        private async Task<IEnumerable<Habit>> GetAll()
+        {
+            var habits = await
+                unitOfWork
+                .Habits
+                .GetAllAsync();
+
+            return habits;
         }
 
         private void ProcessMissedInstances(Habit habit)
@@ -207,7 +209,7 @@ namespace Posthuman.Services
             switch (habit.RepetitionPeriod)
             {
                 case RepetitionPeriod.Weekly:
-                    var days = DaysOfWeekUtils.DaysOfWeek(habit.WeekDays);
+                    var days = DaysOfWeekUtils.DaysOfWeek(habit.DaysOfWeek);
                     DateTime previousInstance = DateTime.Now.Date.AddDays(-1);
                     while (!days.Contains(previousInstance.DayOfWeek))
                     {
@@ -234,7 +236,7 @@ namespace Posthuman.Services
             switch (habit.RepetitionPeriod)
             {
                 case RepetitionPeriod.Weekly:
-                    var days = DaysOfWeekUtils.DaysOfWeek(habit.WeekDays);
+                    var days = DaysOfWeekUtils.DaysOfWeek(habit.DaysOfWeek);
 
                     // Scenario 1:
                     //      - Todays day of week is on the repetition days list

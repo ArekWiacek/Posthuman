@@ -1,4 +1,5 @@
-﻿using Posthuman.Core.Models.Enums;
+﻿using Posthuman.Core.Models.Entities.Interfaces;
+using Posthuman.Core.Models.Enums;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -6,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace Posthuman.Core.Models.Entities
 {
     [Table("Habits")]
-    public class Habit
+    public class Habit : IEntity, IOwnable
     {
         public Habit()
         {
@@ -15,7 +16,7 @@ namespace Posthuman.Core.Models.Entities
             CreationDate = DateTime.Now;
 
             RepetitionPeriod = RepetitionPeriod.Weekly;
-            WeekDays = 0;
+            DaysOfWeek = 0;
             DayOfMonth = 0;
 
             CompletedInstances = 0;
@@ -37,7 +38,7 @@ namespace Posthuman.Core.Models.Entities
         public virtual Avatar Avatar { get; set; }
 
         public RepetitionPeriod RepetitionPeriod { get; set; } // Habit repeats "Daily" or "Weekly" or "Monthly"
-        public int WeekDays { get; set; }                      // Days of week when habit recreates for "Weekly" repetition 
+        public int DaysOfWeek { get; set; }                    // Days of week when habit recreates for "Weekly" repetition 
         public int DayOfMonth { get; set; }                    // Day of month when habit recreates for "Monthly" repetition
 
         public DateTime NextIstanceDate { get; set; }

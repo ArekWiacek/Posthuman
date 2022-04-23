@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 // Selector for choosing days of the week
-//      initialWeekdays         - string or array of strings with initial weekdays selected
+//      initialDays             - string or array of strings with initial days of week selected
 //      allowMultipleSelection  - ability to choose more than one option (default true)
 //      disabled                - disable component on/off
-//      onWeekdaysChanged       - triggered when toggle button is clicked
+//      onDaysChanged           - triggered when day is checked/unchecked
 
-const WeekdaysSelector = ({ initialWeekdays, allowMultipleSelection, disabled, onWeekdaysChanged }) => {
-    const allWeekdays = [
+const DaysOfWeekSelector = ({ initialDays, allowMultipleSelection, disabled, onDaysChanged }) => {
+    const daysOfWeek = [
         {
             label: "Monday",
             shortLabel: "Mon",
@@ -47,32 +47,31 @@ const WeekdaysSelector = ({ initialWeekdays, allowMultipleSelection, disabled, o
         }
     ];
 
-    const [weekdays, setWeekdays] = useState(initialWeekdays);
+    const [days, setDays] = useState(initialDays);
 
+    const handleDaysChanged = (event, newDays) => {
+        setDays(newDays);
 
-    const handleWeekdaysChanged = (event, newWeekdays) => {
-        setWeekdays(newWeekdays);
-
-        if (onWeekdaysChanged)
-            onWeekdaysChanged(newWeekdays);
+        if (onDaysChanged)
+            onDaysChanged(newDays);
     };
 
     return (
         <ToggleButtonGroup
-            value={weekdays}
-            onChange={handleWeekdaysChanged}
+            value={days}
+            onChange={handleDaysChanged}
             exclusive={!allowMultipleSelection}
             disabled={disabled}
             aria-label="weekdays selected"
         >
-            {allWeekdays.map((weekday) => {
+            {daysOfWeek.map((day) => {
                 return (
                     <ToggleButton
-                        key={weekday.value}
-                        value={weekday.value}
-                        aria-label={weekday.label}
+                        key={day.value}
+                        value={day.value}
+                        aria-label={day.label}
                     >
-                        {weekday.shortLabel}
+                        {day.shortLabel}
                     </ToggleButton>
                 );
             })}
@@ -80,9 +79,9 @@ const WeekdaysSelector = ({ initialWeekdays, allowMultipleSelection, disabled, o
     );
 }
 
-WeekdaysSelector.defaultProps = {
+DaysOfWeekSelector.defaultProps = {
     allowMultipleSelection: true,
-    initialWeekdays: ['mon', 'fri']
+    initialDays: ['mon', 'fri']
 };
 
-export default WeekdaysSelector;
+export default DaysOfWeekSelector;

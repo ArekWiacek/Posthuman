@@ -6,13 +6,13 @@ import {
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { LogI, LogW } from '../../../Utilities/Utilities';
-import WeekdaysSelector from '../../Common/WeekdaysSelector';
+import DaysOfWeekSelector from '../../Common/DaysOfWeekSelector';
 
 const defaultValues = {
     title: 'Type your habit title',
     description: 'Describe your habit',
     repetitionPeriod: 'weekly',
-    weekDays: ['mon'],
+    daysOfWeek: ['mon'],
     dayOfMonth: 1,
 };
 
@@ -34,8 +34,8 @@ const CreateHabitForm = ({ onCreateHabit }) => {
         setFormState({ ...formState, [formProperty]: newValue });
     };
 
-    const handleWeekdaysChanged = newWeekdays => {
-        setFormState({ ...formState, ['weekDays']: newWeekdays });
+    const handleDaysOfWeekChanged = newDaysOfWeek => {
+        setFormState({ ...formState, ['daysOfWeek']: newDaysOfWeek });
     };
 
     const handleSubmit = e => {
@@ -58,7 +58,7 @@ const CreateHabitForm = ({ onCreateHabit }) => {
             description: formState.description,
             repetitionPeriod: formState.repetitionPeriod,
             dayOfMonth: formState.dayOfMonth ? formState.dayOfMonth : null,
-            weekDays: formState.weekDays ? formState.weekDays : null,
+            daysOfWeek: formState.daysOfWeek ? formState.daysOfWeek : null,
         };
 
         onCreateHabit(habit);
@@ -93,13 +93,13 @@ const CreateHabitForm = ({ onCreateHabit }) => {
                 >
                     <FormControlLabel value='weekly' control={<Radio />} label='Week' />
 
-                    <WeekdaysSelector
-                        initialWeekdays={formState.weekDays}
+                    <DaysOfWeekSelector
+                        initialDaysOfWeek={formState.daysOfWeek}
                         allowMultipleSelection={true}
                         disabled={formState.repetitionPeriod != 'weekly'}
-                        onWeekdaysChanged={handleWeekdaysChanged} />
+                        onDaysChanged={handleDaysOfWeekChanged} />
 
-                    Weekdays: {formState.weekDays}
+                    Days of week: {formState.daysOfWeek}
 
                     <FormControlLabel value='monthly' control={<Radio />} label='Month' />
 

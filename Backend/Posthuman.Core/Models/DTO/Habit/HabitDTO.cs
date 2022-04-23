@@ -11,7 +11,7 @@ namespace Posthuman.Core.Models.DTO.Habit
         public bool IsActive { get; set; }
 
         public int RepetitionPeriod { get; set; }  
-        public string[] WeekDays { get; set; }                      
+        public string[] DaysOfWeek { get; set; }                      
         public int? DayOfMonth { get; set; }                    
 
         public DateTime NextIstanceDate { get; set; }

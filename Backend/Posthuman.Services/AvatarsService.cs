@@ -142,13 +142,13 @@ namespace Posthuman.Services
 
             var avatarLevelGainedEvent = await eventItemsService.AddNewEventItem(avatar.UserId, EventType.AvatarLevelGained, EntityType.Avatar, avatar.Id);
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarLevelGainedEvent));
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification<Avatar>(avatar, avatarLevelGainedEvent, avatar));
 
             if(await HasAvatarDiscoveredNewCard(avatar))
             {
                 var avatarCardDiscoveredEvent = await eventItemsService.AddNewEventItem(avatar.Id, EventType.CardDiscovered, null, null);
 
-                notificationsService.AddNotification(NotificationsHelper.CreateNotification(avatar, avatarCardDiscoveredEvent));
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification<Avatar>(avatar, avatarCardDiscoveredEvent, avatar));
             }
         }
 

@@ -75,10 +75,10 @@ namespace Posthuman.WebApi.Mappings
 
         private void MapHabitsModels()
         {
-            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
+            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.DaysOfWeek, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
 
-            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
-            CreateMap<CreateHabitDTO, Habit>().ForMember(dest => dest.WeekDays, opt => opt.MapFrom(new ConvertSetOfDaysTagsToBitwiseInt()));
+            CreateMap<Habit, HabitDTO>().ForMember(dest => dest.DaysOfWeek, opt => opt.MapFrom(new ConvertBitwiseNumberToSetOfDaysTags()));
+            CreateMap<CreateHabitDTO, Habit>().ForMember(dest => dest.DaysOfWeek, opt => opt.MapFrom(new ConvertSetOfDaysTagsToBitwiseInt()));
 
         }
     }

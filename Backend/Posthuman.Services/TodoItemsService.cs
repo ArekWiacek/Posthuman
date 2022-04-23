@@ -11,6 +11,7 @@ using Posthuman.Core.Services;
 using Posthuman.Services.Helpers;
 using Posthuman.RealTime.Notifications;
 using Posthuman.Core.Models.DTO.Avatar;
+using Posthuman.Core.Models.Entities.Interfaces;
 
 namespace Posthuman.Services
 {
@@ -47,6 +48,8 @@ namespace Posthuman.Services
         public async Task<TodoItemDTO> GetTodoItemById(int id, int userId)
         {
             var todoItem = await unitOfWork.TodoItems.GetByUserId(id, userId);
+            ValidationHelper.CheckIfExists(todoItem);
+
             return mapper.Map<TodoItemDTO>(todoItem);
         }
 
@@ -71,8 +74,6 @@ namespace Posthuman.Services
 
         public async Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsHierarchical(int userId)
         {
-            var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
-
             var todoItems = await
                 unitOfWork
                 .TodoItems
@@ -127,8 +128,7 @@ namespace Posthuman.Services
         public async Task<TodoItemDTO> CreateTodoItem(int userId, CreateTodoItemDTO createTodoItemDTO)
         {
             var avatar = await unitOfWork.Avatars.GetAvatarForUserAsync(userId);
-            if (avatar == null)
-                throw new Exception($"User of ID {userId} does not have avatar created");
+            ValidationHelper.CheckIfExists(avatar);
 
             var newTodoItem = mapper.Map<TodoItem>(createTodoItemDTO);
             newTodoItem.IsCompleted = false;
@@ -156,7 +156,7 @@ namespace Posthuman.Services
             var todoItemCreatedEvent = await eventItemsService.AddNewEventItem(userId, EventType.TodoItemCreated, EntityType.TodoItem, newTodoItem.Id);
             await unitOfWork.CommitAsync();
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(newTodoItem.Avatar, todoItemCreatedEvent, newTodoItem));
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification<TodoItem>(newTodoItem.Avatar, todoItemCreatedEvent, newTodoItem));
             await notificationsService.SendAllNotifications();
 
             return mapper.Map<TodoItemDTO>(newTodoItem);
@@ -166,54 +166,48 @@ namespace Posthuman.Services
         #region UPDATE
         public async Task UpdateTodoItem(int userId, TodoItemDTO updatedTodoItemDTO)
         {
-            if (updatedTodoItemDTO != null && updatedTodoItemDTO.Id != 0)
+            var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(updatedTodoItemDTO.Id);
+            ValidationHelper.CheckIfExists(todoItem);
+            ValidationHelper.CheckIfUserHasAccess(todoItem, userId);
+
+            var ownerAvatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
+            ValidationHelper.CheckIfExists(ownerAvatar);
+
+            todoItem.Title = updatedTodoItemDTO.Title;
+            todoItem.Description = updatedTodoItemDTO.Description;
+
+            // Deadline changed - update for todoItem and all children
+            if (todoItem.Deadline != updatedTodoItemDTO.Deadline)
+                await UpdateTodoItemDeadline(todoItem, updatedTodoItemDTO.Deadline, true);
+
+            // Visibility changed - update for todoItem and all children
+            if (todoItem.IsVisible != updatedTodoItemDTO.IsVisible)
+                await UpdateTodoItemVisibility(todoItem, updatedTodoItemDTO.IsVisible);
+
+            // Parent todo item changed
+            if (todoItem.ParentId != updatedTodoItemDTO.ParentId)
             {
-                var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(updatedTodoItemDTO.Id);
-                if (todoItem == null)
-                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {updatedTodoItemDTO.Id} could not be found.");
-
-                var ownerAvatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
-                if (ownerAvatar == null)
-                    throw new ArgumentNullException("Avatar", "Task owner could not be found");
-
-                if (todoItem.UserId != userId)
-                    throw new Exception($"User with ID: {userId} is not owner of task with ID: {todoItem.Id}. Access denied. Go fuck yourself.");
-
-                todoItem.Title = updatedTodoItemDTO.Title;
-                todoItem.Description = updatedTodoItemDTO.Description;
-
-                // Deadline changed - update for todoItem and all children
-                if (todoItem.Deadline != updatedTodoItemDTO.Deadline)
-                    await UpdateTodoItemDeadline(todoItem, updatedTodoItemDTO.Deadline, true);
-
-                // Visibility changed - update for todoItem and all children
-                if (todoItem.IsVisible != updatedTodoItemDTO.IsVisible)
-                    await UpdateTodoItemVisibility(todoItem, updatedTodoItemDTO.IsVisible);
-
-                // Parent todo item changed
-                if (todoItem.ParentId != updatedTodoItemDTO.ParentId)
+                // Update parent
+                if (updatedTodoItemDTO.ParentId.HasValue)
                 {
-                    // Update parent
-                    if (updatedTodoItemDTO.ParentId.HasValue)
-                    {
-                        var parentTask = await unitOfWork.TodoItems.GetByIdAsync(updatedTodoItemDTO.ParentId.Value);
-                        todoItem.Parent = parentTask;
-                    }
-                    // Or remove parent
-                    else
-                    {
-                        todoItem.Parent = null;
-                        todoItem.ParentId = null;
-                    }
+                    var parentTask = await unitOfWork.TodoItems.GetByIdAsync(updatedTodoItemDTO.ParentId.Value);
+                    todoItem.Parent = parentTask;
                 }
-
-                var todoItemModifiedEvent = await eventItemsService.AddNewEventItem(todoItem.UserId, EventType.TodoItemModified, EntityType.TodoItem, todoItem.Id);
-
-                await unitOfWork.CommitAsync();
-
-                //notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
-                //await notificationsService.SendAllNotifications();
+                // Or remove parent
+                else
+                {
+                    todoItem.Parent = null;
+                    todoItem.ParentId = null;
+                }
             }
+
+            var todoItemModifiedEvent = await eventItemsService.AddNewEventItem(todoItem.UserId, EventType.TodoItemModified, EntityType.TodoItem, todoItem.Id);
+
+            await unitOfWork.CommitAsync();
+
+            //notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemModifiedEvent, todoItem));
+            //await notificationsService.SendAllNotifications();
+
         }
 
         public async Task CompleteTodoItem(int id, int userId)
@@ -221,12 +215,7 @@ namespace Posthuman.Services
             if (id != 0 && userId != 0)
             {
                 var todoItem = await unitOfWork.TodoItems.GetByUserId(id, userId);
-                if (todoItem == null)
-                    throw new ArgumentNullException("TodoItem", $"TodoItem of ID: {id} could not be found.");
-
-                var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
-                if (avatar == null)
-                    throw new ArgumentNullException("Avatar", "Task owner could not be found");
+                ValidationHelper.CheckIfExists(todoItem);
 
                 // Check if can be completed
                 if (todoItem.HasUnfinishedSubtasks())
@@ -241,10 +230,12 @@ namespace Posthuman.Services
                 var experienceForEvent = expManager.CalculateExperienceForEvent(todoItemCompletedEvent);
                 todoItemCompletedEvent.ExpGained = experienceForEvent;
 
+                var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
+                ValidationHelper.CheckIfExists(avatar);
                 await avatarsService.UpdateAvatarGainedExp(avatar, experienceForEvent);
                 await unitOfWork.CommitAsync();
 
-                notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemCompletedEvent, todoItem));
+                notificationsService.AddNotification(NotificationsHelper.CreateNotification<TodoItem>(todoItem.Avatar, todoItemCompletedEvent, todoItem));
                 await notificationsService.SendAllNotifications();
 
                 var avatarDto = mapper.Map<AvatarDTO>(avatar);
@@ -290,11 +281,11 @@ namespace Posthuman.Services
         public async Task DeleteTodoItem(int id, int userId)
         {
             var todoItem = await unitOfWork.TodoItems.GetByIdWithSubtasksAsync(id);
-            CheckIfExists<TodoItem>(todoItem, id);
-            CheckIfUserIsOwner(todoItem, id, userId);
+            ValidationHelper.CheckIfExists(todoItem);
+            ValidationHelper.CheckIfUserHasAccess(todoItem, userId);
 
             var avatar = await unitOfWork.Avatars.GetByIdAsync(todoItem.AvatarId);
-            CheckIfExists<Avatar>(avatar, todoItem.AvatarId);
+            ValidationHelper.CheckIfExists(avatar);
 
             await DeleteTodoItemWithSubtasks(todoItem);
 
@@ -323,7 +314,7 @@ namespace Posthuman.Services
                 EntityType.TodoItem,
                 todoItem.Id);
 
-            notificationsService.AddNotification(NotificationsHelper.CreateNotification(todoItem.Avatar, todoItemDeletedEvent, todoItem));
+            notificationsService.AddNotification(NotificationsHelper.CreateNotification<TodoItem>(todoItem.Avatar, todoItemDeletedEvent, todoItem));
         }
         #endregion DELETE
 
@@ -366,20 +357,7 @@ namespace Posthuman.Services
                 .ThenByDescending(t => t.Deadline.HasValue)
                 .ThenBy(t => t.Deadline);
         }
-        
-        private void CheckIfExists<T>(T item, int itemId)
-        {
-            var typeName = typeof(T).Name;
-            if (item == null)
-                throw new ArgumentNullException(typeName, $"Cannot find {typeName} of ID: {itemId}");
-        }
 
-        private void CheckIfUserIsOwner(TodoItem todoItem, int todoItemId, int userId)
-        {
-            if (todoItem.UserId != userId)
-                throw new Exception($"User with ID: {userId} is not owner of task with ID: {todoItemId}. Access denied. Go fuck yourself.");
-
-        }
         #endregion
     }
 }

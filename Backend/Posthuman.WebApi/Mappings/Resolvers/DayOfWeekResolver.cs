@@ -10,7 +10,7 @@ namespace Posthuman.WebApi.Mappings.Resolvers
     {
         public int Resolve(CreateHabitDTO source, Habit destination, int destMember, ResolutionContext context)
         {
-            var daysOfWeek = DaysOfWeekUtils.ValueOf(source.WeekDays);
+            var daysOfWeek = DaysOfWeekUtils.ValueOf(source.DaysOfWeek);
             return daysOfWeek;
         }
     }
@@ -19,7 +19,7 @@ namespace Posthuman.WebApi.Mappings.Resolvers
     {
         public string[] Resolve(Habit source, HabitDTO destination, string[] destMember, ResolutionContext context)
         {
-            var tags = DaysOfWeekUtils.DaysOfWeekTagNames(source.WeekDays);
+            var tags = DaysOfWeekUtils.DaysOfWeekTagNames(source.DaysOfWeek);
             return tags.ToArray(); ;
         }
     }
