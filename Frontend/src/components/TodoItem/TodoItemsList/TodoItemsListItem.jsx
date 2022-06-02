@@ -24,7 +24,7 @@ const TodoItemListItem = ({ displayMode, todoItem, collapseActionButtons, onDele
             progressText = todoItem.finishedSubtasksCount + " / " + todoItem.subtasksCount + " (" + progressPercentage + "%)";
         }
         else 
-            todoItem.isCompleted ? progressText = "Done!" : progressText = "Not completed";
+            todoItem.isCompleted ? progressText = "Done!" : progressText = "";
 
         return progressText;
     };
