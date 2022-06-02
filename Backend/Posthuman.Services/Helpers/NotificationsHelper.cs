@@ -11,7 +11,7 @@ namespace Posthuman.Services.Helpers
         public static NotificationMessage CreateNotification<TEntityType>(Avatar avatar, EventItem eventItem, IEntity entity)
         {
             ValidationHelper.CheckIfExists(avatar);
-            ValidationHelper.CheckIfExists(eventItem);
+            //ValidationHelper.CheckIfExists(eventItem);
             ValidationHelper.CheckIfExists(entity);
 
             NotificationMessage notification = new NotificationMessage
@@ -35,9 +35,18 @@ namespace Posthuman.Services.Helpers
                     var habit = (Habit)entity;
                     notification = CreateHabitNotification(notification, avatar, eventItem, habit);
                     break;
+
+                case EntityType.Avatar:
+                    notification = CreateAvatarNotification(notification, avatar, eventItem);
+                    break;
+
+                case EntityType.TechnologyCard:
+                case EntityType.TechnologyCardDiscovery:
+                    notification = CreateCardNotification(notification, avatar, eventItem);
+                    break;
             }
 
-            return notification;
+            return notification; 
         }
 
         public static NotificationMessage CreateTodoItemNotification(NotificationMessage notification, Avatar avatar, EventItem eventItem, TodoItem? todoItem = null)
@@ -45,45 +54,48 @@ namespace Posthuman.Services.Helpers
             switch (eventItem.Type)
             {
                 case EventType.TodoItemCreated:
-                    notification.Title = "Task created";
-                    notification.Text = $"{avatar.Name} created new task: '{todoItem.Title}'";
+                    CreateNotificationTextLabels(notification, "Task created", $"{avatar.Name} created new task: '{todoItem.Title}'.");
                     break;
 
-                //case EventType.TodoItemCyclicCreated:
-                //    notification.Title = "Repeating task created";
-                //    notification.Text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
-                //    break;
-
                 case EventType.TodoItemDeleted:
-                    notification.Title = "Task deleted";
-                    notification.Text = $"{avatar.Name} deleted task: '{todoItem.Title}'";
+                    CreateNotificationTextLabels(notification, "Task deleted", $"{avatar.Name} deleted task: '{todoItem.Title}'.");
                     break;
 
                 case EventType.TodoItemModified:
-                    notification.Title = "Task modified";
-                    notification.Text = $"{avatar.Name} modified task: '{todoItem.Title}'";
+                    CreateNotificationTextLabels(notification, "Task modified", $"{avatar.Name} modified task: '{todoItem.Title}'.");
                     break;
 
                 case EventType.TodoItemCompleted:
+                    CreateNotificationTextLabels(notification, "Task completed", $"{avatar.Name} completed task: '{todoItem.Title}'.");
                     notification.Title = "Task completed";
-                    notification.Reward = $"+ {eventItem.ExpGained} XP";
-                    //  notification.Subtitle = $"Jebane +{eventItem.ExpGained} expa!";
-                    notification.Text = $"{avatar.Name} gained +{eventItem.ExpGained} experience points for completing task: '{todoItem.Title}'";
-                    notification.SecondText = $"Some second text";
                     break;
+            }
 
+            CreateNotificationExperienceLabels(notification, eventItem);
+
+            return notification;
+        }
+
+        public static NotificationMessage CreateAvatarNotification(NotificationMessage notification, Avatar avatar, EventItem eventItem)
+        {
+            switch (eventItem.Type)
+            {
                 case EventType.AvatarLevelGained:
-                    notification.Title = $"{avatar.Name}";
+                    CreateNotificationTextLabels(notification, "New level!", $"{avatar.Name} reached {avatar.Level} level! Next level at {avatar.ExpToNewLevel} XP.");
                     notification.Reward = $"Level {avatar.Level}";
-                    //notification.Subtitle = $"Level {avatar.Level}";
-                    notification.Text = $"{avatar.Name} reached {avatar.Level}. Next level at {avatar.ExpToNewLevel} XP.";
-                    notification.SecondText = $"Some second text";
                     break;
+            }
 
+            return notification;
+        }
+
+        public static NotificationMessage CreateCardNotification(NotificationMessage notification, Avatar avatar, EventItem eventItem)
+        {
+            switch (eventItem.Type)
+            {
                 case EventType.CardDiscovered:
-                    notification.Title = "New card discovered!";
+                    CreateNotificationTextLabels(notification, "New card discovered!", $"{avatar.Name} discovered new card. Go to cards page to see it!.");
                     notification.Reward = "New card";
-                    notification.Text = $"{avatar.Name} discovered new card. Go to cards page to see it!.";
                     break;
             }
 
@@ -95,30 +107,40 @@ namespace Posthuman.Services.Helpers
             switch (eventItem.Type)
             {
                 case EventType.HabitCreated:
-                    notification.Title = "Habit created";
-                    notification.Text = $"{avatar.Name} created new habit: '{habit.Title}'";
+                    CreateNotificationTextLabels(notification, "Habit created", $"{avatar.Name} created new habit: '{habit.Title}'");
                     break;
 
                 case EventType.HabitDeleted:
-                    notification.Title = "Habit deleted";
-                    notification.Text = $"{avatar.Name} deleted habit: '{habit.Title}'";
+                    CreateNotificationTextLabels(notification, "Habit deleted", $"{avatar.Name} deleted habit: '{habit.Title}'");
                     break;
 
                 case EventType.HabitModified:
-                    notification.Title = "Habit modified";
-                    notification.Text = $"{avatar.Name} modified habit: '{habit.Title}'";
+                    CreateNotificationTextLabels(notification, "Habit modified", $"{avatar.Name} modified habit: '{habit.Title}'");
                     break;
 
                 case EventType.HabitCompleted:
-                    notification.Title = "Habit completed";
-                    notification.Reward = $"+ {eventItem.ExpGained} XP";
-                    //  notification.Subtitle = $"Jebane +{eventItem.ExpGained} expa!";
-                    notification.Text = $"{avatar.Name} gained + {eventItem.ExpGained} experience points for completing habit: '{habit.Title}'";
-                    notification.SecondText = $"Some second text";
+                    CreateNotificationTextLabels(notification, "Habit completed", $"{avatar.Name} completed habit: '{habit.Title}'.");
                     break;
             }
 
+            CreateNotificationExperienceLabels(notification, eventItem);
+
             return notification;
+        }
+
+        private static void CreateNotificationTextLabels(NotificationMessage notification, string title, string text)
+        {
+            notification.Title = title;
+            notification.Text = text;
+        }
+
+        private static void CreateNotificationExperienceLabels(NotificationMessage notification, EventItem eventItem)
+        {
+            if (eventItem.ExpGained > 0)
+            {
+                notification.Reward = $"+ {eventItem.ExpGained} XP";
+                notification.Text += $" + {eventItem.ExpGained} XP gained!";
+            }
         }
     }
 }

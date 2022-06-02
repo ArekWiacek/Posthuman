@@ -1,6 +1,7 @@
 ﻿using Posthuman.Core.Models.Entities.Interfaces;
 using Posthuman.Core.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -37,6 +38,7 @@ namespace Posthuman.Core.Models.Entities
         [JsonIgnore]
         public virtual Avatar Avatar { get; set; }
 
+
         public RepetitionPeriod RepetitionPeriod { get; set; } // Habit repeats "Daily" or "Weekly" or "Monthly"
         public int DaysOfWeek { get; set; }                    // Days of week when habit recreates for "Weekly" repetition 
         public int DayOfMonth { get; set; }                    // Day of month when habit recreates for "Monthly" repetition
@@ -49,5 +51,9 @@ namespace Posthuman.Core.Models.Entities
         public int MissedInstances { get; set; }        // How many not completed in the past
         public int CurrentStreak { get; set; }          // How many completed in a row
         public int LongestStreak { get; set; }          // Longest streak in history of this habit
+
+        [JsonIgnore]
+        public virtual ICollection<HabitCompletion> CompletedInstancesInfo { get; set; }
+
     }
 }

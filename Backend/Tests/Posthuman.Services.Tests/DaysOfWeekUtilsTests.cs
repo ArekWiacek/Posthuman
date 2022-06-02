@@ -13,14 +13,6 @@ namespace Posthuman.Services.Tests
     [TestFixture]
     public class DaysOfWeekUtilsTests
     {
-        //public IConfiguration GetMockConfiguration(IEnumerable<KeyValuePair<string, object>> testData)
-        //{
-        //    var mock = new Mock<IConfiguration>();
-        //    var data = testData.ToList();
-        //    mock.Setup(cfg => cfg.GetAllProperties()).Returns(data);
-        //    return mock.Object;
-        //}
-
         #region Test Methods
         [Test]
         public void TestNearestDayCalculation()
@@ -36,14 +28,6 @@ namespace Posthuman.Services.Tests
 
             var mock = new Mock<IUnitOfWork>();
             var data = "asd";
-            //mock.Setup(uow => uow.Avatars.GetByIdAsync(3)).Returns(new Avatar()
-            //{
-
-            //});
-
-
-            //HabitsService habitsService = new HabitsService();
-
             var days = DaysOfWeekUtils.DaysOfWeek(habit.DaysOfWeek);
             if(days.Contains(now.DayOfWeek))
             {

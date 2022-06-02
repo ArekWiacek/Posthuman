@@ -18,6 +18,15 @@ namespace Posthuman.Data.Repositories
             get { return Context; }
         }
 
+        public new async ValueTask<Habit> GetByIdAsync(int habitId, int userId)
+        {
+            return await HabitsDbContext
+                   .Habits
+                   //.Include(h => h.CompletedInstancesInfo)
+                   .Where(h => h.Id == habitId & h.UserId == userId)
+                   .FirstOrDefaultAsync();
+        }
+
         public async Task<Habit> GetByUserId(int id, int userId)
         {
             return await HabitsDbContext

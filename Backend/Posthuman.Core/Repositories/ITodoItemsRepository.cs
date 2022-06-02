@@ -12,9 +12,7 @@ namespace Posthuman.Core.Repositories
     {
         public Task<TodoItem> GetByUserId(int id, int userId);
         public Task<IEnumerable<TodoItem>> GetAllByUserIdAsync(int id);
-
         public Task<IEnumerable<TodoItem>> GetAllByParentIdAsync(int id);
-
         public Task<TodoItem> GetByIdWithSubtasksAsync(int todoItemId);
     }
 }

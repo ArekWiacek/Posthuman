@@ -129,6 +129,19 @@ namespace Posthuman.Services
             await notificationsService.SendAllNotifications();
         }
 
+        /// <summary>
+        /// Performs all logic after marking habit as "done" 
+        /// 
+        /// Finds given habit and sets all fields to correct values
+        /// Creates and adds entity with info about this action (HabitCompletion
+        /// Gives experience for avatar
+        /// Sends notification to user
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task CompleteHabitInstance(int id, int userId)
         {
             if (id != 0 && userId != 0)
@@ -155,6 +168,19 @@ namespace Posthuman.Services
 
                 var habitCompletedEvent = await eventItemsService.AddNewEventItem(userId, EventType.HabitCompleted, EntityType.Habit, habit.Id);
 
+                // Create habits instance
+                //var completedHabitInfo = new HabitCompletion
+                //{
+                //    UserId = userId,
+                //    HabitId = habit.Id,
+                //    Habit = habit,
+                //    Occured = habit.LastCompletedInstanceDate.Value
+                //};
+                //if (habit.CompletedInstancesInfo == null)
+                //    habit.CompletedInstancesInfo = new List<HabitCompletion>();
+
+                // habit.CompletedInstancesInfo.Add(completedHabitInfo);
+
                 var experienceForEvent = expManager.CalculateExperienceForEvent(habitCompletedEvent);
                 habitCompletedEvent.ExpGained = experienceForEvent;
 
@@ -174,6 +200,7 @@ namespace Posthuman.Services
             allHabits.ToList().ForEach(habit => ProcessMissedInstances(habit));
             await unitOfWork.CommitAsync();
         }
+
         private async Task<IEnumerable<Habit>> GetAll()
         {
             var habits = await
@@ -220,6 +247,7 @@ namespace Posthuman.Services
                     break;
 
                 case RepetitionPeriod.Monthly:
+                    //previousInstanceDate = DateTime.Today.AddMonths(-1).day
                     break;
 
                 default:

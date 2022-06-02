@@ -28,6 +28,7 @@ namespace Posthuman.Data
         public DbSet<TechnologyCardDiscovery> TechnologyCardsDiscoveries { get; set; } = default!;
         public DbSet<Requirement> Requirements { get; set; } = default!;
         public DbSet<Habit> Habits { get; set; } = default!;
+        public DbSet<HabitCompletion> HabitsCompletions { get; set; } = default!;
 
         public static readonly int AvatarId = 2;
 
@@ -68,6 +69,7 @@ namespace Posthuman.Data
             modelBuilder.Entity<TechnologyCardDiscovery>().ToTable("TechnologyCardsDiscoveries");
             modelBuilder.Entity<Requirement>().ToTable("Requirements");
             modelBuilder.Entity<Habit>().ToTable("Habits");
+            modelBuilder.Entity<HabitCompletion>().ToTable("HabitsCompletions");
 
             EnumToNumberConverter<CardCategory, int> converter = new EnumToNumberConverter<CardCategory, int>();
             modelBuilder.Entity<TechnologyCard>()

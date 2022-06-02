@@ -7,12 +7,11 @@ namespace Posthuman.Services.Helpers
     {
         public static void CheckIfExists(IEntity entity) 
         {
-            var typeName = entity.GetType().Name;
             if (entity == null)
-                throw new ArgumentNullException(nameof(entity), $"Entity of type [{typeName}] is null.");
+                throw new ArgumentNullException(nameof(entity), $"Entity is null.");
 
             if (entity.Id == 0)
-                throw new ArgumentNullException(nameof(entity), $"Entity of type [{typeName}] has ID = 0.");
+                throw new ArgumentNullException(nameof(entity), $"Entity has ID = 0.");
         }
 
         public static void CheckIfUserHasAccess(IOwnable ownableEntity, int userId)
