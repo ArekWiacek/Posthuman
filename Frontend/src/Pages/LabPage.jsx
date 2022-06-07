@@ -16,10 +16,6 @@ const LabPage = () => {
     let item = FindItemById([], 3);
     console.log('asdasd');
 
-    const handleCreateHabit = (habitToCreate) => {
-        console.log('Habit to create: ');
-        console.log(habitToCreate);
-    }
     const habitsEndpointName = "Habits";
     const { user } = useAuth();
     const [habits, setHabits] = useState(CreateDummyHabits(1));
