@@ -1,5 +1,6 @@
 import { LogI } from './Utilities';
 
+
 // Helper functions that makes working with arrays and objects easier
 // Also makes handling react state civilized  
 

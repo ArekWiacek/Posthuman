@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-const useAsyncState = (initialState) {
+const useAsyncState = (initialState) => {
     const [state, setState] = useState(initialState);
     const resolveState = useRef();
     const isMounted = useRef(false);

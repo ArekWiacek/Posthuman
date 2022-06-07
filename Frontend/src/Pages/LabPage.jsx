@@ -4,7 +4,13 @@ import { Grid } from '@mui/material';
 import CreateHabitForm from '../components/Habit/Forms/CreateHabitForm';
 import WeekdaysSelector from '../components/Common/WeekdaysSelector';
 
+import { FindItemById } from './../Utilities/ArrayUtils';
+
+
 const LabPage = () => {
+    let item = FindItemById([], 3);
+    console.log('asdasd');
+
     const handleCreateHabit = (habitToCreate) => {
         console.log('Habit to create: ');
         console.log(habitToCreate);

@@ -61,7 +61,7 @@ const EditTodoItemForm = ({ todoItemToEdit, todoItems, projects, onSaveEdit, onC
 
             <TextField
                 label="Project" name="projectId" select
-                disabled={!projects || projects.length === 0} disabled
+                disabled={!projects || projects.length === 0} 
                 value={todoItem.projectId ? todoItem.projectId : ''} 
                 onChange={handleInputChange}>
                 
