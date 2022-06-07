@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Posthuman.Core.Models.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,7 @@ namespace Posthuman.Core.Models.Entities
     /// Represents single "to-do" task
     /// </summary>
     [Table("TodoItems")]
-    public class TodoItem
+    public class TodoItem : IEntity, IOwnable
     {
         public TodoItem()
         {
@@ -19,7 +20,6 @@ namespace Posthuman.Core.Models.Entities
             Description = "";
 
             ParentId = null;
-            ProjectId = null;
         }
 
         [Key]
@@ -46,16 +46,6 @@ namespace Posthuman.Core.Models.Entities
         public int AvatarId { get; set; }
         [JsonIgnore]
         public virtual Avatar Avatar { get; set; }
-
-        // Parent project - when to-do item is part of something bigger
-        public int? ProjectId { get; set; }
-        public virtual Project Project { get; set; }
-
-        // Task can be repetitive - repetition info is stored in TodoItemCycle table
-        public bool IsCyclic { get; set; }
-        public int? TodoItemCycleId { get; set; }
-        [JsonIgnore]
-        public virtual TodoItemCycle TodoItemCycle { get; set; }
         
         public bool IsTopLevel() =>  ParentId == null;
         public bool HasSubtasks() => Subtasks != null && Subtasks.Count > 0;

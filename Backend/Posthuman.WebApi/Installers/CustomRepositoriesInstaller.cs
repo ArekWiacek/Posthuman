@@ -14,12 +14,11 @@ namespace Posthuman.WebApi.Installers
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<ITodoItemsRepository, TodoItemsRepository>();
-            services.AddTransient<ITodoItemsCyclesRepository, TodoItemsCyclesRepository>();
-            services.AddTransient<IProjectsRepository, ProjectsRepository>();
             services.AddTransient<IEventItemsRepository, EventItemsRepository>();
             services.AddTransient<IAvatarsRepository, AvatarsRepository>();
             services.AddTransient<IBlogPostsRepository, BlogPostsRepository>();
             services.AddTransient<ITechnologyCardsRepository, TechnologyCardsRepository>();
+            services.AddTransient<IHabitsRepository, HabitsRepository>();
         }
     }
 }

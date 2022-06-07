@@ -40,6 +40,13 @@ const todoListStyles = makeStyles(theme => ({
     }
 }));
 
+const habitListStyles = makeStyles(() => ({
+    listRoot: {
+        width: '100%',
+        maxWidth: 360
+    }
+}));
+
 const loginPageStyles = makeStyles(() => ({
     eyecandy: {
         height: '100%',
@@ -51,6 +58,7 @@ const loginPageStyles = makeStyles(() => ({
 const customStyles = {
     formStyles,
     todoListStyles,
+    habitListStyles,
     loginPageStyles
 };
 

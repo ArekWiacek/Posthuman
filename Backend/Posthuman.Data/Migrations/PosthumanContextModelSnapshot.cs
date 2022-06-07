@@ -33,6 +33,18 @@ namespace Posthuman.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "RegisteredUser"
+                        });
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Avatar", b =>
@@ -158,7 +170,7 @@ namespace Posthuman.Data.Migrations
                     b.ToTable("EventItems");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.Habit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,38 +180,83 @@ namespace Posthuman.Data.Migrations
                     b.Property<int>("AvatarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CompletedSubtasks")
+                    b.Property<int>("CompletedInstances")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CurrentStreak")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DayOfMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DaysOfWeek")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("FinishDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsFinished")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime?>("LastCompletedInstanceDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("LongestStreak")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MissedInstances")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NextIstanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PreviousInstanceDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RepetitionPeriod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TotalSubtasks")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AvatarId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Habits");
+                });
+
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.HabitCompletion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("HabitId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Occured")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HabitId");
+
+                    b.ToTable("HabitsCompletions");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.Requirement", b =>
@@ -303,7 +360,7 @@ namespace Posthuman.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AvatarId")
+                    b.Property<int>("AvatarId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CompletionDate")
@@ -322,25 +379,16 @@ namespace Posthuman.Data.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsCyclic")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
-
-                    b.Property<int?>("TodoItemCycleId")
-                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -351,65 +399,7 @@ namespace Posthuman.Data.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("TodoItem");
-                });
-
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItemCycle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CompletedInstances")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InstancesStreak")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InstancesToComplete")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsInfinite")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastCompletedInstanceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastInstanceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MissedInstances")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("NextIstanceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RepetitionPeriod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TodoItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TotalInstances")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TodoItemId")
-                        .IsUnique();
-
-                    b.ToTable("TodoItemCycles");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.User", b =>
@@ -447,11 +437,20 @@ namespace Posthuman.Data.Migrations
                         .HasForeignKey("Posthuman.Core.Models.Entities.Avatar", "UserId");
                 });
 
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.Project", b =>
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.Habit", b =>
                 {
                     b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
-                        .WithMany("Projects")
+                        .WithMany("Habits")
                         .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Posthuman.Core.Models.Entities.HabitCompletion", b =>
+                {
+                    b.HasOne("Posthuman.Core.Models.Entities.Habit", "Habit")
+                        .WithMany("CompletedInstancesInfo")
+                        .HasForeignKey("HabitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -480,24 +479,15 @@ namespace Posthuman.Data.Migrations
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItem", b =>
                 {
-                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", null)
+                    b.HasOne("Posthuman.Core.Models.Entities.Avatar", "Avatar")
                         .WithMany("TodoItems")
-                        .HasForeignKey("AvatarId");
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "Parent")
                         .WithMany("Subtasks")
                         .HasForeignKey("ParentId");
-
-                    b.HasOne("Posthuman.Core.Models.Entities.Project", "Project")
-                        .WithMany("TodoItems")
-                        .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("Posthuman.Core.Models.Entities.TodoItemCycle", b =>
-                {
-                    b.HasOne("Posthuman.Core.Models.Entities.TodoItem", "TodoItem")
-                        .WithOne("TodoItemCycle")
-                        .HasForeignKey("Posthuman.Core.Models.Entities.TodoItemCycle", "TodoItemId");
                 });
 
             modelBuilder.Entity("Posthuman.Core.Models.Entities.User", b =>

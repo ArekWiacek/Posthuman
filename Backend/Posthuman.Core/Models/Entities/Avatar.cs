@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Posthuman.Core.Models.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,7 @@ namespace Posthuman.Core.Models.Entities
     /// This class represents game player character (= hero, user profile)
     /// </summary>
     [Table("Avatars")]
-    public class Avatar : IEntity
+    public class Avatar : IEntity, IOwnable
     {
         public Avatar()
         {
@@ -34,19 +35,17 @@ namespace Posthuman.Core.Models.Entities
         public DateTime CreationDate { get; set; }  // Date when user created account        
 
 
-
         public int Level { get; set; }              // Avatar level - it grows when gaining experience
         public int Exp { get; set; }                // Experience points
         public int ExpToNewLevel { get; set; }      // When new level will be reached 
         public int ExpToCurrentLevel { get; set; }
 
-        // Owned Projects
-        [JsonIgnore]
-        public virtual ICollection<Project> Projects { get; set; }
 
-        // Owned Todo Items (tasks)
+        // Owned entities
         [JsonIgnore]
         public virtual ICollection<TodoItem> TodoItems { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<Habit> Habits { get; set; }
 
 
         // NOT YET SURE... - TEST PROPERTIES :)

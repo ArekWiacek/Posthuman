@@ -6,9 +6,10 @@
 
         User = 1,
         Avatar = 2,
-
         TodoItem = 3,
-        Project = 4
-    }
+        Habit = 4,
 
+        TechnologyCard = 5,
+        TechnologyCardDiscovery = 6
+    }
 }

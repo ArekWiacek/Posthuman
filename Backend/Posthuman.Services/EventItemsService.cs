@@ -44,19 +44,20 @@ namespace Posthuman.Services
             return mapper.Map<EventItemDTO>(eventItem);
         }
 
-        public async Task<EventItem> CreateEventItem(
-            int userId, 
-            EventType eventType, 
-            EntityType? relatedEntityType, 
-            int? relatedEntityId, 
+
+        public async Task<EventItem> AddNewEventItem(
+            int userId,
+            EventType eventType,
+            EntityType? relatedEntityType,
+            int? relatedEntityId,
             int expGained = 0)
         {
             var eventItem = new EventItem(
-                userId, 
-                eventType, 
-                DateTime.Now, 
-                relatedEntityType, 
-                relatedEntityId, 
+                userId,
+                eventType,
+                DateTime.Now,
+                relatedEntityType,
+                relatedEntityId,
                 expGained);
 
             await unitOfWork.EventItems.AddAsync(eventItem);

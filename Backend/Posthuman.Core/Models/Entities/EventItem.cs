@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Posthuman.Core.Models.Entities.Interfaces;
 using Posthuman.Core.Models.Enums;
 
 namespace Posthuman.Core.Models.Entities
@@ -10,7 +10,7 @@ namespace Posthuman.Core.Models.Entities
     /// Used mostly for gamification mechanism, statistical / historical and logging purposes
     /// </summary>
     [Table("EventItems")]
-    public class EventItem
+    public class EventItem : IEntity, IOwnable
     {
         public EventItem(
             int userId,

@@ -24,13 +24,14 @@ namespace PosthumanWebApi.Controllers
         [HttpGet("GetAvatarForLoggedUser")]
         public async Task<ActionResult<AvatarDTO>> GetAvatarForLoggedUser()
         {
-            int userId = this.GetCurrentUserId();
-            var avatar = await avatarsService.GetAvatarByUserId(userId);
+            var avatar = await 
+                avatarsService
+                .GetAvatarByUserId(this.GetCurrentUserId());
 
             if (avatar == null)
                 throw new ArgumentNullException("Avatar");
             
-            return avatar;
+            return Ok(avatar);
         }
 
         [HttpGet("{id}")]
@@ -41,7 +42,7 @@ namespace PosthumanWebApi.Controllers
             if (avatar == null)
                 throw new ArgumentNullException("Avatar");
             
-            return avatar;
+            return Ok(avatar);
         }
 
         [HttpGet]

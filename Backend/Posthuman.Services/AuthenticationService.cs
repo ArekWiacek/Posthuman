@@ -75,9 +75,7 @@ namespace Posthuman.Core.Services
             await unitOfWork.CommitAsync();
 
             // Create and add event item (registration)
-            var userRegisteredEvent = await eventItemsService.CreateEventItem(
-                user.Id, EventType.UserRegistered, EntityType.User, user.Id);
-            await unitOfWork.EventItems.AddAsync(userRegisteredEvent);
+            await eventItemsService.AddNewEventItem(user.Id, EventType.UserRegistered, EntityType.User, user.Id);
             await unitOfWork.CommitAsync();
 
             // Create and save 'Avatar'
@@ -86,9 +84,7 @@ namespace Posthuman.Core.Services
             await unitOfWork.CommitAsync();
 
             // Create and add event item (avatar creation)
-            var avatarCreatedEvent = await eventItemsService.CreateEventItem(
-                user.Id, EventType.AvatarCreated, EntityType.Avatar, avatar.Id);
-            await unitOfWork.EventItems.AddAsync(avatarCreatedEvent);
+            await eventItemsService.AddNewEventItem(user.Id, EventType.AvatarCreated, EntityType.Avatar, avatar.Id);
             await unitOfWork.CommitAsync();
 
             return mapper.Map<UserDTO>(user);

@@ -1,17 +1,14 @@
-﻿namespace Posthuman.Services
+﻿namespace Posthuman.Services.Helpers
 {
-    public partial class ExperienceManager
+    public struct ExperienceRange
     {
-        public struct ExperienceRange
+        public ExperienceRange(int startXp, int endXp)
         {
-            public ExperienceRange(int startXp, int endXp)
-            {
-                StartXp = startXp;
-                EndXp = endXp;
-            }
-
-            public int StartXp { get; set; }
-            public int EndXp { get; set; }
+            StartXp = startXp;
+            EndXp = endXp;
         }
+
+        public int StartXp { get; set; }
+        public int EndXp { get; set; }
     }
 }

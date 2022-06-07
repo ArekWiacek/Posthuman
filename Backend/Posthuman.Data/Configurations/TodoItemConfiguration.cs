@@ -17,27 +17,10 @@ namespace Posthuman.Data.Configurations
                 .HasMaxLength(150);
 
             builder
-                .HasOne(ti => ti.Project)
-                .WithMany(p => p.TodoItems)
-                .HasForeignKey(ti => ti.ProjectId)
-                .IsRequired(false);
-
-            //builder
-            //    .HasOne(todoItem => todoItem.Avatar)
-            //    .WithMany(avatar => avatar.TodoItems);
-
-            builder
                 .HasOne(ti => ti.Parent)
                 .WithMany(p => p.Subtasks)
                 .HasForeignKey(ti => ti.ParentId)
                 .IsRequired(false);
-
-            builder
-                    .HasOne(ti => ti.TodoItemCycle)
-                    .WithOne(tic => tic.TodoItem)
-                    .HasForeignKey<TodoItem>(ti => ti.TodoItemCycleId)
-                    .IsRequired(false)
-                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("TodoItems");
         }

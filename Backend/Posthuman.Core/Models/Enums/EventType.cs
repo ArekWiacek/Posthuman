@@ -16,16 +16,11 @@
         TodoItemDeleted = 22,
         TodoItemCompleted = 23,
 
-        ProjectCreated = 30,
-        ProjectModified = 31,
-        ProjectDeleted = 32,
-        ProjectFinished = 33,
+        CardDiscovered = 30,
 
-        CardDiscovered = 40,
-
-        TodoItemCyclicCreated = 100,
-        TodoItemCyclicModified = 101,
-        TodoItemCyclicDeleted = 102,
-        TodoItemCyclicCompleted = 103
+        HabitCreated = 40,
+        HabitModified = 41,
+        HabitDeleted = 42,
+        HabitCompleted = 43
     }
 }

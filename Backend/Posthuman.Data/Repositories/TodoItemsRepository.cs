@@ -18,19 +18,19 @@ namespace Posthuman.Data.Repositories
             get { return Context; }
         }
 
+        public async Task<TodoItem> GetByUserId(int id, int userId)
+        {
+            return await TodoItemsDbContext
+                .TodoItems
+                .Where(ti => ti.Id == id & ti.UserId == userId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<TodoItem>> GetAllByUserIdAsync(int userId)
         {
             return await TodoItemsDbContext
                 .TodoItems
                 .Where(ti => ti.UserId == userId)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<TodoItem>> GetAllWithProjectsAsync()
-        {
-            return await TodoItemsDbContext
-                .TodoItems
-                .Include(ti => ti.Project)
                 .ToListAsync();
         }
 
@@ -53,5 +53,6 @@ namespace Posthuman.Data.Repositories
                 .Where(ti => ti.ParentId == id)
                 .ToListAsync();
         }
+
     }
 }

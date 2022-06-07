@@ -19,10 +19,6 @@
         public int ExpToNewLevel { get; set; }
         public int ExpToCurrentLevel { get; set; }
 
-        public int ProjectsCount { get; set; }
-        public int TasksCount { get; set; }
-        public int DaysAlive { get; set; }
-
         public string CybertribeName { get; set; }
     }
 }

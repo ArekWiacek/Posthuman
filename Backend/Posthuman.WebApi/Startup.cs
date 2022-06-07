@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Posthuman.RealTime.Notifications;
 using Posthuman.WebApi.Middleware;
 using Posthuman.WebApi.Installers;
+using Posthuman.Services.BackgroundServices;
 
 namespace Posthuman.WebApi
 {
@@ -22,6 +23,9 @@ namespace Posthuman.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.InstallServicesInAssembly(Configuration);
+
+            // Temp
+            services.AddHostedService<DailyRecalculationBackgroundService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

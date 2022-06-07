@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
 import CreateHabitForm from '../components/Habit/Forms/CreateHabitForm';
-import WeekdaysSelector from '../components/Common/WeekdaysSelector';
+import HabitsList from '../components/Habit/HabitsList';
+import Api from '../Utilities/ApiHelper';
+import { LogI, LogE } from '../Utilities/Utilities';
+import { CreateDummyHabits } from '../Utilities/DummyObjects';
 
 import { FindItemById } from './../Utilities/ArrayUtils';
 
+
+import useAuth from '../Hooks/useAuth';
 
 const LabPage = () => {
     let item = FindItemById([], 3);
@@ -15,21 +20,35 @@ const LabPage = () => {
         console.log('Habit to create: ');
         console.log(habitToCreate);
     }
+    const habitsEndpointName = "Habits";
+    const { user } = useAuth();
+    const [habits, setHabits] = useState(CreateDummyHabits(1));
 
-    const [weekdays1, setWeekdays1] = useState(['monday']);
-    const [weekdays2, setWeekdays2] = useState();
-
-    const handleWeekdaysChanged1 = (selectedWeekdays) => {
-        console.log("Selected weekdays in 1: ");
-        console.log(selectedWeekdays);
-        setWeekdays1(selectedWeekdays);
+    const handleCreateHabit = habitToCreate => {
+        Api.Post(habitsEndpointName, habitToCreate, createdHabit => {
+            console.log(createdHabit);
+        }, (error) => {
+            console.error(error);
+        });
     };
 
-    const handleWeekdaysChanged2 = (selectedWeekdays) => {
-        console.log("Selected weekdays in 2: ");
-        console.log(selectedWeekdays);
-        setWeekdays2(selectedWeekdays);
+    const handleHabitCompleted = completedHabit => {
+        Api.Put(habitsEndpointName + "/Complete", completedHabit.id, completedHabit, () => {
+            getHabits();
+        });
     };
+
+    const getHabits = () => {
+        Api.Get(habitsEndpointName, habits => {
+            LogI('Habits downloaded: ');
+            LogI(habits);
+            setHabits(habits);
+        });
+    };
+
+    useEffect(() => {
+        getHabits();
+    }, [user]);
 
     return (
         <Grid container spacing={3}>
@@ -37,22 +56,21 @@ const LabPage = () => {
                 <CreateHabitForm onCreateHabit={handleCreateHabit}></CreateHabitForm>
             </Grid>
 
-            <Grid item xs={12} md={6} lg={3} disabled>
-                <WeekdaysSelector 
-                    initialWeekdays={weekdays1} 
-                    allowMultipleSelection={false} 
-                    onWeekdaysChanged={handleWeekdaysChanged1} 
-                    disabled />
+            <Grid item xs={12} md={6} lg={3}>
+                <HabitsList 
+                    title="Your habits for today" 
+                    habits={habits} 
+                    onHabitCompleted={handleHabitCompleted} />
             </Grid>
 
             <Grid item xs={12} md={6} lg={3}>
-                <WeekdaysSelector 
-                    initialWeekdays={weekdays2} 
-                    onWeekdaysChanged={handleWeekdaysChanged2} />
+            <HabitsList 
+                    title="Your habits for today" 
+                    habits={habits} 
+                    onHabitCompleted={handleHabitCompleted} />
             </Grid>
 
             <Grid item xs={12} md={6} lg={3}>
-                Values from Labpage: 1 - [ {weekdays1} ], 2 - [ {weekdays2} ] 
             </Grid>
         </Grid>
     );

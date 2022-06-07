@@ -19,7 +19,7 @@ const TodoItemsList = ({ todoItems, onTodoItemDelete, onTodoItemEdit, onTodoItem
     const [displayOptions, setDisplayOptions] = useDisplayOptions();
 
     const handleDisplayOptionsChanged = (option, value) => setDisplayOptions({ ...displayOptions, [option]: value });
-    const handleTodoItemDelete = todoItemId => onTodoItemDelete(todoItemId);
+    const handleTodoItemDelete = todoItem => onTodoItemDelete(todoItem);
     const handleTodoItemEdit = todoItem => onTodoItemEdit(todoItem);
     const handleTodoItemDone = todoItem => onTodoItemDone(todoItem);
     const handleAddSubtask = todoItem => setParentId(todoItem.id);

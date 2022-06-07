@@ -112,9 +112,8 @@ const TodoPage = () => {
     }
 
     // Open delete confirmation modal
-    const handleTodoItemDelete = (todoItemToDeleteId) => {
-        let itemToDelete = ArrayHelper.FindObjectByProperty(todoItems, "id", todoItemToDeleteId);
-        setTodoItemToDelete({ ...itemToDelete });
+    const handleTodoItemDelete = (todoItemToBeDeleted) => {
+        setTodoItemToDelete({ ...todoItemToBeDeleted });
         setModalVisible('delete', true);
     }
 

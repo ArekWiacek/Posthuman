@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.RealTime", "Posth
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E0E9DF22-22E5-497C-BA2D-B107C4233203}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posthuman.Services.Tests", "Tests\Posthuman.Services.Tests\Posthuman.Services.Tests.csproj", "{693432C3-E425-4228-879F-5E44C797BF2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posthuman.Services.Tests", "Tests\Posthuman.Services.Tests\Posthuman.Services.Tests.csproj", "{693432C3-E425-4228-879F-5E44C797BF2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

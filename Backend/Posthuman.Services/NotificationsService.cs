@@ -15,7 +15,8 @@ namespace Posthuman.Services
         private List<NotificationMessage> notifications = new List<NotificationMessage>();
 
         public NotificationsService(
-            IHubContext<NotificationsHub, INotificationsClient> notificationsContext)
+            IHubContext<NotificationsHub, 
+            INotificationsClient> notificationsContext)
         {
             NotificationsContext = notificationsContext;
         }
@@ -78,10 +79,10 @@ namespace Posthuman.Services
                     text = $"{avatar.Name} created new task: '{todoItem.Title}'";
                     break;
 
-                case EventType.TodoItemCyclicCreated:
-                    title = "Repeating task created";
-                    text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
-                    break;
+                //case EventType.TodoItemCyclicCreated:
+                //    title = "Repeating task created";
+                //    text = $"{avatar.Name} created new repeating task: '{todoItem.Title}'";
+                //    break;
 
                 case EventType.TodoItemDeleted:
                     title = "Task deleted";

@@ -7,7 +7,7 @@ namespace Posthuman.Core.Services
 {
     public interface ITodoItemsService
     {
-        Task<TodoItemDTO> GetTodoItemById(int id);
+        Task<TodoItemDTO> GetTodoItemById(int id, int userId);
         Task<IEnumerable<TodoItemDTO>> GetAllTodoItems(int userId);
         Task<IEnumerable<TodoItemDTO>> GetAllTodoItemsHierarchical(int userId);
         Task <IEnumerable<TodoItemDTO>> GetTodoItemsByDeadline(int userId, DateTime deadline);
@@ -15,10 +15,10 @@ namespace Posthuman.Core.Services
 
         Task<TodoItemDTO> CreateTodoItem(int userId, CreateTodoItemDTO todoItemDTO);
         
-        Task UpdateTodoItem(TodoItemDTO todoItemDTO);
+        Task UpdateTodoItem(int userId, TodoItemDTO todoItemDTO);
         
-        Task DeleteTodoItem(int id);
+        Task DeleteTodoItem(int id, int userId);
 
-        Task CompleteTodoItem(TodoItemDTO todoITemDTO);
+        Task CompleteTodoItem(int id, int userId);
     }
 }

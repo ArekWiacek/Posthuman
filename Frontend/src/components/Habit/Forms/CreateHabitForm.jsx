@@ -6,16 +6,18 @@ import {
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { LogI, LogW } from '../../../Utilities/Utilities';
+import DaysOfWeekSelector from '../../Common/DaysOfWeekSelector';
 
-import WeekdaysSelector from '../../Common/WeekdaysSelector';
+const defaultValues = {
+    title: 'Type your habit title',
+    description: 'Describe your habit',
+    repetitionPeriod: 'weekly',
+    daysOfWeek: ['mon'],
+    dayOfMonth: 1,
+};
 
 const CreateHabitForm = ({ onCreateHabit }) => {
-    const [formState, setFormState] = useState({
-        title: '',
-        repetitionPeriod: 'daily',
-        weekdays: ['mon'],
-        dayOfMonth: 1,
-    });
+    const [formState, setFormState] = useState(defaultValues);
 
     const handleInputChange = e => {
         const { name, value } = e.target;
@@ -32,8 +34,8 @@ const CreateHabitForm = ({ onCreateHabit }) => {
         setFormState({ ...formState, [formProperty]: newValue });
     };
 
-    const handleWeekdaysChanged = newWeekdays => {
-        setFormState({ ...formState, ['weekdays']: newWeekdays });
+    const handleDaysOfWeekChanged = newDaysOfWeek => {
+        setFormState({ ...formState, ['daysOfWeek']: newDaysOfWeek });
     };
 
     const handleSubmit = e => {
@@ -44,22 +46,30 @@ const CreateHabitForm = ({ onCreateHabit }) => {
             return;
         }
 
+        if (formState.repetitionPeriod == 'monthly') {
+            if (formState.dayOfMonth < 1 || formState.dayOfMonth > 31) {
+                LogW('If you want to repeat your habit each month, select number from 1 to 31 to specify on which day of month you want to accomplish it.');
+                return;
+            }
+        }
+
         var habit = {
             title: formState.title,
+            description: formState.description,
             repetitionPeriod: formState.repetitionPeriod,
             dayOfMonth: formState.dayOfMonth ? formState.dayOfMonth : null,
-            weekDays: formState.weekDays ? formState.weekDays : null,
+            daysOfWeek: formState.daysOfWeek ? formState.daysOfWeek : null,
         };
 
         onCreateHabit(habit);
-        setFormState({ ...formState, title: '', repetitionPeriod: 'daily' });
+        setFormState({ ...formState, title: 'Another habit', repetitionPeriod: 'weekly' });
     };
 
     return (
         <Box component='form' sx={{
             display: 'flex', flexDirection: 'column', alignItems: 'center',
-            '& .MuiTextField-root': { m: 1, width: '100%' }}}
-            noValidate autoComplete='off' onSubmit={e => handleSubmit(e)}>
+            '& .MuiTextField-root': { m: 1, width: '100%' }
+        }} noValidate autoComplete='off' onSubmit={e => handleSubmit(e)}>
 
             <Typography variant='h5'>Create habit</Typography>
 
@@ -67,9 +77,13 @@ const CreateHabitForm = ({ onCreateHabit }) => {
                 label='Title' name='title' variant='outlined' required autoFocus
                 value={formState.title} onChange={handleInputChange} />
 
-            <FormControl sx={{ alignSelf: 'start' }}>
+            <TextField
+                label='Description' name='description' variant='outlined' multiline rows={3}
+                value={formState.description} onChange={handleInputChange} />
+
+            <FormControl sx={{ alignItems: 'center', width: '100%' }}>
                 <FormLabel id='repetition-period-label'>Repeat every</FormLabel>
-                
+
                 <RadioGroup
                     aria-labelledby='repetition-period-label'
                     name='repetitionPeriod'
@@ -77,46 +91,25 @@ const CreateHabitForm = ({ onCreateHabit }) => {
                     defaultValue={formState.repetitionPeriod}
                     onChange={handleRepetitionPeriodChanged}
                 >
-
-                    <FormControlLabel value='daily' control={<Radio />} label='Day' />
-
                     <FormControlLabel value='weekly' control={<Radio />} label='Week' />
-                    <WeekdaysSelector 
-                        initialWeekdays={formState.weekdays}
-                        allowMultipleSelection={true}  
+
+                    <DaysOfWeekSelector
+                        initialDaysOfWeek={formState.daysOfWeek}
+                        allowMultipleSelection={true}
                         disabled={formState.repetitionPeriod != 'weekly'}
-                        onWeekdaysChanged={handleWeekdaysChanged} />
+                        onDaysChanged={handleDaysOfWeekChanged} />
+
+                    Days of week: {formState.daysOfWeek}
 
                     <FormControlLabel value='monthly' control={<Radio />} label='Month' />
-                    
+
+                    <TextField
+                        label='Day of month' name='dayOfMonth' variant='outlined'
+                        disabled={formState.repetitionPeriod != 'monthly'}
+                        value={formState.dayOfMonth} onChange={handleInputChange} inputProps={{ min: 1, max: 31 }} />
+
                 </RadioGroup>
             </FormControl>
-
-            {/* <TextField
-                label='Description' name='description' value={formState.description}
-                onChange={handleInputChange} multiline rows={3} />
-
-
-            <DesktopDatePicker
-                label='Deadline' name='deadline' inputFormat='DD.MM.YYYY' mask='__.__.____'
-                value={formState.deadline} onChange={handleDeadlineChange} minDate={moment()}
-                renderInput={(params) => <TextField {...params} />} />
-
-            <TextField
-                label='Parent task' name='parentId' select
-                disabled={!todoItems || todoItems.length === 0}
-                value={formState.parentId} onChange={handleInputChange}>
-                <MenuItem key={0} value={0}>Select parent task</MenuItem>
-                {todoItems.map((todoItem) => {
-                    if (!todoItem.isCompleted && todoItem.isVisible) {
-                        return (
-                            <MenuItem key={todoItem.id} value={todoItem.id} sx={{ pl: (todoItem.nestingLevel + 1) * 2 }}>
-                                {todoItem.title}
-                            </MenuItem>
-                        )
-                    }
-                })}
-            </TextField> */}
 
             <Button sx={{ m: 1, width: '100%' }}
                 variant='contained' type='submit'
