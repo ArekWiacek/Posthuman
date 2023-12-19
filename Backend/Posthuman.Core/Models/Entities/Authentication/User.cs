@@ -1,4 +1,5 @@
 ﻿using Posthuman.Core.Models.Entities.Authentication;
+using System.Text.Json.Serialization;
 
 namespace Posthuman.Core.Models.Entities
 {
@@ -18,7 +19,10 @@ namespace Posthuman.Core.Models.Entities
 
         public bool IsAdmin { get; set; }
         public int RoleId { get; set; }
-        public virtual Role Role { get; set; } = default!;
+
+        [JsonIgnore]
+        public virtual Role Role { get; set; }
+        
         public Avatar Avatar { get; set; } = default!;
     }
 }
